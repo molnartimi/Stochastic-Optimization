@@ -7,11 +7,11 @@ class SPDN:
     def __init__(self,model):
 
         """ Class to communicate with SPDN.exe
-        :param model: Model namedtuple from main.py
+        :param model: Model namedtuple from test.models
         """
 
-        self.spdn_cmd = ('.\\resources\SPDN.exe', 'reward', '-c', 'resources\configs\SP_PAR_BICG.txt', '-m') +\
-                        ('resources\models\\' + model.file,) + ('--interactive',)
+        self.spdn_cmd = ('.\..\\resources\SPDN.exe', 'reward', '-c', '..\\resources\configs\SP_PAR_BICG.txt', '-m') +\
+                        ('..\\resources\models\\' + model.file,) + ('--interactive',)
         self.params = model.parameters
         self.rewards = model.rewards
         self.measures = model.measurements
