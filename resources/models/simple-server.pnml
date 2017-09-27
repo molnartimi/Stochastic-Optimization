@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<pnml>
+     <net id="n1" type="http://www.pnml.org/version-2009/grammar/ptnet">
+          <name>
+               <text>Net1</text>
+          </name>
+          <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+               <reward-configs>
+                    <ArrayOfStateRewardConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                         <StateRewardConfiguration>
+                              <ConfigurationName>Idle</ConfigurationName>
+                              <CtlBasedRewards />
+                              <PlaceRateRewards>
+                                   <SimpleReward>
+                                        <ElementId>id1</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>Net1.p1</ElementName>
+                                   </SimpleReward>
+                              </PlaceRateRewards>
+                              <TransitionImpulseRewards />
+                         </StateRewardConfiguration>
+                         <StateRewardConfiguration>
+                              <ConfigurationName>ServedRequests</ConfigurationName>
+                              <CtlBasedRewards />
+                              <PlaceRateRewards />
+                              <TransitionImpulseRewards>
+                                   <SimpleReward>
+                                        <ElementId>id4</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>Net1.t2</ElementName>
+                                   </SimpleReward>
+                              </TransitionImpulseRewards>
+                         </StateRewardConfiguration>
+                    </ArrayOfStateRewardConfiguration>
+               </reward-configs>
+               <sensitivity-parameters>
+                    <ArrayOfSensitivityNetParameter xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                         <SensitivityNetParameter>
+                              <Name>requestRate</Name>
+                              <Description />
+                              <DefaultValue>1.5</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>serviceTime</Name>
+                              <Description />
+                              <DefaultValue>0.25</DefaultValue>
+                         </SensitivityNetParameter>
+                    </ArrayOfSensitivityNetParameter>
+               </sensitivity-parameters>
+          </toolspecific>
+          <declaration>
+               <structure>
+                    <declarations />
+               </structure>
+          </declaration>
+          <place id="id1">
+               <name>
+                    <text>idle</text>
+               </name>
+               <initialMarking>
+                    <text>1</text>
+               </initialMarking>
+               <graphics>
+                    <position x="280" y="220" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <place id="id2">
+               <name>
+                    <text>serving</text>
+               </name>
+               <initialMarking>
+                    <text>0</text>
+               </initialMarking>
+               <graphics>
+                    <position x="400" y="220" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <transition id="id3">
+               <name>
+                    <text>incomingRequest</text>
+               </name>
+               <graphics>
+                    <position x="340" y="180" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>1.5</param1>
+                         <rate-function>requestRate</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <transition id="id4">
+               <name>
+                    <text>serviceDone</text>
+               </name>
+               <graphics>
+                    <position x="340" y="260" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>4</param1>
+                         <rate-function>1 / serviceTime</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <arc id="id5" source="id1" target="id3">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id6" source="id3" target="id2">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id7" source="id2" target="id4">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id8" source="id4" target="id1">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+     </net>
+</pnml>

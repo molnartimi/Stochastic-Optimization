@@ -1,0 +1,864 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<pnml>
+     <net id="n1" type="http://www.pnml.org/version-2009/grammar/ptnet">
+          <name>
+               <text>VCL</text>
+          </name>
+          <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+               <reward-configs>
+                    <ArrayOfStateRewardConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                         <StateRewardConfiguration>
+                              <ConfigurationName>jobsFinished</ConfigurationName>
+                              <CtlBasedRewards />
+                              <PlaceRateRewards />
+                              <TransitionImpulseRewards>
+                                   <SimpleReward>
+                                        <ElementId>id20</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>VCL.Finish_warm</ElementName>
+                                   </SimpleReward>
+                                   <SimpleReward>
+                                        <ElementId>id15</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>VCL.Finish_hot</ElementName>
+                                   </SimpleReward>
+                              </TransitionImpulseRewards>
+                         </StateRewardConfiguration>
+                         <StateRewardConfiguration>
+                              <ConfigurationName>powerUsage</ConfigurationName>
+                              <CtlBasedRewards>
+                                   <CtlReward>
+                                        <Guid>60c953e1-e3f7-4946-bf49-e56d82b6ba56</Guid>
+                                        <CtlExpression>true</CtlExpression>
+                                        <RewardExpression>powerUsage*(VCL.hot_working+VCL.warm_working+VCL.starting+idlePowerFactor*(VCL.hot_free+VCL.warm_free))</RewardExpression>
+                                   </CtlReward>
+                              </CtlBasedRewards>
+                              <PlaceRateRewards />
+                              <TransitionImpulseRewards />
+                         </StateRewardConfiguration>
+                         <StateRewardConfiguration>
+                              <ConfigurationName>noFreeMachines</ConfigurationName>
+                              <CtlBasedRewards>
+                                   <CtlReward>
+                                        <Guid>cf598152-a936-47cf-bdb4-cf3040c6c69a</Guid>
+                                        <CtlExpression>VCL.hot_free=0&amp;VCL.warm_free=0</CtlExpression>
+                                        <RewardExpression>1.0</RewardExpression>
+                                   </CtlReward>
+                              </CtlBasedRewards>
+                              <PlaceRateRewards />
+                              <TransitionImpulseRewards />
+                         </StateRewardConfiguration>
+                         <StateRewardConfiguration>
+                              <ConfigurationName>jobsDispatched</ConfigurationName>
+                              <CtlBasedRewards />
+                              <PlaceRateRewards />
+                              <TransitionImpulseRewards>
+                                   <SimpleReward>
+                                        <ElementId>id10</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>VCL.Dispatch_hot</ElementName>
+                                   </SimpleReward>
+                                   <SimpleReward>
+                                        <ElementId>id23</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>VCL.Dispatch_warm</ElementName>
+                                   </SimpleReward>
+                              </TransitionImpulseRewards>
+                         </StateRewardConfiguration>
+                         <StateRewardConfiguration>
+                              <ConfigurationName>machinesWorking</ConfigurationName>
+                              <CtlBasedRewards />
+                              <PlaceRateRewards>
+                                   <SimpleReward>
+                                        <ElementId>id8</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>VCL.hot_working</ElementName>
+                                   </SimpleReward>
+                                   <SimpleReward>
+                                        <ElementId>id19</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>VCL.warm_working</ElementName>
+                                   </SimpleReward>
+                              </PlaceRateRewards>
+                              <TransitionImpulseRewards />
+                         </StateRewardConfiguration>
+                         <StateRewardConfiguration>
+                              <ConfigurationName>hotMachinesWorking</ConfigurationName>
+                              <CtlBasedRewards />
+                              <PlaceRateRewards>
+                                   <SimpleReward>
+                                        <ElementId>id8</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>VCL.hot_working</ElementName>
+                                   </SimpleReward>
+                              </PlaceRateRewards>
+                              <TransitionImpulseRewards />
+                         </StateRewardConfiguration>
+                         <StateRewardConfiguration>
+                              <ConfigurationName>coldStarted</ConfigurationName>
+                              <CtlBasedRewards />
+                              <PlaceRateRewards />
+                              <TransitionImpulseRewards>
+                                   <SimpleReward>
+                                        <ElementId>id31</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>VCL.Shutdown</ElementName>
+                                   </SimpleReward>
+                              </TransitionImpulseRewards>
+                         </StateRewardConfiguration>
+                    </ArrayOfStateRewardConfiguration>
+               </reward-configs>
+               <sensitivity-parameters>
+                    <ArrayOfSensitivityNetParameter xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                         <SensitivityNetParameter>
+                              <Name>incomingRate</Name>
+                              <Description>Rate of incoming requests</Description>
+                              <DefaultValue>0.015</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>dispatchTime</Name>
+                              <Description>Time to dispatch a request</Description>
+                              <DefaultValue>0.5</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>warmDispatchTime</Name>
+                              <Description>Additional time required to dispatch to a warm machine</Description>
+                              <DefaultValue>0.15</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>jobTime</Name>
+                              <Description>Average duration of jobs</Description>
+                              <DefaultValue>60</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>powerTime</Name>
+                              <Description>Time to power on or off a machine</Description>
+                              <DefaultValue>5</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>powerUsage</Name>
+                              <Description>Power used by a machine per unit time</Description>
+                              <DefaultValue>0.75</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>idlePowerFactor</Name>
+                              <Description>Portion of power used by idle machines</Description>
+                              <DefaultValue>0.6</DefaultValue>
+                         </SensitivityNetParameter>
+                    </ArrayOfSensitivityNetParameter>
+               </sensitivity-parameters>
+          </toolspecific>
+          <declaration>
+               <structure>
+                    <declarations />
+               </structure>
+          </declaration>
+          <place id="id1">
+               <name>
+                    <text>requests</text>
+               </name>
+               <initialMarking>
+                    <text>20</text>
+               </initialMarking>
+               <graphics>
+                    <position x="60" y="200" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <place id="id2">
+               <name>
+                    <text>dispatch_working</text>
+               </name>
+               <initialMarking>
+                    <text>0</text>
+               </initialMarking>
+               <graphics>
+                    <position x="200" y="300" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <place id="id3">
+               <name>
+                    <text>dispatch_free</text>
+               </name>
+               <initialMarking>
+                    <text>1</text>
+               </initialMarking>
+               <graphics>
+                    <position x="200" y="100" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <transition id="id4">
+               <name>
+                    <text>Incoming</text>
+               </name>
+               <graphics>
+                    <position x="120" y="200" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>0.015</param1>
+                         <rate-function>incomingRate</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <arc id="id5" source="id3" target="id4">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id6" source="id4" target="id2">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id7" source="id1" target="id4">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <place id="id8">
+               <name>
+                    <text>hot_working</text>
+               </name>
+               <initialMarking>
+                    <text>0</text>
+               </initialMarking>
+               <graphics>
+                    <position x="360" y="300" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <place id="id9">
+               <name>
+                    <text>hot_free</text>
+               </name>
+               <initialMarking>
+                    <text>5</text>
+               </initialMarking>
+               <graphics>
+                    <position x="360" y="100" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <transition id="id10">
+               <name>
+                    <text>Dispatch_hot</text>
+               </name>
+               <graphics>
+                    <position x="280" y="180" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>2</param1>
+                         <rate-function>1 / dispatchTime</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <arc id="id11" source="id2" target="id10">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id12" source="id9" target="id10">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id13" source="id10" target="id8">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id14" source="id10" target="id3">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <transition id="id15">
+               <name>
+                    <text>Finish_hot</text>
+               </name>
+               <graphics>
+                    <position x="360" y="200" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>0.0166666666666667</param1>
+                         <rate-function>1 / jobTime</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <arc id="id16" source="id8" target="id15">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id17" source="id15" target="id9">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <place id="id18">
+               <name>
+                    <text>warm_free</text>
+               </name>
+               <initialMarking>
+                    <text>5</text>
+               </initialMarking>
+               <graphics>
+                    <position x="460" y="100" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <place id="id19">
+               <name>
+                    <text>warm_working</text>
+               </name>
+               <initialMarking>
+                    <text>0</text>
+               </initialMarking>
+               <graphics>
+                    <position x="460" y="300" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <transition id="id20">
+               <name>
+                    <text>Finish_warm</text>
+               </name>
+               <graphics>
+                    <position x="460" y="200" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>0.0166666666666667</param1>
+                         <rate-function>1 / jobTime</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <arc id="id21" source="id19" target="id20">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id22" source="id20" target="id18">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <transition id="id23">
+               <name>
+                    <text>Dispatch_warm</text>
+               </name>
+               <graphics>
+                    <position x="280" y="240" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>1.53846153846154</param1>
+                         <rate-function>1 /(dispatchTime + warmDispatchTime)</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <arc id="id24" source="id2" target="id23">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id25" source="id23" target="id3">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id26" source="id18" target="id23">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id27" source="id23" target="id19">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id28" source="id23" target="id8">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>5</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id29" source="id8" target="id23">
+               <graphics>
+                    <position x="300" y="280" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>5</weight>
+               </toolspecific>
+          </arc>
+          <place id="id30">
+               <name>
+                    <text>cold</text>
+               </name>
+               <initialMarking>
+                    <text>5</text>
+               </initialMarking>
+               <graphics>
+                    <position x="660" y="100" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <transition id="id31">
+               <name>
+                    <text>Shutdown</text>
+               </name>
+               <graphics>
+                    <position x="560" y="100" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>0.2</param1>
+                         <rate-function>1 / powerTime</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <arc id="id32" source="id18" target="id31">
+               <graphics>
+                    <position x="500" y="80" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>6</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id33" source="id31" target="id18">
+               <graphics>
+                    <position x="520" y="120" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>5</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id34" source="id31" target="id30">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <place id="id35">
+               <name>
+                    <text>starting</text>
+               </name>
+               <initialMarking>
+                    <text>0</text>
+               </initialMarking>
+               <graphics>
+                    <position x="560" y="300" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <transition id="id36">
+               <name>
+                    <text>Start_cold</text>
+               </name>
+               <graphics>
+                    <position x="660" y="300" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>0.001</param1>
+                         <rate-function>0.001</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <arc id="id37" source="id30" target="id36">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id38" source="id36" target="id35">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <transition id="id41">
+               <name>
+                    <text>Started</text>
+               </name>
+               <graphics>
+                    <position x="560" y="200" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>0.2</param1>
+                         <rate-function>1 / powerTime</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <arc id="id42" source="id35" target="id41">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id43" source="id41" target="id18">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id44" source="id36" target="id2">
+               <graphics>
+                    <position x="560" y="440" />
+                    <position x="300" y="440" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id45" source="id2" target="id36">
+               <graphics>
+                    <position x="300" y="460" />
+                    <position x="560" y="460" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id46" source="id15" target="id1">
+               <graphics>
+                    <position x="280" y="60" />
+                    <position x="140" y="60" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id47" source="id20" target="id1">
+               <graphics>
+                    <position x="380" y="40" />
+                    <position x="140" y="40" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id48" source="id8" target="id36">
+               <graphics>
+                    <position x="400" y="400" />
+                    <position x="580" y="400" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>5</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id49" source="id36" target="id8">
+               <graphics>
+                    <position x="580" y="380" />
+                    <position x="400" y="380" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>5</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id50" source="id36" target="id19">
+               <graphics>
+                    <position x="580" y="360" />
+                    <position x="540" y="360" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>5</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id51" source="id19" target="id36">
+               <graphics>
+                    <position x="540" y="340" />
+                    <position x="580" y="340" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>5</weight>
+               </toolspecific>
+          </arc>
+          <place id="id52">
+               <name>
+                    <text>Not_starting</text>
+               </name>
+               <initialMarking>
+                    <text>1</text>
+               </initialMarking>
+               <graphics>
+                    <position x="620" y="200" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <arc id="id53" source="id41" target="id52">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id54" source="id52" target="id36">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+     </net>
+</pnml>

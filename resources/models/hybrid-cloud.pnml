@@ -1,0 +1,848 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<pnml>
+     <net id="n1" type="http://www.pnml.org/version-2009/grammar/ptnet">
+          <name>
+               <text>HybridCloud</text>
+          </name>
+          <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+               <reward-configs>
+                    <ArrayOfStateRewardConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                         <StateRewardConfiguration>
+                              <ConfigurationName>Expense</ConfigurationName>
+                              <CtlBasedRewards>
+                                   <CtlReward>
+                                        <Guid>e99cc1f1-c2d5-46b7-b993-01a7af89024f</Guid>
+                                        <CtlExpression>true</CtlExpression>
+                                        <RewardExpression>publicRent * HybridCloud.PublicRun + runPower * HybridCloud.PrivateRun + idlePower * HybridCloud.PrivateIdle</RewardExpression>
+                                   </CtlReward>
+                                   <CtlReward>
+                                        <Guid>ca8370a1-ec92-42af-bd35-3865c5440298</Guid>
+                                        <CtlExpression>HybridCloud.PrivateDown&gt;0</CtlExpression>
+                                        <RewardExpression>rate(HybridCloud.Repair) * repairCost</RewardExpression>
+                                   </CtlReward>
+                              </CtlBasedRewards>
+                              <PlaceRateRewards />
+                              <TransitionImpulseRewards />
+                         </StateRewardConfiguration>
+                         <StateRewardConfiguration>
+                              <ConfigurationName>JobComplete</ConfigurationName>
+                              <CtlBasedRewards />
+                              <PlaceRateRewards />
+                              <TransitionImpulseRewards>
+                                   <SimpleReward>
+                                        <ElementId>id33</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>HybridCloud.PublicDone</ElementName>
+                                   </SimpleReward>
+                                   <SimpleReward>
+                                        <ElementId>id19</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>HybridCloud.PrivateDone</ElementName>
+                                   </SimpleReward>
+                              </TransitionImpulseRewards>
+                         </StateRewardConfiguration>
+                         <StateRewardConfiguration>
+                              <ConfigurationName>JobsProcessing</ConfigurationName>
+                              <CtlBasedRewards />
+                              <PlaceRateRewards>
+                                   <SimpleReward>
+                                        <ElementId>id2</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>HybridCloud.Queue</ElementName>
+                                   </SimpleReward>
+                                   <SimpleReward>
+                                        <ElementId>id5</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>HybridCloud.PublicRun</ElementName>
+                                   </SimpleReward>
+                                   <SimpleReward>
+                                        <ElementId>id6</ElementId>
+                                        <ScaleFactor>1</ScaleFactor>
+                                        <ElementName>HybridCloud.PrivateRun</ElementName>
+                                   </SimpleReward>
+                              </PlaceRateRewards>
+                              <TransitionImpulseRewards />
+                         </StateRewardConfiguration>
+                         <StateRewardConfiguration>
+                              <ConfigurationName>NoFailedServer</ConfigurationName>
+                              <CtlBasedRewards>
+                                   <CtlReward>
+                                        <Guid>9478b2cc-ea2a-4f5d-8f5d-942f38755c28</Guid>
+                                        <CtlExpression>HybridCloud.PrivateDown=0</CtlExpression>
+                                        <RewardExpression>1</RewardExpression>
+                                   </CtlReward>
+                              </CtlBasedRewards>
+                              <PlaceRateRewards />
+                              <TransitionImpulseRewards />
+                         </StateRewardConfiguration>
+                    </ArrayOfStateRewardConfiguration>
+               </reward-configs>
+               <event-reward-configs>
+                    <ArrayOfEventRewardConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                         <EventRewardConfiguration>
+                              <ConfigurationName>ServerFailing</ConfigurationName>
+                              <CtlSource>HybridCloud.PrivateDown=0</CtlSource>
+                              <CtlTarget>HybridCloud.PrivateDown&gt;0</CtlTarget>
+                              <Function>1</Function>
+                              <SelectedTransitionIds>
+                                   <string>id3</string>
+                                   <string>id19</string>
+                                   <string>id23</string>
+                                   <string>id26</string>
+                                   <string>id29</string>
+                                   <string>id33</string>
+                                   <string>id36</string>
+                                   <string>id39</string>
+                              </SelectedTransitionIds>
+                         </EventRewardConfiguration>
+                    </ArrayOfEventRewardConfiguration>
+               </event-reward-configs>
+               <complex-reward-configs>
+                    <ArrayOfComplexRewardConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                         <ComplexRewardConfiguration>
+                              <ConfigurationName>ProcessTime</ConfigurationName>
+                              <RewardExpression>inst(JobsProcessing) / inst(JobComplete)</RewardExpression>
+                         </ComplexRewardConfiguration>
+                         <ComplexRewardConfiguration>
+                              <ConfigurationName>UpTime</ConfigurationName>
+                              <RewardExpression>inst(NoFailedServer) / inst(ServerFailing)</RewardExpression>
+                         </ComplexRewardConfiguration>
+                    </ArrayOfComplexRewardConfiguration>
+               </complex-reward-configs>
+               <mtff-failure-configs>
+                    <ArrayOfMtffFaultConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                         <MtffFaultConfiguration>
+                              <ConfigurationName>PrivateDown</ConfigurationName>
+                              <FaultModes>
+                                   <MtffFault>
+                                        <Guid>09490ecf-e8c5-40b8-b326-6c4a975412f1</Guid>
+                                        <CtlExpression>HybridCloud.PrivateDown&gt;0</CtlExpression>
+                                   </MtffFault>
+                              </FaultModes>
+                         </MtffFaultConfiguration>
+                    </ArrayOfMtffFaultConfiguration>
+               </mtff-failure-configs>
+               <sensitivity-parameters>
+                    <ArrayOfSensitivityNetParameter xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                         <SensitivityNetParameter>
+                              <Name>incRate</Name>
+                              <Description>Incoming request rate</Description>
+                              <DefaultValue>5</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>p</Name>
+                              <Description>Dispatch probability to private cloud</Description>
+                              <DefaultValue>0.75</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>lbTime</Name>
+                              <Description>Time spent in load balancer</Description>
+                              <DefaultValue>0.0002</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>execTime1</Name>
+                              <Description>Execution time on public cloud</Description>
+                              <DefaultValue>0.2</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>execTime2</Name>
+                              <Description>Execution time on private cloud</Description>
+                              <DefaultValue>0.1</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>failRate</Name>
+                              <Description>Failure rate of private servers</Description>
+                              <DefaultValue>0.0002</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>idleFactor</Name>
+                              <Description>Relative stress on idle servers</Description>
+                              <DefaultValue>0.1</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>repairTime</Name>
+                              <Description>Repair time of private servers</Description>
+                              <DefaultValue>24</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>publicRent</Name>
+                              <Description>Hourly rent rate of public cloud</Description>
+                              <DefaultValue>0.8</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>runPower</Name>
+                              <Description>Power cost of a running machine</Description>
+                              <DefaultValue>0.3</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>idlePower</Name>
+                              <Description>Power cost of an idle machine</Description>
+                              <DefaultValue>0.01</DefaultValue>
+                         </SensitivityNetParameter>
+                         <SensitivityNetParameter>
+                              <Name>repairCost</Name>
+                              <Description>Cost of repairing a machine</Description>
+                              <DefaultValue>1000</DefaultValue>
+                         </SensitivityNetParameter>
+                    </ArrayOfSensitivityNetParameter>
+               </sensitivity-parameters>
+               <sensitivity-configs>
+                    <ArrayOfSensitivityConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                         <SensitivityConfiguration>
+                              <Name>Overload</Name>
+                              <ParameterValues>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>incRate</ParameterName>
+                                        <ParameterValue>20</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>p</ParameterName>
+                                        <ParameterValue>0.75</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>lbTime</ParameterName>
+                                        <ParameterValue>0.0002</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>execTime1</ParameterName>
+                                        <ParameterValue>0.2</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>execTime2</ParameterName>
+                                        <ParameterValue>0.1</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>failRate</ParameterName>
+                                        <ParameterValue>0.0002</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>idleFactor</ParameterName>
+                                        <ParameterValue>0.1</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>repairTime</ParameterName>
+                                        <ParameterValue>24</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>publicRent</ParameterName>
+                                        <ParameterValue>0.8</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>runPower</ParameterName>
+                                        <ParameterValue>0.3</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>idlePower</ParameterName>
+                                        <ParameterValue>0.01</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>repairCost</ParameterName>
+                                        <ParameterValue>1000</ParameterValue>
+                                   </SensitivityParameterBinding>
+                              </ParameterValues>
+                         </SensitivityConfiguration>
+                         <SensitivityConfiguration>
+                              <Name>PreferCloud</Name>
+                              <ParameterValues>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>incRate</ParameterName>
+                                        <ParameterValue>20</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>p</ParameterName>
+                                        <ParameterValue>0.9</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>lbTime</ParameterName>
+                                        <ParameterValue>0.0002</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>execTime1</ParameterName>
+                                        <ParameterValue>0.2</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>execTime2</ParameterName>
+                                        <ParameterValue>0.1</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>failRate</ParameterName>
+                                        <ParameterValue>0.0002</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>idleFactor</ParameterName>
+                                        <ParameterValue>0.1</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>repairTime</ParameterName>
+                                        <ParameterValue>24</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>publicRent</ParameterName>
+                                        <ParameterValue>0.8</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>runPower</ParameterName>
+                                        <ParameterValue>0.3</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>idlePower</ParameterName>
+                                        <ParameterValue>0.01</ParameterValue>
+                                   </SensitivityParameterBinding>
+                                   <SensitivityParameterBinding>
+                                        <ParameterName>repairCost</ParameterName>
+                                        <ParameterValue>1000</ParameterValue>
+                                   </SensitivityParameterBinding>
+                              </ParameterValues>
+                         </SensitivityConfiguration>
+                    </ArrayOfSensitivityConfiguration>
+               </sensitivity-configs>
+          </toolspecific>
+          <declaration>
+               <structure>
+                    <declarations />
+               </structure>
+          </declaration>
+          <place id="id1">
+               <name>
+                    <text>Buffer</text>
+               </name>
+               <initialMarking>
+                    <text>20</text>
+               </initialMarking>
+               <graphics>
+                    <position x="80" y="180" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Top</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <place id="id2">
+               <name>
+                    <text>Queue</text>
+               </name>
+               <initialMarking>
+                    <text>0</text>
+               </initialMarking>
+               <graphics>
+                    <position x="240" y="180" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Top</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <place id="id5">
+               <name>
+                    <text>PublicRun</text>
+               </name>
+               <initialMarking>
+                    <text>0</text>
+               </initialMarking>
+               <graphics>
+                    <position x="400" y="80" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Top</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <place id="id6">
+               <name>
+                    <text>PrivateRun</text>
+               </name>
+               <initialMarking>
+                    <text>0</text>
+               </initialMarking>
+               <graphics>
+                    <position x="400" y="240" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Top</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <place id="id7">
+               <name>
+                    <text>PrivateIdle</text>
+               </name>
+               <initialMarking>
+                    <text>5</text>
+               </initialMarking>
+               <graphics>
+                    <position x="400" y="300" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <place id="id8">
+               <name>
+                    <text>PrivateDown</text>
+               </name>
+               <initialMarking>
+                    <text>0</text>
+               </initialMarking>
+               <graphics>
+                    <position x="400" y="380" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <capacity>Unlimited</capacity>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <interface>False</interface>
+               </toolspecific>
+          </place>
+          <transition id="id3">
+               <name>
+                    <text>Incoming</text>
+               </name>
+               <graphics>
+                    <position x="160" y="180" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Top</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>5</param1>
+                         <rate-function>incRate</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <transition id="id19">
+               <name>
+                    <text>PrivateDone</text>
+               </name>
+               <graphics>
+                    <position x="480" y="240" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Top</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>10</param1>
+                         <rate-function>1 / execTime2</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <transition id="id23">
+               <name>
+                    <text>Repair</text>
+               </name>
+               <graphics>
+                    <position x="480" y="340" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>0.0416666666666667</param1>
+                         <rate-function>1 / repairTime</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <transition id="id26">
+               <name>
+                    <text>IdleFail</text>
+               </name>
+               <graphics>
+                    <position x="320" y="340" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>2E-05</param1>
+                         <rate-function>failRate * idleFactor</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <transition id="id29">
+               <name>
+                    <text>ExecFail</text>
+               </name>
+               <graphics>
+                    <position x="320" y="280" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Bottom</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>0.0002</param1>
+                         <rate-function>failRate</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <transition id="id33">
+               <name>
+                    <text>PublicDone</text>
+               </name>
+               <graphics>
+                    <position x="480" y="80" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <orientation>Vertical</orientation>
+                    <priority>-1</priority>
+                    <textalign>Top</textalign>
+                    <textvisible visible="true" />
+                    <important>False</important>
+                    <abnormal>False</abnormal>
+                    <distribution type="Exponential">
+                         <param1>5</param1>
+                         <rate-function>1 / execTime1</rate-function>
+                    </distribution>
+                    <condition />
+                    <command />
+               </toolspecific>
+          </transition>
+          <arc id="id9" source="id1" target="id3">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id10" source="id3" target="id2">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id20" source="id6" target="id19">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id21" source="id19" target="id7">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id22" source="id19" target="id1">
+               <graphics>
+                    <position x="520" y="240" />
+                    <position x="520" y="420" />
+                    <position x="40" y="420" />
+                    <position x="40" y="200" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id24" source="id8" target="id23">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id25" source="id23" target="id7">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id27" source="id7" target="id26">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id28" source="id26" target="id8">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id30" source="id6" target="id29">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id31" source="id29" target="id8">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id32" source="id29" target="id2">
+               <graphics>
+                    <position x="240" y="280" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id34" source="id5" target="id33">
+               <graphics>
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <arc id="id35" source="id33" target="id1">
+               <graphics>
+                    <position x="520" y="80" />
+                    <position x="520" y="40" />
+                    <position x="40" y="40" />
+                    <position x="40" y="160" />
+                    <fill color="White" />
+                    <line color="Black" />
+               </graphics>
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <weight>1</weight>
+               </toolspecific>
+          </arc>
+          <page id="n2">
+               <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                    <coarsetransition id="id4">
+                         <name>
+                              <text>LoadBalancer</text>
+                         </name>
+                         <graphics>
+                              <position x="320" y="180" />
+                              <fill color="White" />
+                              <line color="Black" />
+                         </graphics>
+                         <textalign>Right</textalign>
+                         <textvisible visible="true" />
+                    </coarsetransition>
+               </toolspecific>
+               <referencePlace id="id11" refid="id2">
+                    <graphics>
+                         <position x="60" y="120" />
+                    </graphics>
+                    <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                         <textalign>Bottom</textalign>
+                         <textvisible visible="true" />
+                         <visualedge />
+                    </toolspecific>
+               </referencePlace>
+               <referencePlace id="id13" refid="id5">
+                    <graphics>
+                         <position x="260" y="60" />
+                    </graphics>
+                    <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                         <textalign>Top</textalign>
+                         <textvisible visible="true" />
+                         <visualedge />
+                    </toolspecific>
+               </referencePlace>
+               <referencePlace id="id15" refid="id6">
+                    <graphics>
+                         <position x="260" y="140" />
+                    </graphics>
+                    <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                         <textalign>Bottom</textalign>
+                         <textvisible visible="true" />
+                         <visualedge />
+                    </toolspecific>
+               </referencePlace>
+               <referencePlace id="id17" refid="id7">
+                    <graphics>
+                         <position x="260" y="220" />
+                    </graphics>
+                    <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                         <textalign>Bottom</textalign>
+                         <textvisible visible="true" />
+                         <visualedge />
+                    </toolspecific>
+               </referencePlace>
+               <transition id="id36">
+                    <name>
+                         <text>DispatchPublic</text>
+                    </name>
+                    <graphics>
+                         <position x="160" y="60" />
+                         <fill color="White" />
+                         <line color="Black" />
+                    </graphics>
+                    <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                         <orientation>Vertical</orientation>
+                         <priority>-1</priority>
+                         <textalign>Top</textalign>
+                         <textvisible visible="true" />
+                         <important>False</important>
+                         <abnormal>False</abnormal>
+                         <distribution type="Exponential">
+                              <param1>1250</param1>
+                              <rate-function>(1 - p)/ lbTime</rate-function>
+                         </distribution>
+                         <condition />
+                         <command />
+                    </toolspecific>
+               </transition>
+               <transition id="id39">
+                    <name>
+                         <text>DispatchPrivate</text>
+                    </name>
+                    <graphics>
+                         <position x="160" y="180" />
+                         <fill color="White" />
+                         <line color="Black" />
+                    </graphics>
+                    <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                         <orientation>Vertical</orientation>
+                         <priority>-1</priority>
+                         <textalign>Bottom</textalign>
+                         <textvisible visible="true" />
+                         <important>False</important>
+                         <abnormal>False</abnormal>
+                         <distribution type="Exponential">
+                              <param1>3750</param1>
+                              <rate-function>p / lbTime</rate-function>
+                         </distribution>
+                         <condition />
+                         <command />
+                    </toolspecific>
+               </transition>
+               <arc id="id37" source="id11" target="id36">
+                    <graphics>
+                         <fill color="White" />
+                         <line color="Black" />
+                    </graphics>
+                    <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                         <weight>1</weight>
+                    </toolspecific>
+               </arc>
+               <arc id="id38" source="id36" target="id13">
+                    <graphics>
+                         <fill color="White" />
+                         <line color="Black" />
+                    </graphics>
+                    <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                         <weight>1</weight>
+                    </toolspecific>
+               </arc>
+               <arc id="id40" source="id11" target="id39">
+                    <graphics>
+                         <fill color="White" />
+                         <line color="Black" />
+                    </graphics>
+                    <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                         <weight>1</weight>
+                    </toolspecific>
+               </arc>
+               <arc id="id41" source="id39" target="id15">
+                    <graphics>
+                         <fill color="White" />
+                         <line color="Black" />
+                    </graphics>
+                    <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                         <weight>1</weight>
+                    </toolspecific>
+               </arc>
+               <arc id="id42" source="id17" target="id39">
+                    <graphics>
+                         <fill color="White" />
+                         <line color="Black" />
+                    </graphics>
+                    <toolspecific tool="Petri.NET" version="1.5.5832.36508">
+                         <weight>1</weight>
+                    </toolspecific>
+               </arc>
+          </page>
+     </net>
+</pnml>
