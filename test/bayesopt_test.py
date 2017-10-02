@@ -5,6 +5,7 @@ from bayes_opt import BayesianOptimization
 from spdn.spdn import SPDN
 import models
 
+
 class BayesianOptimizationTest(unittest.TestCase):
 
     def test_simple_server(self):
@@ -14,9 +15,9 @@ class BayesianOptimizationTest(unittest.TestCase):
         if (spdn.running):
             # print(spdn.f([1.5, 0.25]))
             bo = BayesianOptimization(lambda requestRate, serviceTime: - spdn.f([requestRate, serviceTime]),
-                                      {'requestRate': (0.0001, 3), 'serviceTime': (0.0001, 1)})
+                                      models.simple_server.borders)
             # bo.explore({'requestRate': [0.4, 2.0], 'serviceTime': [0.1, 0.6]})
-            bo.maximize(init_points=10, n_iter=15, kappa=2, acq='ei')
+            bo.maximize(init_points=10, n_iter=5, kappa=2, acq='ei')
             print(bo.res['max'])
             spdn.close()
 
@@ -30,13 +31,11 @@ class BayesianOptimizationTest(unittest.TestCase):
                                                                                     warmDispatchTime, jobTime,
                                                                                     powerTime, powerUsage,
                                                                                     idlePowerFactor]),
-                                      {'incomingRate': (0.0001, 1), 'dispatchTime': (0.0001, 3),
-                                       'warmDispatchTime': (0.0001, 2), 'jobTime': (0.0001, 200),
-                                       'powerTime': (0.0001, 20), 'powerUsage': (0.0001, 5),
-                                       'idlePowerFactor': (0.0001, 5)})
-            bo.maximize(init_points=10, n_iter=15, kappa=2, acq='ei')
+                                      models.vcl_stochastic.borders)
+            bo.maximize(init_points=10, n_iter=5, kappa=2, acq='ei')
             print(bo.res['max'])
             spdn.close()
+
 
 if __name__ == '__main__':
     unittest.main()

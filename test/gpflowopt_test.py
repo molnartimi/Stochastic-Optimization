@@ -20,6 +20,15 @@ class GPflowOptTest(unittest.TestCase):
             result[i] = fresult
         return result
 
+    def _getdomain(self):
+        domain = None
+        for key in self.model.borders:
+            if domain is None:
+                domain = ContinuousParameter(key, self.model.borders[key][0], self.model.borders[key][1])
+            else:
+                domain = domain + ContinuousParameter(key, self.model.borders[key][0], self.model.borders[key][1])
+        return domain
+
     def _optimize(self, domain):
         # Use standard Gaussian process Regression
         lhd = LatinHyperCube(21, domain)
@@ -37,29 +46,23 @@ class GPflowOptTest(unittest.TestCase):
             r = optimizer.optimize(self._fx, n_iter=5)
         return r
 
-    def test_simple_server(self):
-
-        self.spdn = SPDN(models.simple_server)
+    def _test(self,model):
+        self.model = model
+        self.spdn = SPDN(self.model)
         self.spdn.start()
         if (self.spdn.running):
-            domain = ContinuousParameter('requestRate', 0.0001, 3) + ContinuousParameter('serviceTime', 0.0001, 1)
+            domain = self._getdomain()
             result = self._optimize(domain)
-            print(result)
             self.spdn.close()
+            return result
+
+    def test_simple_server(self):
+        result = self._test(models.simple_server)
+        print(result)
 
     def test_vcl_stochastic(self):
-
-        self.spdn = SPDN(models.vcl_stochastic)
-        self.spdn.start()
-        if (self.spdn.running):
-            domain = ContinuousParameter('incomingRate', 0.0001, 1) + ContinuousParameter('dispatchTime', 0.0001, 3) +\
-                ContinuousParameter('warmDispatchTime', 0.0001, 2) + ContinuousParameter('jobTime', 0.0001, 200) +\
-                ContinuousParameter('powerTime', 0.0001, 20) + ContinuousParameter('powerUsage', 0.0001, 5) +\
-                ContinuousParameter('idlePowerFactor', 0.0001, 5)
-
-            result = self._optimize(domain)
-            print(result)
-            self.spdn.close()
+        result = self._test(models.vcl_stochastic)
+        print(result)
 
 
 if __name__ == '__main__':

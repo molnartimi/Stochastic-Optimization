@@ -1,3 +1,6 @@
+# https://github.com/GPflow/GPflowOpt
+"""Example of how to use this GPflowOpt package."""
+
 import numpy as np
 from gpflowopt.domain import ContinuousParameter
 
