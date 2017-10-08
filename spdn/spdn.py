@@ -11,21 +11,33 @@ class SPDN:
         """
 
         self.spdn_cmd = ('.\..\\resources\SPDN.exe', 'reward', '-c', '..\\resources\configs\SP_PAR_BICG.txt', '-m') +\
-                        ('..\\resources\models\\' + model.file,) + ('--interactive',)
+                        ('..\\resources\models\\' + model.file,) + ('--interactive','-l','File')
+        self.spdn_mono_cmd = ('mono','../resources/SPDN.exe', 'reward', '-c', '../resources/configs/SP_PAR_BICG.txt', '-m') +\
+                        ('..\/resources/models/' + model.file,) + ('--interactive','-l','File')
         self.params = model.parameters
         self.rewards = model.rewards
         self.measures = model.measurements
         self.running = False
         self.pipe = None
         self.last_result = {}
+        self.verbose = False
 
-    def start(self):
+    def start(self,verbose=False):
 
         """ Start new process """
 
+        self.verbose = verbose
         self.pipe = subprocess.Popen(self.spdn_cmd, stdout=PIPE, stdin=PIPE, stderr=PIPE)
-        self._receive_ok()
-        if not self.running: print('ERROR at starting SPDN.exe')
+        response = self._check_spdn_response()
+        if response != 'OK':
+            self.pipe = subprocess.Popen(self.spdn_mono_cmd, stdout=PIPE, stdin=PIPE, stderr=PIPE)
+            response = self._check_spdn_response()
+            if response != 'OK':
+                print('ERROR at starting SPDN.exe')
+            else:
+                self.running = True
+        else:
+            self.running = True
 
     def f(self, values):
 
@@ -69,34 +81,28 @@ class SPDN:
         """
 
         self._write_to_spdn(self._parameters_to_string(values))  # requestRate=0.5;serviceTime=0.25
-        self._receive_ok()
-        if not self.running: print('ERROR at setting parameters')
+        response = self._check_spdn_response()
 
     def _set_rewards(self):
 
         """ Give the rewards with parameters to SPDN.exe """
 
         self._write_to_spdn(self._rewards_to_string())
-        self._receive_ok()
-        if not self.running: print('ERROR at setting rewards')
+        response = self._check_spdn_response()
 
     def _write_to_spdn(self,cmd):
 
         """ Write command into SPDN.exe
         :param cmd: command as string
         """
-
+        if self.verbose: print(">>>>>>>>>>" + cmd.strip())
         self.pipe.stdin.write(bytes(cmd, 'utf-8'))
         self.pipe.stdin.flush()
 
-    def _receive_ok(self):
-
-        """ Check if the last input was valid in SPDN.exe
-        If not, the process is closed
-        """
-
-        result = self.pipe.stdout.readline().strip().decode('utf-8')
-        self.running = result == 'OK'
+    def _check_spdn_response(self):
+        response = self.pipe.stdout.readline().strip().decode('utf-8')
+        if self.verbose: print("<<<<<<<<<<" + response.strip())
+        return response
 
     def _get_results(self):
 
@@ -104,7 +110,7 @@ class SPDN:
         and save it as a dictionary in self.last_result
         """
 
-        result = self.pipe.stdout.readline().strip().decode('utf-8')
+        result = self._check_spdn_response()
         while ('=' in result):
             equal_sign = result.index('=')
             if (';' in result):
@@ -166,7 +172,7 @@ class SPDN:
 
         """ Close the running process """
 
-        self._write_to_spdn('END')
+        self._write_to_spdn('END\n')
         self.running = False
 
 
