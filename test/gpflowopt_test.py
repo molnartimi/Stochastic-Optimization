@@ -1,4 +1,6 @@
 import unittest
+import sys
+sys.path.append("./")
 import numpy as np
 from gpflowopt.domain import ContinuousParameter
 import gpflow
@@ -7,6 +9,8 @@ from gpflowopt.design import LatinHyperCube
 from gpflowopt.acquisition import ExpectedImprovement
 from spdn.spdn import SPDN
 import models
+from time import gmtime, strftime
+import csv
 
 
 class GPflowOptTest(unittest.TestCase):
@@ -29,9 +33,9 @@ class GPflowOptTest(unittest.TestCase):
                 domain = domain + ContinuousParameter(key, self.model.borders[key][0], self.model.borders[key][1])
         return domain
 
-    def _optimize(self, domain):
+    def _optimize(self, domain, init_points, n_iter):
         # Use standard Gaussian process Regression
-        lhd = LatinHyperCube(21, domain)
+        lhd = LatinHyperCube(init_points, domain)
         X = lhd.generate()
         Y = self._fx(X)
         model = gpflow.gpr.GPR(X, Y, gpflow.kernels.Matern52(2, ARD=True))
@@ -43,26 +47,38 @@ class GPflowOptTest(unittest.TestCase):
 
         # Run the Bayesian optimization
         with optimizer.silent():
-            r = optimizer.optimize(self._fx, n_iter=5)
+            r = optimizer.optimize(self._fx, n_iter=n_iter)
         return r
 
-    def _test(self,model):
+    def _test(self, modelname, model, init_points, n_iter):
         self.model = model
         self.spdn = SPDN(self.model)
-        self.spdn.start()
+        self.spdn.start(verbose=True)
         if (self.spdn.running):
-            domain = self._getdomain()
-            result = self._optimize(domain)
-            self.spdn.close()
-            return result
+            with open(strftime("gpflowopt_" + modelname + "_" + "%Y-%m-%d_%H-%M-%S", gmtime()) + '.csv', "w", newline="") as csvfile:
+                writer = csv.writer(csvfile, delimiter=';')
+                row = ['init points', 'n iter', 'MAX VALUE']
+                for param in model.parameters:
+                    row.append(param)
+                writer.writerow(row)
 
+                domain = self._getdomain()
+                result = self._optimize(domain, init_points, n_iter)
+                self.spdn.close()
+
+                row = [init_points, n_iter, result['fun'][0]]
+                for param in result['x'][0]:
+                    row.append(str(param))
+                writer.writerow(row)
+
+                print(result)
+
+    @unittest.skip("works fine")
     def test_simple_server(self):
-        result = self._test(models.simple_server)
-        print(result)
+        self._test("simple-server", models.simple_server, init_points=5, n_iter=10)
 
     def test_vcl_stochastic(self):
-        result = self._test(models.vcl_stochastic)
-        print(result)
+        self._test("vcl-stochastic", models.vcl_stochastic, init_points=3, n_iter=3)
 
 
 if __name__ == '__main__':

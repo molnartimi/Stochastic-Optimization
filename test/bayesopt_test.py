@@ -21,7 +21,7 @@ class BayesianOptimizationTest(unittest.TestCase):
             return bo.res['max']
 
     def _run_tests(self, modelname, model, bo, init_points, n_iter):
-        with open(strftime("%Y-%m-%d_%H-%M-%S", gmtime()) + '_' + modelname + '.csv', "w", newline="") as csvfile:
+        with open("bayesopt_" + modelname + "_" + strftime("%Y-%m-%d_%H-%M-%S", gmtime()) + '.csv', "w", newline="") as csvfile:
             writer = csv.writer(csvfile, delimiter=';')
             row = ['acq', 'param', 'init points', 'n iter', 'MAX VALUE']
             for param in model.parameters:
