@@ -1,6 +1,6 @@
 import subprocess
 from subprocess import PIPE
-
+import os
 
 class SPDN:
 
@@ -9,11 +9,15 @@ class SPDN:
         """ Class to communicate with SPDN.exe
         :param model: Model namedtuple from test.models
         """
-
-        self.spdn_cmd = ('.\..\\resources\SPDN.exe', 'reward', '-c', '..\\resources\configs\SP_PAR_BICG.txt', '-m') +\
-                        ('..\\resources\models\\' + model.file,) + ('--interactive','-l','File')
-        self.spdn_mono_cmd = ('mono','../resources/SPDN.exe', 'reward', '-c', '../resources/configs/SP_PAR_BICG.txt', '-m') +\
-                        ('..\/resources/models/' + model.file,) + ('--interactive','-l','File')
+        self.SPDN_EXE_LOCATION = os.path.dirname(os.path.abspath(__file__))
+        if '\\' in self.SPDN_EXE_LOCATION:
+            self.spdn_cmd = (self.SPDN_EXE_LOCATION + '\\resource\SPDN.exe', 'reward', '-c',
+                             self.SPDN_EXE_LOCATION + '\\resource\configs\SP_PAR_BICG.txt', '-m',
+                             self.SPDN_EXE_LOCATION + '\\resource\models\\' + model.file, '--interactive', '-l', 'File')
+        else:
+            self.spdn_cmd = ('mono', self.SPDN_EXE_LOCATION + '/resource/SPDN.exe', 'reward', '-c',
+                             self.SPDN_EXE_LOCATION + '/resource/configs/SP_PAR_BICG.txt', '-m',
+                             self.SPDN_EXE_LOCATION + '/resource/models/' + model.file, '--interactive', '-l', 'File')
         self.params = model.parameters
         self.rewards = model.rewards
         self.measures = model.measurements
@@ -30,12 +34,7 @@ class SPDN:
         self.pipe = subprocess.Popen(self.spdn_cmd, stdout=PIPE, stdin=PIPE, stderr=PIPE)
         response = self._check_spdn_response()
         if response != 'OK':
-            self.pipe = subprocess.Popen(self.spdn_mono_cmd, stdout=PIPE, stdin=PIPE, stderr=PIPE)
-            response = self._check_spdn_response()
-            if response != 'OK':
-                print('ERROR at starting SPDN.exe')
-            else:
-                self.running = True
+            print('ERROR at starting SPDN.exe')
         else:
             self.running = True
 
@@ -174,6 +173,7 @@ class SPDN:
 
         self._write_to_spdn('END\n')
         self.running = False
+        self.pipe.kill()
 
 
 

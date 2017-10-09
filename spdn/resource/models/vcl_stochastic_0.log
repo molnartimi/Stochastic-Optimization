@@ -1,0 +1,159 @@
+vcl_stochastic STARTED
+
+Net Converter STARTED
+Info	Mapping places...
+Info	Mapping transitions...
+Info	Mapping arcs...
+Info	Mapping partitions...
+Net Converter DONE        0
+
+Symbolic State Space STARTED
+Info	Beginning saturation...
+Info	Saturation finished.
+
+Info	States in MDD: 1 092
+Info	Nodes in MDD: 216
+Info	Levels in MDD: 11
+Symbolic State Space DONE        5
+
+MDD Converter STARTED
+Info	Converted 212 nodes
+MDD Converter DONE        0
+
+EDD Converter STARTED
+Info	Converted 206 nodes with 1092 states
+EDD Converter DONE        0
+
+Symbolic Sparse Generator STARTED
+Info	Filling in the sparse generator matrix...
+Symbolic Sparse Generator Progress: 0%
+Symbolic Sparse Generator Progress: 11%
+Symbolic Sparse Generator Progress: 22%
+Symbolic Sparse Generator Progress: 33%
+Symbolic Sparse Generator Progress: 45%
+Symbolic Sparse Generator Progress: 56%
+Symbolic Sparse Generator Progress: 67%
+Symbolic Sparse Generator Progress: 78%
+Symbolic Sparse Generator Progress: 90%
+Info	Computing the diagonal...
+Info	Sparse generator matrix of size (1 092 X 1 092) created with 3 746 nonzero elements.
+Symbolic Sparse Generator DONE        3
+
+BiCGSTAB STARTED
+Info	iteration 91 early return with vanishing s (L1-norm=6,473E-11)
+BiCGSTAB DONE       12
+
+Info	Solution sum: 1,00000000000002
+Info	Residual l1-norm: 0
+
+Expression Cache STARTED
+Info	Calculating MDDs and lambdas for reward configuration 'jobsFinished'
+Info	Calculating MDDs and lambdas for reward configuration 'powerUsage'
+Evaluate CTL STARTED
+Info	Calculating MDD from CTL expression...
+Info	MDD calculated with 1092 states.
+Evaluate CTL DONE        1
+
+Info	Creating expressions for derivate rewards...
+Info	Calculating MDDs and lambdas for reward configuration 'noFreeMachines'
+Evaluate CTL STARTED
+Info	Calculating MDD from CTL expression...
+Info	MDD calculated with 22 states.
+Evaluate CTL DONE        2
+
+Info	Creating expressions for derivate rewards...
+Info	Calculating MDDs and lambdas for reward configuration 'jobsDispatched'
+Info	Calculating MDDs and lambdas for reward configuration 'machinesWorking'
+Evaluate CTL STARTED
+Info	Calculating MDD from CTL expression...
+Info	MDD calculated with 910 states.
+Evaluate CTL DONE        1
+
+Info	Creating expressions for derivate rewards...
+Evaluate CTL STARTED
+Info	Calculating MDD from CTL expression...
+Info	MDD calculated with 960 states.
+Evaluate CTL DONE        1
+
+Info	Creating expressions for derivate rewards...
+Info	Calculating MDDs and lambdas for reward configuration 'hotMachinesWorking'
+Evaluate CTL STARTED
+Info	Calculating MDD from CTL expression...
+Info	MDD calculated with 910 states.
+Evaluate CTL DONE        1
+
+Info	Creating expressions for derivate rewards...
+Info	Calculating MDDs and lambdas for reward configuration 'coldStarted'
+Expression Cache DONE       10
+
+Expression Cache STARTED
+Expression Cache DONE        0
+
+Symbolic State Reward STARTED
+Info	Symbolic state reward calculation for configuration 'jobsFinished'
+Info	Calculating reward from enabled transitions...
+Symbolic State Reward DONE        2
+
+Symbolic State Reward STARTED
+Info	Symbolic state reward calculation for configuration 'powerUsage'
+Info	Calculating reward from CTL MDDs...
+Info	Calculating reward from enabled transitions...
+Symbolic State Reward DONE        1
+
+Symbolic State Reward STARTED
+Info	Symbolic state reward calculation for configuration 'noFreeMachines'
+Info	Calculating reward from CTL MDDs...
+Info	Calculating reward from enabled transitions...
+Symbolic State Reward DONE        0
+
+Symbolic State Reward STARTED
+Info	Symbolic state reward calculation for configuration 'jobsDispatched'
+Info	Calculating reward from enabled transitions...
+Symbolic State Reward DONE        0
+
+Symbolic State Reward STARTED
+Info	Symbolic state reward calculation for configuration 'machinesWorking'
+Info	Calculating reward from CTL MDDs...
+Info	Calculating reward from enabled transitions...
+Symbolic State Reward DONE        1
+
+Symbolic State Reward STARTED
+Info	Symbolic state reward calculation for configuration 'hotMachinesWorking'
+Info	Calculating reward from CTL MDDs...
+Info	Calculating reward from enabled transitions...
+Symbolic State Reward DONE        0
+
+Symbolic State Reward STARTED
+Info	Symbolic state reward calculation for configuration 'coldStarted'
+Info	Calculating reward from enabled transitions...
+Symbolic State Reward DONE        0
+
+Info	Disposing probability vector...
+
+
+Info	Results for reward 'jobsFinished'
+Info		Instantaneous: '0,0793827288721896'
+
+Info	Results for reward 'powerUsage'
+Info		Instantaneous: '18,3483975463934'
+
+Info	Results for reward 'noFreeMachines'
+Info		Instantaneous: '0,0291642726215182'
+
+Info	Results for reward 'jobsDispatched'
+Info		Instantaneous: '0,0793827288722258'
+
+Info	Results for reward 'machinesWorking'
+Info		Instantaneous: '4,72922203596922'
+
+Info	Results for reward 'hotMachinesWorking'
+Info		Instantaneous: '3,70428722339244'
+
+Info	Results for reward 'coldStarted'
+Info		Instantaneous: '1,40529381114731E-05'
+
+Info	Disposing data structures...
+Info	Peak memory: 49385472
+
+vcl_stochastic DONE       78
+

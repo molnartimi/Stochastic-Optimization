@@ -1,0 +1,81 @@
+simple-server STARTED
+
+Net Converter STARTED
+Info	Mapping places...
+Info	Mapping transitions...
+Info	Mapping arcs...
+Info	Mapping partitions...
+Net Converter DONE        0
+
+Symbolic State Space STARTED
+Info	Beginning saturation...
+Info	Saturation finished.
+
+Info	States in MDD: 2
+Info	Nodes in MDD: 7
+Info	Levels in MDD: 3
+Symbolic State Space DONE        2
+
+MDD Converter STARTED
+Info	Converted 5 nodes
+MDD Converter DONE        0
+
+EDD Converter STARTED
+Info	Converted 5 nodes with 2 states
+EDD Converter DONE        0
+
+Symbolic Sparse Generator STARTED
+Info	Filling in the sparse generator matrix...
+Symbolic Sparse Generator Progress: 0%
+Symbolic Sparse Generator Progress: 45%
+Symbolic Sparse Generator Progress: 90%
+Info	Computing the diagonal...
+Info	Sparse generator matrix of size (2 X 2) created with 2 nonzero elements.
+Symbolic Sparse Generator DONE        0
+
+BiCGSTAB STARTED
+Info	iteration 1 early return with vanishing s (L1-norm=0,000E+00)
+BiCGSTAB DONE        0
+
+Info	Solution sum: 1
+Info	Residual l1-norm: 0
+
+Expression Cache STARTED
+Info	Calculating MDDs and lambdas for reward configuration 'Idle'
+Evaluate CTL STARTED
+Info	Calculating MDD from CTL expression...
+Info	MDD calculated with 1 states.
+Evaluate CTL DONE        0
+
+Info	Creating expressions for derivate rewards...
+Info	Calculating MDDs and lambdas for reward configuration 'ServedRequests'
+Expression Cache DONE        0
+
+Expression Cache STARTED
+Expression Cache DONE        0
+
+Symbolic State Reward STARTED
+Info	Symbolic state reward calculation for configuration 'Idle'
+Info	Calculating reward from CTL MDDs...
+Info	Calculating reward from enabled transitions...
+Symbolic State Reward DONE        0
+
+Symbolic State Reward STARTED
+Info	Symbolic state reward calculation for configuration 'ServedRequests'
+Info	Calculating reward from enabled transitions...
+Symbolic State Reward DONE        0
+
+Info	Disposing probability vector...
+
+
+Info	Results for reward 'Idle'
+Info		Instantaneous: '0,344304718220248'
+
+Info	Results for reward 'ServedRequests'
+Info		Instantaneous: '0,705574307890988'
+
+Info	Disposing data structures...
+Info	Peak memory: 39927808
+
+simple-server DONE       36
+

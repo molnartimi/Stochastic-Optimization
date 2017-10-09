@@ -11,20 +11,22 @@ class BayesianOptimizationTest(unittest.TestCase):
 
     def _test(self, model, bo, init_points, n_iter, acq, eparam):
         self.spdn = SPDN(model)
-        self.spdn.start(verbose=True)
+        self.spdn.start(verbose=False)
         if (self.spdn.running):
             if acq == 'ucb':
-                bo.maximize(init_points=init_points, n_iter=n_iter, kappa=eparam, acq='ucb')
-            else:
-                if acq == 'ei':
-                    bo.maximize(init_points=init_points, n_iter=n_iter, xi=eparam, acq='ei')
+                bo.maximize(init_points=init_points, n_iter=n_iter, kappa=eparam, acq=acq)
+            else: # ei or poi
+                bo.maximize(init_points=init_points, n_iter=n_iter, xi=eparam, acq=acq)
             self.spdn.close()
             return bo.res['max']
 
     def _run_tests(self, modelname, model, bo, init_points, n_iter):
         with open(strftime("%Y-%m-%d_%H-%M-%S", gmtime()) + '_' + modelname + '.csv', "w", newline="") as csvfile:
             writer = csv.writer(csvfile, delimiter=';')
-            writer.writerow(['acq', 'param', 'init points', 'n iter', 'MAX VALUE', 'PARAM VALUES'])
+            row = ['acq', 'param', 'init points', 'n iter', 'MAX VALUE']
+            for param in model.parameters:
+                row.append(param)
+            writer.writerow(row)
 
             testcases = [{'acq': 'ucb', 'eparam': 1},
                          {'acq': 'ucb', 'eparam': 5},
@@ -47,7 +49,7 @@ class BayesianOptimizationTest(unittest.TestCase):
                 writer.writerow(row)
                 print(result)
 
-    @unittest.skip("It works fine")
+    #@unittest.skip("It works fine")
     def test_simple_server(self):
         # print(spdn.f([1.5, 0.25]))
         bo = BayesianOptimization(lambda requestRate, serviceTime: - self.spdn.f([requestRate, serviceTime]),
@@ -55,7 +57,7 @@ class BayesianOptimizationTest(unittest.TestCase):
 
         self._run_tests("simple-server", models.simple_server, bo, 2, 5)
 
-    #@unittest.skip("too long")
+    @unittest.skip("too long")
     def test_vcl_stochastic(self):
         # print(spdn.f([0.015, 0.5, 0.15, 60, 5, 0.75, 0.6]))
         bo = BayesianOptimization(lambda incomingRate, dispatchTime, warmDispatchTime, jobTime, powerTime,
