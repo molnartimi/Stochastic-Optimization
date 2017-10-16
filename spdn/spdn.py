@@ -150,7 +150,11 @@ class SPDN:
         """ Close the running process """
         self._write_to_spdn('END\n')
         self.running = False
-        self.pipe.kill()
+        self.pipe.stdin.close()
+        self.pipe.stdout.close()
+        self.pipe.stderr.close()
+        os.kill(self.pipe.pid,15)
+        self.pipe.terminate()
 
 
 
