@@ -1,3 +1,6 @@
+# https://github.com/GPflow/GPflowOpt
+"""Example of how to use this GPflowOpt package for black-box constrained black-box functions."""
+
 import gpflow
 import gpflowopt
 import numpy as np

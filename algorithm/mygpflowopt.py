@@ -3,7 +3,7 @@ sys.path.append("./")
 from gpflowopt.domain import ContinuousParameter
 import gpflow
 from gpflowopt.bo import BayesianOptimizer
-from gpflowopt.design import LatinHyperCube # TODO van még más is
+from gpflowopt.design import LatinHyperCube # TODO van meg mas is
 from gpflowopt.optim import *
 from gpflowopt.acquisition import *
 from gpflow.priors import *
