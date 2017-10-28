@@ -3,12 +3,12 @@ sys.path.append("./")
 from gpflowopt.domain import ContinuousParameter
 import gpflow
 from gpflowopt.bo import BayesianOptimizer
-from gpflowopt.design import LatinHyperCube
-from gpflowopt.acquisition import *
-from spdn.spdn import SPDN
-from spdn.spdnexception import SPDNException
-from logger.csvwriter import CsvWriter
+from gpflowopt.design import LatinHyperCube # TODO van még más is
 from gpflowopt.optim import *
+from gpflowopt.acquisition import *
+from gpflow.priors import *
+from spdn.spdn import SPDN
+from logger.csvwriter import CsvWriter
 
 
 class MyGPflowOpt:
@@ -20,17 +20,18 @@ class MyGPflowOpt:
         self._write_csv_header()
         self.KERNELS = {'exp': MyKernel.exp, 'm12': MyKernel.m12, 'm32': MyKernel.m12, 'm52': MyKernel.m52}
         self.ACQS = {'ei': MyAcquisition.ei, 'poi': MyAcquisition.poi, 'lcb': MyAcquisition.lcb}
+        self.PRIORS = {'gaussian': MyPrior.gaussian, 'lognormal': MyPrior.lognormal, 'gamma': MyPrior.gamma}
 
-    def optimize(self, init_points, n_iter, kernel, acquisition, constrained=False, verbose=False):
+    def optimize(self, init_points, n_iter, kernel, acquisition, constrain_prior=None, prior_param1=None, prior_param2=None, verbose=False):
         self.spdn.start(verbose)
         if (self.spdn.running):
 
             domain = self._getdomain()
             try:
-                if not constrained:
+                if constrain_prior is None:
                     result = self._optimize(domain, init_points, n_iter, kernel, acquisition)
                 else:
-                    result = self._optimize_constrained(domain, init_points, n_iter, kernel, acquisition)
+                    result = self._optimize_constrained(domain, init_points, n_iter, kernel, acquisition, constrain_prior, prior_param1, prior_param2)
 
                 self.spdn.close()
                 self._write_csv_result(init_points,n_iter,kernel,acquisition,result)
@@ -54,7 +55,7 @@ class MyGPflowOpt:
         lhd = LatinHyperCube(init_points, domain)
         X = lhd.generate()
         Y = self._fx(X)
-        #optmodel = gpflow.gpr.GPR(X, Y, gpflow.kernels.Matern52(2, ARD=True))
+        # optmodel = gpflow.gpr.GPR(X, Y, gpflow.kernels.Matern52(2, ARD=True))
         optmodel = gpflow.gpr.GPR(X, Y, self.KERNELS[kernel](len(self.model.parameters)))
         optmodel.kern.lengthscales.transform = gpflow.transforms.Log1pe(1e-3) # TODO ???
 
@@ -67,36 +68,28 @@ class MyGPflowOpt:
             r = optimizer.optimize(self._fx, n_iter=n_iter)
             return r
 
-    def _optimize_constrained(self, domain, init_points, n_iter, kernel, acquisition):
+    def _optimize_constrained(self, domain, init_points, n_iter, kernel, acquisition, constrain_prior, prior_param1, prior_param2):
         # Initial evaluations
         lhd = LatinHyperCube(init_points, domain)
         X = lhd.generate()
         Yo = self._fx(X)
-        Yc = np.copy(Yo)
+        Yc = self._constraint(X)
 
         # Models
-        objective_model = gpflow.gpr.GPR(X, Yo, self.KERNELS[kernel]())
-        objective_model.likelihood.variance = 0.01
-        constraint_model = gpflow.gpr.GPR(np.copy(X), Yc, self.KERNELS[kernel]())
+        objective_model = gpflow.gpr.GPR(X, Yo, self.KERNELS[kernel](len(self.model.parameters)))
+        constraint_model = gpflow.gpr.GPR(np.copy(X), Yc, self.KERNELS[kernel](len(self.model.parameters)))
         constraint_model.kern.lengthscales.transform = gpflow.transforms.Log1pe(1e-3)
-        constraint_model.likelihood.variance = 0.01
-        constraint_model.likelihood.variance.prior = gpflow.priors.Gamma(1. / 4., 1.0)
+        constraint_model.likelihood.variance.prior = self.PRIORS[constrain_prior](prior_param1,prior_param2)
 
         # Setup
-        ACQ = MyAcquisition(objective_model)
-        acqs = {'ei': ACQ.ei, 'poi': ACQ.poi, 'lcb': ACQ.lcb}
-        alpha = acqs[acquisition]()
+        alpha = self.ACQS[acquisition](objective_model)
         pof = ProbabilityOfFeasibility(constraint_model)
         joint = alpha * pof
 
-        # First setup the optimization strategy for the acquisition function
-        # Combining MC step followed by L-BFGS-B
-        acquisition_opt = StagedOptimizer([MCOptimizer(domain, 200), SciPyOptimizer(domain)])
-
-        # Then run the BayesianOptimizer for 50 iterations
-        optimizer = BayesianOptimizer(domain, joint, optimizer=acquisition_opt)
+        # Then run the BayesianOptimizer for n_iter iterations
+        optimizer = BayesianOptimizer(domain, joint)
         with optimizer.silent():
-            result = optimizer.optimize([self._fx,self._fx], n_iter)
+            result = optimizer.optimize([self._fx,self._constraint], n_iter)
             return result
 
     def _fx(self, X):
@@ -106,6 +99,15 @@ class MyGPflowOpt:
             row = X[i]
             fresult = self.spdn.f(row)
             result[i] = fresult
+        return result
+
+    def _constraint(self, X):
+        X = np.atleast_2d(X)
+        result = np.zeros(shape=(X.shape[0], 1))
+        for i in range(X.shape[0]):
+            row = X[i]
+            const_result = self.spdn.f(row,error_check_mode=True)
+            result[i] = const_result
         return result
 
     def _write_csv_header(self):
@@ -145,7 +147,19 @@ class Acquisition:
     LCB = 'lcb'
 
 
-class MyAcquisition():
+class MyAcquisition:
     def ei(optmodel): return ExpectedImprovement(optmodel)
     def poi(optmodel): return ProbabilityOfImprovement(optmodel)
     def lcb(optmodel): return LowerConfidenceBound(optmodel)
+
+class Prior:
+    GAUSSIAN = 'gaussian'
+    LOGNORMAL = 'lognormal'
+    GAMMA = 'gamma'
+    UNIFORM = 'uniform'
+
+class MyPrior:
+    def gaussian(mu,variance): return Gaussian(mu,variance)
+    def lognormal(mu,variance): return LogNormal(mu,variance)
+    def gamma(shape,scale): return Gamma(shape,scale)
+    def uniform(lower,upper): return Uniform(lower,upper)

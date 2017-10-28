@@ -29,7 +29,7 @@ class SPDN:
         self.pipe = None
         self.last_result = {}
         self.verbose = False
-        self.ERROR_VALUE = 1000
+        self.ERROR_VALUE = 10000
 
     def start(self,verbose=False):
 
@@ -45,10 +45,11 @@ class SPDN:
         else:
             self.running = True
 
-    def f(self, values):
+    def f(self, values, error_check_mode=False):
 
         """ Count the objective function (square error of measurement values)
         :param values: of the parameters
+        :param error_check_mode: True if we call it as constraint function
         :return: the result as a float
         """
 
@@ -62,6 +63,8 @@ class SPDN:
                 f_result += (self._fR(r) - self.measures[r]) ** 2
         except SPDNException as error:
             f_result = self.ERROR_VALUE
+            if error_check_mode: f_result *= -1
+            return f_result
         return f_result
 
     def df(self, values):
