@@ -6,7 +6,7 @@ simple_server = Model(id='SMPL',
                       file='simple-server.pnml',
                       parameters=['requestRate', 'serviceTime'],
                       validvalues={'requestRate': 1.5, 'serviceTime': 0.25},
-                      borders={'requestRate': (0.15, 15), 'serviceTime': (0.0025, 25)},
+                      borders={'requestRate': (0.15, 15), 'serviceTime': (0.025, 2.5)},
                       rewards=('Idle', 'ServedRequests'),
                       measurements={'Idle': 0.727272727272727, 'ServedRequests': 1.09090909090909})
 

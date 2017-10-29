@@ -11,7 +11,7 @@ class CsvWriter:
                              strftime("%m-%d_%H-%M", gmtime()) + ".csv", "w", newline="")
         else:
             self.file = open(dirname + "/results/" + modelId + "_" + algorithmId + "_" +
-                             strftime("%m-%d_%H-%M", gmtime()) + ".csv", "w", newline="")
+                             strftime("%m-%d_%H-%M", gmtime()) + ".csv", "w")
         self.writer = csv.writer(self.file, delimiter=';')
 
     def write(self,row):

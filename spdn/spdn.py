@@ -97,11 +97,11 @@ class SPDN:
     def _write_to_spdn(self,cmd):
         """ Write command into SPDN.exe"""
         if self.verbose: print(">>>>>>>>>>" + cmd.strip())
-        self.pipe.stdin.write(bytes(cmd, 'utf-8'))
+        self.pipe.stdin.write(bytes(cmd))
         self.pipe.stdin.flush()
 
     def _check_spdn_response(self):
-        response = self.pipe.stdout.readline().strip().decode('utf-8')
+        response = self.pipe.stdout.readline().strip()
         if self.verbose: print("<<<<<<<<<<" + response.strip())
         return response
 
