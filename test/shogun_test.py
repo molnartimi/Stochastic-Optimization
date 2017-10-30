@@ -15,6 +15,6 @@ from numpy import *
 
 
 if __name__ == '__main__':
-    shogun = MyShogunOpt(models.simple_server,10,5)
-    shogun.get_mean([[1.5],[0.25]])
-    #shogun.plot_posterior_mean([30,20])
+    shogun = MyShogunOpt(models.simple_server,200)
+    #shogun.get_mean([[1.5],[0.25]])
+    shogun.plot_posterior_mean([80,50])
