@@ -35,30 +35,13 @@ class MyShogunOpt:
         self._randomize_train_points()
         self._calculate_train_values()
 
-    def _randomize_train_points(self):
-        for param in self.model.borders:
-            lower = self.model.borders[param][0]
-            upper = self.model.borders[param][1]
-            self.train_points.append(np.random.rand(self.init_points) * (upper - lower) + lower)
-
-    def _calculate_train_values(self):
-        for i in range(self.init_points):
-            row = [self.train_points[0][i],self.train_points[1][i]]
-            fresult = self.spdn.f(row)
-            self.train_values.append(fresult)
-
-            if self.MIN_value is None or fresult<self.MIN_value:
-                self.MIN_value = fresult
-                self.MIN_point = row
-
     def optimize(self,max_iter):
-        print("It is also pseudo code")
         # for MAX_ITER iteration
         idx = 0
         while self.MIN_value > self.XTOL or idx < max_iter:
             # EI function
             def ei(x):
-                mean, variance = self.get_mean(x) # TODO not valid return values yet
+                mean, variance = self.get_mean_and_variance(x) # TODO not valid return values yet
                 phi = norm(loc=mean,scale=variance)
                 return - (self.MIN_value - mean) * phi.cdf(x) + variance * phi.pdf(x)
             # max of EI function
@@ -66,10 +49,36 @@ class MyShogunOpt:
                            options={'xtol': 0.01, 'disp': True})
 
             # update with maxEI
-            self._update_gp(self._array_1_to_2(res.x))
+            self._update_gp(MyShogunOpt._array_1_to_2(res.x))
         return (self.MIN_value, self.MIN_point)
 
-    def get_mean(self,points):
+    def get_mean_and_variance(self, points):
+        gp = self._train_gp()
+
+        feats_test = RealFeatures(np.atleast_2d(points))
+
+        means = gp.get_mean_vector(feats_test)
+        variance = gp.get_variance_vector(feats_test)
+
+        return means, variance
+
+    def plot_posterior_mean(self,intervals):
+        XY_test = self._test_matrix(intervals)
+        means, _ = self.get_mean_and_variance(XY_test)
+
+        M = MyShogunOpt._array_1_to_2(means, intervals[0], intervals[1])
+
+        borders = []
+        for param in self.model.parameters:
+            borders.append([self.model.borders[param][0], self.model.borders[param][1]])
+
+        plt.imshow(M, interpolation="nearest", aspect='auto', origin='lower',
+                   extent=(borders[0][0], borders[0][1], borders[1][0], borders[1][1]))
+        plt.plot(self.train_points[0], self.train_points[1], '*', color='black')
+        plt.colorbar()
+        plt.show()
+
+    def _train_gp(self):
         feats_train = RealFeatures(np.atleast_2d(self.train_points))
         labels_train = RegressionLabels(np.atleast_1d(self.train_values))
 
@@ -85,14 +94,7 @@ class MyShogunOpt:
         best_combination.apply_to_machine(gp)
 
         gp.train()
-
-        feats_test = RealFeatures(np.atleast_2d(points))
-
-        means = gp.get_mean_vector(feats_test)
-        variance = gp.get_variance_vector(feats_test)
-        print(means)
-        print(variance)
-        return means
+        return gp
 
     def _update_gp(self,points):
         for i in range(len(points)):
@@ -102,52 +104,28 @@ class MyShogunOpt:
             row = np.atleast_2d(points)[:, i].tolist()
             np.append(self.train_values, self.spdn.f(row))
 
-    def plot_posterior_mean(self,intervals):
-        feats_train = RealFeatures(np.atleast_2d(self.train_points))
-        labels_train = RegressionLabels(np.atleast_1d(self.train_values))
+    def _randomize_train_points(self):
+        for param in self.model.parameters:
+            lower = self.model.borders[param][0]
+            upper = self.model.borders[param][1]
+            self.train_points.append(np.random.rand(self.init_points) * (upper - lower) + lower)
 
-        inf = ExactInferenceMethod(self.kernel, feats_train, self.mean, labels_train, self.gauss)
-        gp = GaussianProcessRegression(inf)
+    def _calculate_train_values(self):
+        for i in range(self.init_points):
+            row = []
+            for j in range(len(self.model.parameters)):
+                row.append(self.train_points[j][i])
+            fresult = self.spdn.f(row)
+            self.train_values.append(fresult)
 
-        grad = GradientEvaluation(gp, feats_train, labels_train, self.gradcalc, False)
-        grad.set_function(inf)
-
-        grad_search = GradientModelSelection(grad)
-        best_combination = grad_search.select_model()
-        best_combination.apply_to_machine(gp)
-
-        # we have to "cast" objects to the specific kernel interface we used (soon to be easier)
-        best_width = GaussianKernel.obtain_from_generic(inf.get_kernel()).get_width()
-        best_scale = inf.get_scale()
-        best_sigma = GaussianLikelihood.obtain_from_generic(inf.get_model()).get_sigma()
-
-        # print("Selected tau (kernel bandwidth):", best_width)
-        # print("Selected gamma (kernel scaling):", best_scale)
-        # print("Selected sigma (observation noise):", best_sigma)
-
-
-        gp.train()
-
-        XY_test = self._test_matrix(intervals)
-        feats_test = RealFeatures(np.atleast_2d(XY_test))
-
-        means = gp.get_mean_vector(feats_test)
-        M = self._array_1_to_2(means, intervals[0], intervals[1])
-
-        borders = []
-        for param in self.model.borders:
-            borders.append([self.model.borders[param][0], self.model.borders[param][1]])
-
-        plt.imshow(M, interpolation="nearest", aspect='auto', origin='lower',
-                   extent=(borders[0][0], borders[0][1], borders[1][0], borders[1][1]))
-        plt.plot(self.train_points[0], self.train_points[1], '*', color='black')
-        plt.colorbar()
-        plt.show()
+            if self.MIN_value is None or fresult<self.MIN_value:
+                self.MIN_value = fresult
+                self.MIN_point = row
 
     def _test_matrix(self,intervals):
         XY_test = [[], []]
         interval_sizes = []
-        for param in self.model.borders:
+        for param in self.model.parameters:
             interval_sizes.append(self.model.borders[param][1] - self.model.borders[param][0])
 
         for i in range(intervals[0]):
@@ -157,7 +135,8 @@ class MyShogunOpt:
 
         return XY_test
 
-    def _array_1_to_2(self,array,row,col):
+    @staticmethod
+    def _array_1_to_2(array,row,col):
         idx = 0
         result = []
         for i in range(row):
@@ -168,3 +147,19 @@ class MyShogunOpt:
             result.append(row)
         result = np.atleast_2d(result)
         return result
+
+    def _get_hyperparams(self):
+        feats_train = RealFeatures(np.atleast_2d(self.train_points))
+        labels_train = RegressionLabels(np.atleast_1d(self.train_values))
+
+        inf = ExactInferenceMethod(self.kernel, feats_train, self.mean, labels_train, self.gauss)
+
+        best_width = GaussianKernel.obtain_from_generic(inf.get_kernel()).get_width() # selected tau (kernel bandwith)
+        best_scale = inf.get_scale() # selected gamma (kernel scaling)
+        best_sigma = GaussianLikelihood.obtain_from_generic(inf.get_model()).get_sigma() # selected sigma (observation noise)
+
+        # print("Selected tau (kernel bandwidth):", best_width)
+        # print("Selected gamma (kernel scaling):", best_scale)
+        # print("Selected sigma (observation noise):", best_sigma)
+
+        return best_width, best_scale, best_sigma
