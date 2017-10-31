@@ -1,8 +1,10 @@
-import sys
-sys.path.append("./")
 from modshogun import *
 import numpy as np
+from scipy.stats import norm
+from scipy.optimize import minimize
 import matplotlib.pyplot as plt
+import sys
+sys.path.append("./")
 from spdn.spdn import SPDN
 
 class MyShogunOpt:
@@ -10,6 +12,7 @@ class MyShogunOpt:
         self.model = model
         self.init_points = init_points
         self.tau = 5 # initial value, we will calculate the best value
+        self.XTOL = 0.01
 
         self.kernel = GaussianKernel(10, self.tau)
         self.mean = ZeroMean()
@@ -18,6 +21,10 @@ class MyShogunOpt:
 
         self.train_points = []
         self.train_values = []
+
+        self.MIN_value = None
+        self.MIN_point = []
+
         self.spdn = SPDN(self.model)
         self.spdn.start()
 
@@ -40,6 +47,28 @@ class MyShogunOpt:
             fresult = self.spdn.f(row)
             self.train_values.append(fresult)
 
+            if self.MIN_value is None or fresult<self.MIN_value:
+                self.MIN_value = fresult
+                self.MIN_point = row
+
+    def optimize(self,max_iter):
+        print("It is also pseudo code")
+        # for MAX_ITER iteration
+        idx = 0
+        while self.MIN_value > self.XTOL or idx < max_iter:
+            # EI function
+            def ei(x):
+                mean, variance = self.get_mean(x) # TODO not valid return values yet
+                phi = norm(loc=mean,scale=variance)
+                return - (self.MIN_value - mean) * phi.cdf(x) + variance * phi.pdf(x)
+            # max of EI function
+            res = minimize(ei, np.array(self.MIN_point), method='nelder-mead',
+                           options={'xtol': 0.01, 'disp': True})
+
+            # update with maxEI
+            self._update_gp(self._array_1_to_2(res.x))
+        return (self.MIN_value, self.MIN_point)
+
     def get_mean(self,points):
         feats_train = RealFeatures(np.atleast_2d(self.train_points))
         labels_train = RegressionLabels(np.atleast_1d(self.train_values))
@@ -60,7 +89,18 @@ class MyShogunOpt:
         feats_test = RealFeatures(np.atleast_2d(points))
 
         means = gp.get_mean_vector(feats_test)
+        variance = gp.get_variance_vector(feats_test)
         print(means)
+        print(variance)
+        return means
+
+    def _update_gp(self,points):
+        for i in range(len(points)):
+            self.train_points[i].append(points[i])
+
+        for i in range(len(points[0])):
+            row = np.atleast_2d(points)[:, i].tolist()
+            np.append(self.train_values, self.spdn.f(row))
 
     def plot_posterior_mean(self,intervals):
         feats_train = RealFeatures(np.atleast_2d(self.train_points))
