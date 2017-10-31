@@ -109,7 +109,7 @@ class SPDN:
         """ Read the results of SPDN.exe from stdout and save it as a dictionary in self.last_result"""
 
         result = self._check_spdn_response()
-        if 'Error' in result:
+        if 'ERROR' in result:
             raise SPDNException(result)
         else:
             while ('=' in result):

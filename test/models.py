@@ -26,3 +26,18 @@ vcl_stochastic = Model(id='VCLS',
                                      'noFreeMachines': 0.00209451703730028, 'jobsDispatched': 0.0148748002307829,
                                      'machinesWorking': 2.3647315051718, 'hotMachinesWorking': 2.17735632582612,
                                      'coldStarted': 6.36702992684728E-7})
+
+hybrid_cloud = Model(id='HYBC',
+                     file='hybrid-cloud.pnml',
+                     parameters=["incRate","p","lbTime","execTime1","execTime2","failRate","idleFactor","repairTime",
+                                 "publicRent","runPower","idlePower","repairCost"],
+                     validvalues={'incRate': 5, 'p': 0.75, 'lbTime': 0.0002, 'execTime1': 0.2, 'execTime2': 0.1,
+                                  'failRate': 0.0002, 'idleFactor': 0.1, 'repairTime': 24, 'publicRent': 0.8,
+                                  'runPower': 0.3, 'idlePower': 0.01, 'repairCost': 1000},
+                     borders={'incRate': (1,10), 'p': (0.01,0.99), 'lbTime': (0.00009,0.002), 'execTime1': (0.02,0.99),
+                              'execTime2': (0.01,0.99), 'failRate': (0.00009, 0.002), 'idleFactor': (0.001,0.1),
+                              'repairTime': (20,30), 'publicRent': (0.08,2), 'runPower': (0.03,0.99), 'idlePower': (0.001,0.1),
+                              'repairCost': (100,3000)},
+                     rewards=("Expense","JobComplete","JobsProcessing","NoFailedServer"),
+                     measurements={'Expense': 0.586765349081149, 'JobComplete': 4.99999999371597,
+                                   'JobsProcessing': 0.925618638346947, 'NoFailedServer': 0.997730355094315})
