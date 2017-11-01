@@ -21,6 +21,7 @@ class MyShogunOpt:
         self.kernel = GaussianKernel(10, self.tau)
         self.mean = ZeroMean()
         self.gauss = GaussianLikelihood()
+        self.lik = LogitLikelihood() # TODO or ProbitLikelihood()
         self.gradcalc = GradientCriterion()
 
         self.train_points = []
@@ -43,37 +44,38 @@ class MyShogunOpt:
             idx = 0
             while self.MIN_value > self.XTOL and idx < max_iter:
                 # EI function
-                gp = self._train_gp()
-                def ei(x):
+                reg_gp, class_gp = self._train_gps()
+                def ei_pof(x):
                     X = self._array_1_to_2(x,len(self.model.parameters),1)
-                    mean, variance = self.get_mean_and_variance(X,gp)
+                    mean, variance, class_probability = self.get_mean_variance_classprobability(X, reg_gp)
                     phi = norm(loc=mean[0],scale=variance[0])
-                    result = - ((self.MIN_value - mean[0]) * phi.cdf(self.MIN_value) + variance[0] * phi.pdf(self.MIN_value))
+                    result = - (((self.MIN_value - mean[0]) * phi.cdf(self.MIN_value) + variance[0] * phi.pdf(self.MIN_value)) * class_probability)
                     return result
                 # max of EI function
-                res = minimize(ei, np.array(self.MIN_point), method='nelder-mead',
+                res = minimize(ei_pof, np.array(self.MIN_point), method='nelder-mead',
                                options={'xtol': 0.01})
 
                 # update with maxEI
-                self._update_gp(MyShogunOpt._array_1_to_2(res.x,len(self.model.parameters),1))
+                self._update_gps(MyShogunOpt._array_1_to_2(res.x, len(self.model.parameters), 1))
                 idx += 1
             self._write_csv_result(idx)
             return {'min-value': self.MIN_value, 'min-point': self.MIN_point}
 
-    def get_mean_and_variance(self, points, gp=None):
-        if gp is None:
-            gp = self._train_gp()
+    def get_mean_variance_classprobability(self, points, reg_gp=None, class_gp=None):
+        if reg_gp is None or class_gp is None:
+            reg_gp, class_gp = self._train_gps()
 
         feats_test = RealFeatures(np.atleast_2d(points))
 
-        means = gp.get_mean_vector(feats_test)
-        variance = gp.get_variance_vector(feats_test)
+        means = reg_gp.get_mean_vector(feats_test)
+        variance = reg_gp.get_variance_vector(feats_test)
+        class_probability = class_gp.get_probabilities(feats_test)
 
-        return means, variance
+        return means, variance, class_probability
 
     def plot_posterior_mean(self,intervals):
         XY_test = self._test_matrix(intervals)
-        means, _ = self.get_mean_and_variance(XY_test)
+        means, _, _ = self.get_mean_variance_classprobability(XY_test)
 
         M = MyShogunOpt._array_1_to_2(means, intervals[0], intervals[1])
 
@@ -87,15 +89,25 @@ class MyShogunOpt:
         plt.colorbar()
         plt.show()
 
-    def _train_gp(self):
+    def _train_gps(self):
         feats_train = RealFeatures(np.atleast_2d(self.train_points))
-        labels_train = RegressionLabels(np.atleast_1d(self.train_values))
+        reg_labels_train = RegressionLabels(np.atleast_1d(self.train_values))
+        class_labels_train = BinaryLabels(np.atleast_1d(self.train_classes))
 
-        inf = ExactInferenceMethod(self.kernel, feats_train, self.mean, labels_train, self.gauss)
+        reg_inf = ExactInferenceMethod(self.kernel, feats_train, self.mean, reg_labels_train, self.gauss)
+        class_inf = SingleLaplaceInferenceMethod(self.kernel, feats_train, self.mean, class_labels_train, self.lik)
 
-        gp = GaussianProcessRegression(inf)
+        reg_gp = GaussianProcessRegression(reg_inf)
+        class_gp = GaussianProcessClassification(class_inf)
 
+        reg_gp = self._helper_gp_trainer(reg_gp,reg_inf,feats_train,reg_labels_train)
+        class_gp = self._helper_gp_trainer(class_gp,class_inf,feats_train,class_labels_train)
+
+        return reg_gp, class_gp
+
+    def _helper_gp_trainer(self,gp,inf,feats_train,labels_train):
         grad = GradientEvaluation(gp, feats_train, labels_train, self.gradcalc, False)
+
         grad.set_function(inf)
 
         grad_search = GradientModelSelection(grad)
@@ -105,7 +117,7 @@ class MyShogunOpt:
         gp.train()
         return gp
 
-    def _update_gp(self,point):
+    def _update_gps(self, point):
         for i in range(len(point)):
             #print("train_points[i]",self.train_points[i],"points[i]",points[i],"egybe +=",self.train_points[i] + points[i])
             self.train_points[i].append(point[i])
