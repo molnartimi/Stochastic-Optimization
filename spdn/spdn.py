@@ -29,7 +29,6 @@ class SPDN:
         self.pipe = None
         self.last_result = {}
         self.verbose = False
-        self.ERROR_VALUE = 10000
 
     def start(self,verbose=False):
 
@@ -45,7 +44,7 @@ class SPDN:
         else:
             self.running = True
 
-    def f(self, values, error_check_mode=False):
+    def f(self, values):
 
         """ Count the objective function (square error of measurement values)
         :param values: of the parameters
@@ -55,16 +54,11 @@ class SPDN:
 
         self._set_params(values)
         self._set_rewards()
-        try:
-            self._get_results()
+        self._get_results()
 
-            f_result = 0
-            for r in self.rewards:
-                f_result += (self._fR(r) - self.measures[r]) ** 2
-        except SPDNException as error:
-            f_result = self.ERROR_VALUE
-            if error_check_mode: f_result *= -1
-            return f_result
+        f_result = 0
+        for r in self.rewards:
+            f_result += (self._fR(r) - self.measures[r]) ** 2
         return f_result
 
     def df(self, values):

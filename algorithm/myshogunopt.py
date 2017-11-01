@@ -6,15 +6,17 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append("./")
 from spdn.spdn import SPDN
+from spdn.spdnexception import SPDNException
 from logger.csvwriter import CsvWriter
 
 class MyShogunOpt:
-    def __init__(self,model,init_points):
+    def __init__(self,model,init_points, error_value=10000):
         self.model = model
         self.init_points = init_points
         self.tau = 5 # initial value, we will calculate the best value
         self.XTOL = 0.01
         self.ALGORITHM_ID = 'SHOG'
+        self.ERROR_VALUE = error_value
 
         self.kernel = GaussianKernel(10, self.tau)
         self.mean = ZeroMean()
@@ -23,6 +25,7 @@ class MyShogunOpt:
 
         self.train_points = []
         self.train_values = []
+        self.train_classes = []
 
         self.MIN_value = None
         self.MIN_point = []
@@ -30,17 +33,13 @@ class MyShogunOpt:
         self.csv_writer = CsvWriter(self.model.id, self.ALGORITHM_ID)
         self._write_csv_header()
 
-        self._init()
+        self.spdn = SPDN(self.model)
 
-    def _init(self):
-        # training points
-        self._randomize_train_points()
-        self._calculate_train_values()
-
-    def optimize(self,max_iter,verbose=False):
-        self.spdn = SPDN(self.model,verbose=verbose)
-        self.spdn.start()
+    def optimize(self,max_iter=20,verbose=False):
+        self.spdn.start(verbose)
         if self.spdn.running:
+            self._init()
+
             idx = 0
             while self.MIN_value > self.XTOL and idx < max_iter:
                 # EI function
@@ -112,13 +111,22 @@ class MyShogunOpt:
             self.train_points[i].append(point[i])
 
         row = np.atleast_2d(point)[:, 0].tolist()
-        result = self.spdn.f(row)
-        self.train_values.append(result)
+        try:
+            result = self.spdn.f(row)
+            self.train_values.append(result)
+            self.train_classes.append(1)
 
-        if result < self.MIN_value:
-            self.MIN_value = result
-            self.MIN_point = row
+            if result < self.MIN_value:
+                self.MIN_value = result
+                self.MIN_point = row
+        except SPDNException:
+            self.train_values.append(self.ERROR_VALUE)
+            self.train_classes.append(-1)
 
+    def _init(self):
+        # training points
+        self._randomize_train_points()
+        self._calculate_train_values()
 
     def _randomize_train_points(self):
         for param in self.model.parameters:
@@ -131,12 +139,17 @@ class MyShogunOpt:
             row = []
             for j in range(len(self.model.parameters)):
                 row.append(self.train_points[j][i])
-            fresult = self.spdn.f(row)
-            self.train_values.append(fresult)
+            try:
+                fresult = self.spdn.f(row)
+                self.train_values.append(fresult)
+                self.train_classes.append(1)
 
-            if self.MIN_value is None or fresult<self.MIN_value:
-                self.MIN_value = fresult
-                self.MIN_point = row
+                if self.MIN_value is None or fresult < self.MIN_value:
+                    self.MIN_value = fresult
+                    self.MIN_point = row
+            except SPDNException:
+                self.train_values.append(self.ERROR_VALUE) # TODO is it necessary?
+                self.train_classes.append(-1)
 
     def _test_matrix(self,intervals):
         XY_test = [[], []]

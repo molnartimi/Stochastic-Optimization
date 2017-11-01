@@ -8,11 +8,12 @@ from gpflowopt.optim import *
 from gpflowopt.acquisition import *
 from gpflow.priors import *
 from spdn.spdn import SPDN
+from spdn.spdnexception import SPDNException
 from logger.csvwriter import CsvWriter
 
 
 class MyGPflowOpt:
-    def __init__(self, model):
+    def __init__(self, model, error_value=10000):
         self.model = model;
         self.ALGORITHM_ID = "GPFL"
         self.spdn = SPDN(self.model)
@@ -21,6 +22,7 @@ class MyGPflowOpt:
         self.KERNELS = {'exp': MyKernel.exp, 'm12': MyKernel.m12, 'm32': MyKernel.m12, 'm52': MyKernel.m52}
         self.ACQS = {'ei': MyAcquisition.ei, 'poi': MyAcquisition.poi, 'lcb': MyAcquisition.lcb}
         self.PRIORS = {'gaussian': MyPrior.gaussian, 'lognormal': MyPrior.lognormal, 'gamma': MyPrior.gamma}
+        self.ERROR_VALUE = error_value
 
     def optimize(self, init_points, n_iter, kernel, acquisition, constrain_prior=None, prior_param1=None, prior_param2=None, verbose=False):
         self.spdn.start(verbose)
@@ -97,8 +99,11 @@ class MyGPflowOpt:
         result = np.zeros(shape=(X.shape[0], 1))
         for i in range(X.shape[0]):
             row = X[i]
-            fresult = self.spdn.f(row)
-            result[i] = fresult
+            try:
+                fresult = self.spdn.f(row)
+                result[i] = fresult
+            except SPDNException:
+                result[i] = self.ERROR_VALUE
         return result
 
     def _constraint(self, X):
@@ -106,8 +111,11 @@ class MyGPflowOpt:
         result = np.zeros(shape=(X.shape[0], 1))
         for i in range(X.shape[0]):
             row = X[i]
-            const_result = self.spdn.f(row,error_check_mode=True)
-            result[i] = const_result
+            try:
+                const_result = self.spdn.f(row)
+                result[i] = const_result # or 1 or something
+            except SPDNException:
+                result[i] = -1
         return result
 
     def _write_csv_header(self):
