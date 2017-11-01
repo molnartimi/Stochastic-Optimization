@@ -33,7 +33,7 @@ class MyBasienOptimization:
         return bo.res['max']
 
     def _write_csv_header(self):
-        row = ['init points', 'n iter', 'acquisition', 'acq parameter', 'MAX VALUE']
+        row = ['init points', 'n iter', 'acquisition', 'acq parameter', 'MIN VALUE']
         for param in self.model.parameters: row.append(param + ' (' + str(self.model.validvalues[param]) + ')')
         self.csv_writer.write(row)
 

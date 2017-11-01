@@ -16,7 +16,7 @@ class BayesianOptimizationTest(unittest.TestCase):
 
     #@unittest.skip("not working")
     def test_hybrid_clour(self):
-        self._run_tests(models.hybrid_cloud,2,5)
+        self._run_tests(models.hybrid_cloud,10,10)
 
     def _run_tests(self, model, init_points, n_iter):
         testcases = [{'acq': Acquisition.LCB, 'acq_param': 1},
@@ -32,7 +32,7 @@ class BayesianOptimizationTest(unittest.TestCase):
         bayo = MyBasienOptimization(model)
 
         for case in testcases:
-            result = bayo.optimize(init_points,n_iter,case['acq'],case['acq_param'],verbose=True)
+            result = bayo.optimize(init_points,n_iter,case['acq'],case['acq_param'])
             print(result)
 
 

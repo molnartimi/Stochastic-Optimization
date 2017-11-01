@@ -111,7 +111,7 @@ class MyGPflowOpt:
         return result
 
     def _write_csv_header(self):
-        row = ['init points', 'n iter', 'kernel', 'acquisition', 'MAX VALUE']
+        row = ['init points', 'n iter', 'kernel', 'acquisition', 'MIN VALUE']
         for param in self.model.parameters: row.append(param + ' (' + str(self.model.validvalues[param]) + ')')
         self.csv_writer.write(row)
 

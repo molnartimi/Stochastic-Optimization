@@ -2,10 +2,10 @@
 """Example of how to use Shogun Machine learning toolbox for Bayesian Regression with Gaussian Processes"""
 
 from modshogun import *
-import random
 import numpy as np
 import matplotlib.pyplot as plt
 from math import exp
+import time
 
 
 
@@ -115,7 +115,6 @@ def calculate_best_hiperparams_example():
     feats_test = RealFeatures(X_test.reshape(1, len(X_test)))
     labels_train = RegressionLabels(y_train)
 
-    # compute covariances for different kernel parameters
     tau = 4
 
     # re-create inference method and GP instance to start from scratch, use other Shogun structures from above
@@ -168,7 +167,7 @@ def _generate_regression_toy_data(n=50, n_test=100, x_range=15, x_range_test=20,
 
     # add noise to training observations
     y_test = np.sin(X_test)
-    y_train = np.sin(X_train) + np.random.randn(n) * 0.5
+    y_train = np.sin(X_train) + np.random.randn(n) * 0.2
 
     return X_train, y_train, X_test, y_test
 
@@ -181,12 +180,11 @@ def _plot_predictive_regression(X_train, y_train, X_test, y_test, means, varianc
 
     # evaluate normal distribution at every prediction point (column)
     print(np.shape(D))
-    gauss = []
     for j in range(np.shape(D)[1]):
         # create gaussian distribution instance, expects mean vector and covariance matrix, reshape
-        gauss.append(GaussianDistribution(np.array(means[j]).reshape(1, ), np.array(variances[j]).reshape(1, 1)))
+        gauss = GaussianDistribution(np.array(means[j]).reshape(1, ), np.array(variances[j]).reshape(1, 1))
         # evaluate predictive distribution for test point, method expects matrix
-        D[:, j] = np.exp(gauss[j].log_pdf_multiple(y_values.reshape(1, len(y_values))))
+        D[:, j] = np.exp(gauss.log_pdf_multiple(y_values.reshape(1, len(y_values))))
 
     plt.pcolor(X_test, y_values, D)
     plt.colorbar()
@@ -197,6 +195,89 @@ def _plot_predictive_regression(X_train, y_train, X_test, y_test, means, varianc
     plt.legend(["Truth", "Prediction", "Data"])
     plt.show()
 
+def large_scale_regression():
+    X_train, y_train, X_test, y_test = _generate_regression_toy_data()
+    feats_train = RealFeatures(X_train.reshape(1, len(X_train)))
+    labels_train = RegressionLabels(y_train)
+    # re-create inference method and GP instance to start from scratch, use other Shogun structures from above
+    kernel = GaussianKernel(10, 4)
+    mean = ZeroMean()
+    gauss = GaussianLikelihood()
+    inf = ExactInferenceMethod(kernel, feats_train, mean, labels_train, gauss)
+    gp = GaussianProcessRegression(inf)
+    gradcalc = GradientCriterion()
+    grad = GradientEvaluation(gp, feats_train, labels_train, gradcalc, False)
+    grad.set_function(inf)
+    grad_search = GradientModelSelection(grad)
+    best_combination = grad_search.select_model()
+    best_combination.apply_to_machine(gp)
+
+    # we have to "cast" objects to the specific kernel interface we used (soon to be easier)
+    best_width = GaussianKernel.obtain_from_generic(inf.get_kernel()).get_width()
+    best_scale = inf.get_scale()
+    best_sigma = GaussianLikelihood.obtain_from_generic(inf.get_model()).get_sigma()
+
+
+    # simple regression data
+    X_train, y_train, X_test, y_test = _generate_regression_toy_data(n=1000)
+
+    # bring data into shogun representation (features are 2d-arrays, organised as column vectors)
+    feats_train = RealFeatures(X_train.reshape(1, len(X_train)))
+    feats_test = RealFeatures(X_test.reshape(1, len(X_test)))
+    labels_train = RegressionLabels(y_train)
+
+    # inducing features (here: a random grid over the input space, try out others)
+    n_inducing = 10
+    # X_inducing=linspace(X_train.min(), X_train.max(), n_inducing)
+    X_inducing = np.random.rand(int(np.asscalar(X_train.min() + n_inducing))) * X_train.max()
+    feats_inducing = RealFeatures(X_inducing.reshape(1, len(X_inducing)))
+
+    # create FITC inference method and GP instance
+    inf = FITCInferenceMethod(GaussianKernel(10, best_width), feats_train, ZeroMean(), labels_train, \
+                              GaussianLikelihood(best_sigma), feats_inducing)
+    gp = GaussianProcessRegression(inf)
+
+    start = time.time()
+    gp.train()
+    means = gp.get_mean_vector(feats_test)
+    variances = gp.get_variance_vector(feats_test)
+    print("FITC inference took %.2f seconds" % (time.time() - start))
+
+    # exact GP
+    start = time.time()
+    inf_exact = ExactInferenceMethod(GaussianKernel(10, best_width), feats_train, ZeroMean(), labels_train, \
+                                     GaussianLikelihood(best_sigma))
+    inf_exact.set_scale(best_scale)
+    gp_exact = GaussianProcessRegression(inf_exact)
+    gp_exact.train()
+    means_exact = gp_exact.get_mean_vector(feats_test)
+    variances_exact = gp_exact.get_variance_vector(feats_test)
+    print("Exact inference took %.2f seconds" % (time.time() - start))
+
+    # comparison plot FITC and exact inference, plot 95% confidence of both predictive distributions
+    plt.figure(figsize=(18, 5))
+    plt.plot(X_test, y_test, color="black", linewidth=3)
+    plt.plot(X_test, means, 'r--', linewidth=3)
+    plt.plot(X_test, means_exact, 'b--', linewidth=3)
+    plt.plot(X_train, y_train, 'ro')
+    plt.plot(X_inducing, np.zeros(len(X_inducing)), 'g*', markersize=15)
+
+    # tube plot of 95% confidence
+    error = 1.96 * np.sqrt(variances)
+    plt.plot(X_test, means - error, color='red', alpha=0.3, linewidth=3)
+    plt.fill_between(X_test, means - error, means + error, color='red', alpha=0.3)
+    error_exact = 1.96 * np.sqrt(variances_exact)
+    plt.plot(X_test, means_exact - error_exact, color='blue', alpha=0.3, linewidth=3)
+    plt.fill_between(X_test, means_exact - error_exact, means_exact + error_exact, color='blue', alpha=0.3)
+
+    # plot upper confidence lines later due to legend
+    plt.plot(X_test, means + error, color='red', alpha=0.3, linewidth=3)
+    plt.plot(X_test, means_exact + error_exact, color='blue', alpha=0.3, linewidth=3)
+
+    plt.legend(["True", "FITC prediction", "Exact prediction", "Data", "Inducing points", "95% FITC", "95% Exact"])
+    _ = plt.title("Comparison FITC and Exact Regression")
+    plt.show()
+
 
 if __name__ == '__main__':
     # You can try only one of these at a time because of the plotting
@@ -204,6 +285,7 @@ if __name__ == '__main__':
     #gaussian_likelihood_example()
     #functions_from_gp_example()
     #distributions_over_gp_example()
-    calculate_best_hiperparams_example()
+    #calculate_best_hiperparams_example()
+    large_scale_regression()
 
 
