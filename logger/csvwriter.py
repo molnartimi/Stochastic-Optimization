@@ -4,11 +4,10 @@ import os
 
 class CsvWriter:
 
-    def __init__(self,modelId,algorithmId):
+    def __init__(self,modelId,algorithmId,spdn=False):
         dirname = os.path.dirname(os.path.abspath(__file__))
-        if "\\" in dirname:
-            self.file = open(dirname + "\\results\\" + modelId + "_" + algorithmId + "_" +
-                             strftime("%m-%d_%H-%M", gmtime()) + ".csv", "w", newline="")
+        if spdn:
+            self.file = open(dirname + "/results/" + modelId + "_" + algorithmId + ".csv", "a")
         else:
             self.file = open(dirname + "/results/" + modelId + "_" + algorithmId + "_" +
                              strftime("%m-%d_%H-%M", gmtime()) + ".csv", "w")

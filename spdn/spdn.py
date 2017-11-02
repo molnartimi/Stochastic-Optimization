@@ -1,7 +1,9 @@
 import subprocess
 from subprocess import PIPE
 import os
+import random
 from .spdnexception import SPDNException
+from logger.csvwriter import CsvWriter
 
 
 class SPDN:
@@ -12,16 +14,10 @@ class SPDN:
         :param model: Model namedtuple from test.models
         """
         self.SPDN_LOCATION = os.path.dirname(os.path.abspath(__file__))
-        if '\\' in self.SPDN_LOCATION:
-            self.OS = 'win'
-            self.spdn_cmd = (self.SPDN_LOCATION + '\\resource\SPDN.exe', 'reward', '-c',
-                             self.SPDN_LOCATION + '\\resource\configs\SP_PAR_BICG.txt', '-m',
-                             self.SPDN_LOCATION + '\\resource\models\\' + model.file, '--interactive', '-l', 'File')
-        else:
-            self.OS = 'lin'
-            self.spdn_cmd = ('mono', self.SPDN_LOCATION + '/resource/SPDN.exe', 'reward', '-c',
-                             self.SPDN_LOCATION + '/resource/configs/SP_PAR_BICG.txt', '-m',
-                             self.SPDN_LOCATION + '/resource/models/' + model.file, '--interactive', '-l', 'File')
+        self.spdn_cmd = ('mono', self.SPDN_LOCATION + '/resource/SPDN.exe', 'reward', '-c',
+                         self.SPDN_LOCATION + '/resource/configs/SP_PAR_BICG.txt', '-m',
+                         self.SPDN_LOCATION + '/resource/models/' + model.file, '--interactive', '-l', 'File')
+        self.model_id = model.id
         self.params = model.parameters
         self.rewards = model.rewards
         self.measures = model.measurements
@@ -29,6 +25,8 @@ class SPDN:
         self.pipe = None
         self.last_result = {}
         self.verbose = False
+        self.csvwriter = None
+        self.csv_data_id = int(random.random() * 10000) # id to csv rows those belong to one process
 
     def start(self,verbose=False):
 
@@ -43,6 +41,7 @@ class SPDN:
             print('ERROR at starting SPDN.exe')
         else:
             self.running = True
+            self.csvwriter = CsvWriter(self.model_id,'DATAS',spdn=True)
 
     def f(self, values):
 
@@ -54,12 +53,19 @@ class SPDN:
 
         self._set_params(values)
         self._set_rewards()
-        self._get_results()
+        try:
+            self._get_results()
 
-        f_result = 0
-        for r in self.rewards:
-            f_result += (self._fR(r) - self.measures[r]) ** 2
-        return f_result
+            f_result = 0
+            self._write_csv_result(values,1)
+            for r in self.rewards:
+                f_result += (self._fR(r) - self.measures[r]) ** 2
+
+            return f_result
+        except SPDNException as error:
+            self._write_csv_result(values,-1)
+            raise(error)
+
 
     def df(self, values):
 
@@ -143,8 +149,14 @@ class SPDN:
         #print(rewards)
         return rewards
 
+    def _write_csv_result(self, points, feasibility):
+        row = [self.csv_data_id, feasibility]
+        for point in points: row.append(str(point))
+        self.csvwriter.write(row)
+
     def close(self):
-        """ Close the running process """
+        """ Close the running processes """
+        self.csvwriter.close()
         self._write_to_spdn('END\n')
         self.running = False
         self.pipe.stdin.close()
@@ -152,6 +164,9 @@ class SPDN:
         self.pipe.stderr.close()
         os.kill(self.pipe.pid,15)
         self.pipe.terminate()
+
+    def __del__(self):
+        self.close()
 
 
 
