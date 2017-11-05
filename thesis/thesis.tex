@@ -1,0 +1,88 @@
+% !TeX spellcheck = hu_HU
+% !TeX encoding = UTF-8
+% !TeX program = xelatex
+\documentclass[11pt,a4paper,oneside]{report}             % Single-side
+%\documentclass[11pt,a4paper,twoside,openright]{report}  % Duplex
+
+\input{include/packages}
+
+% main variables
+\newcommand{\vikszerzoVezeteknev}{Molnár}
+\newcommand{\vikszerzoKeresztnev}{Tímea}
+
+\newcommand{\vikkonzulensAMegszolitas}{}
+\newcommand{\vikkonzulensAVezeteknev}{Molnár}
+\newcommand{\vikkonzulensAKeresztnev}{Vince}
+
+\newcommand{\vikcim}{Sztochasztikus modellek paramétereinek optimalizációja: eszközök és kihívások} % Cím
+\newcommand{\viktanszek}{\bmemit} % Tanszék
+\newcommand{\vikdoktipus}{\bsc} % Dokumentum típusa (\bsc vagy \msc)
+\newcommand{\vikmunkatipusat}{szakdolgozatot} % a "hallgató nyilatkozat" részhez: szakdolgozatot vagy diplomatervet
+
+\newcommand{\szerzoMeta}{\vikszerzoVezeteknev{} \vikszerzoKeresztnev} % egy szerző esetén
+
+% Beállítások magyar nyelvű dolgozathoz
+\input{include/thesis-hu}
+
+\input{include/preamble}
+
+%--------------------------------------------------------------------------------------
+% Table of contents and the main text
+%--------------------------------------------------------------------------------------
+\begin{document}
+	
+\selectthesislanguage
+
+%Titlepage 
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\include{include/titlepage}		   % Szakdolgozat címlap
+
+
+% Table of Contents
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\tableofcontents\vfill
+
+
+% Declaration and Abstract
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\include{include/declaration} % Hallgatói nyilatkozat
+\include{content/abstract}    % Összefoglaló
+
+
+% The main part of the thesis
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\pagenumbering{arabic}
+
+% My own content
+\include{content/introduction}
+\include{content/optimalizacios-megkozelitesek}
+\include{content/algoritmusok}
+\include{content/implementaciok}
+\include{content/meresek}
+\include{content/osszefoglalas}
+
+
+% Acknowledgements
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\include{content/acknowledgement}
+
+
+% List of Figures, Tables
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%\listoffigures\addcontentsline{toc}{chapter}{\listfigurename}
+%\listoftables\addcontentsline{toc}{chapter}{\listtablename}
+
+
+% Bibliography
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%\bibliography{bib/mybib}
+%\addcontentsline{toc}{chapter}{\bibname}
+\include{content/irodalomjegyzek}
+
+
+% Appendix
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% \include{content/appendices}
+
+%\label{page:last}
+\end{document}

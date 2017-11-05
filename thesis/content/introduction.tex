@@ -1,0 +1,49 @@
+%----------------------------------------------------------------------------
+\chapter{\bevezetes}
+%----------------------------------------------------------------------------
+% TODO irodalomhivatkozás könyvre
+% TODO szépen képletekkel formázva
+Az informatikában, akár a többi tudományterületen, elképzelhetetlen lenne a problémák vizsgálata, megoldása modellek, hipotézisek felállítása nélkül. Mérnökökként mi is a valós világot tetszőleges mértékben leegyszerűsítve végezzük feladatainkat. Sok esetben a világ egyik fontos tulajdonságát, az események bekövetkezésének valószínűségét nem hanyagolhatjuk el. A valószínűségszámítás alkalmazása során pedig gyakran kerülünk szembe matematikai időben lejátszódó véletlen jelenségekkel. Ezek leírásához használjuk a sztochasztikus folyamatok modelljét:
+
+Legyen X={Xt:t eleme T} valószínűségi változóknak egy t paraméterrel indexelt családja. X-et sztochasztikus folyamatnak nevezzük. A t paramétert (főleg az alkalmazásokban gyakori jelentése miatt) rendszerint az idővel azonosítjuk. Ha T = {0,1,2,..}, akkor X-et diszkrét idejű folyamatnak vagy idősornak, ha pedig T=[0,végtelen], akkor folytonos idejű folyamat esetén pedig (a függvényszerű írásmóddal utalva a valós értékű paraméterre) X(t)-vel jelöljük. Azt az S halmazt, melyből az Xt valószínűségi változók értékeiket veszik, állapottérnek (vagy állapothalmaznak) nevezzük.
+
+A sztochasztikus modellek számos problémakörben jelentenek hatékony megoldást, ahol az egyszerűbb esetekre alkalmazott determinisztikus megoldások nem vezetnek eredményre.
+Ilyen helyzettel állunk szemben bizonyos rendszerek tervezésénél, informatikusként például szolgáltatásbiztonság vagy teljesítmény tervezésénél, vizsgálatánál.
+
+Sok esetben rendszerünkre igaz a következő definíció is:
+
+Egy X sztochasztikus folyamatot Markov-láncnak nevezünk, ha teljesül rá a Markov-tulajdonság, miszerint minden x>=0 és x0,x1,...xn-1,xn eleme S esetén
+P(Xn=xn|Xn-1=xn-1,..X0=x0) = P(Xn=xn|Xn-1=xn-1), amennyiben a feltételes valószínűségek léteznek.\cite{MarkovLancokKonyv}
+Tehát szemléletesebben, modellezett folyamataink jövője és múltja függetlenek a jelen ismeretében. Ugyanakkor az állapotváltozások tetszőleges időpontban történhetnek.
+
+Sztochasztikus modell esetén valószínűségi eloszlásokkal, várható értékekkel, tüzelési valószínűségekkel számolunk. Parametrikus esetben ezek az átmeneti valószínűségek nem ismertek, ismeretlen változók. Amennyiben a  tüzelési valószínűségek exponenciális eloszlást követnek, az exponenciális eloszlás rátája függhet a modell paramétereitől, ezáltal befolyásolják a hatótényezők a rendszert.
+
+A modellekhez reward függvényeket definiálva, melyek metrikákat, vagyis méréseket azonosítanak, tudjuk a rendszerrel szemben felállított követelményeket megfogalmazni - például a valószínűsége egy rossz rendszerállapotba való érkezésnek legyen egy adott érték alatt. A lényege, hogy a paraméterek valamilyen konkrét értékével a rendszer kimenete megfigyelhető, így, bár a rendszert leíró függvényt pontosan nem ismerjük, a függvényértékeket felhasználva végezhetünk műveleteket a kívánt cél elérése érdekében - ami a mi esetünkben az optimalizálás lesz. Paraméter szintézisnek nevezzük a folyamatot, mellyel megkeressük azokat a paramétereket, melyekkel a modell kielégíti a specifikációban definiált elvárásokat.
+
+A kulcslépés a valószínűségi modellek ellenőrzésénél az elérhetőségi valószínűség kiszámítása: mekkora eséllyel érünk el adott állapotokat? Nemdeterminizmus működést mutató modellek esetében, amilyen a Markov döntési folyamat is, ezen elérhetőségi valószínűségek az alapjai a nemdeterminizmus áthidalásának. A fejlett modell ellenőrzők támogatást nyújtanak ehhez, ma már léteznek sikeres alkalmazások százmillió állapotú modellek kiértékelésére is.
+
+Szükséges tehát annak a racionális függvénynek a kiszámítása, mely kiszámítja az elérhetőségi valószínűséget egy parametrikus Markov láncban.
+Ehhez az ismeretlen átmenetet nem-determinisztikus választásokkal helyettesítjük. Az így kapott paramétermentes modell már könnyebben vizsgálható a megszokott analízis módszerekkel. Ez a megvalósítás teljesítményben felülmúlja a többi, parametrikus Markov láncokat kiértékelő társait, és a szépsége, hogy nagyon változatos problémakörben alkalmazható, akár csak a mi esetünkben a Markov döntési folyamat paraméter szintézise során.\cite{ParameterSzintezisCikk}
+
+A modellek kiértékeléséhez iteratív módszert alkalmazunk. Ezen módszerek az általános, nagy % lineáris ?
+rendszerek megoldásához a tudományos számítástechnika számos területén egyre nagyobb népszerűségnek örvendenek. Habár ma már léteznek explicit megoldások, számos újabb hatékony iteratív megoldó % megoldó ?= solver
+jelent meg, amiket a nagyon nagy lineáris rendszerek kiértékelésére való igény növekedésével egyre nagyobb érdeklődés vesz kerül.
+
+Az iteratív megoldó egy adott kezdetleges becsült megoldásból indulva konvergál a megoldáshoz, minden iterációban egyszerre egy vagy több komponenst módosítva, meghatározott sorrendben. Ezt az alap működést kombinálva más módszerekkel, meglehetősen sikeres eredményt érhetünk el.\cite{SolverKonyv}
+
+Sok esetben azonban a modell kiértékelése nem az elsődleges célunk. Az élet minden területén az optimális megoldásokat keressük, így van ez egy rendszer tervezésénél is. Egy optimalizáló algoritmus, mely megmondja a tervezőnek, milyen tulajdonságokkal bír az a modell, mely megfelel az elvárásoknak, számos területen nagy segítség lehet.
+
+Szakdolgozatomban erre keresem a lehető legjobb megoldást. A tanszéken fejlesztett PetriDotNet alkalmazásban leírt modelleket egy TDK keretein belül megalkotott megoldó\cite{SpdnTDK} segítségével értékelem ki, és különböző ismert optimalizáló algoritmusokkal keresem a modellek azon paramétereit, melyek a lehető legjobban közelítik a célfüggvényünk minimumát. Ez a célfüggvény nemes egyszerűséggel a reward függvények elvárt értékektől való eltérésének négyzetössze:
+
+%TODO
+IDE TESZEK MAJD EGY KÉPLETET
+
+Szeretnénk eléri, hogy az ezzel a képlettel leírt összesített hibaérték minél jobban 0 felé konvergáljon.
+
+A \ref{sec:optimalizacios-megkozelitesek}. fejezetben ismertetem az optimalizálás sztochasztikus rendszerek esetében fennálló jellegzetességeit, kihívásait és megoldásait.
+
+A \ref{sec:algoritmusok}. fejezetben bemutatva néhány lehetséges megoldást elemzem, milyen tulajdonságokkal bírnak az algoritmusok, és a mi esetünkben ezek milyen és mekkora befolyással vannak a kívánt eredmény elérésére.
+
+A dolgozat \ref{sec:implementaciok}. fejezetében olvashatunk a részletes megvalósításról, majd a \ref{sec:meresek}. részben láthatjuk ezen algoritmusok működését, értékelését és összehasonlítását a megelőző fejezetekben definiált szempontrendszer alapján.
+
+
