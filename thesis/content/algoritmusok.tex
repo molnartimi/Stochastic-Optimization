@@ -4,17 +4,88 @@
 %----------------------------------------------------------------------------
 
 %----------------------------------------------------------------------------
-% TODO keresek majd jobb, általános alcímet!
-\section{Önálló laboratórium alatt kipróbált algoritmusok}
+\section{Nemkorlátos optimalizáló algoritmusok}
 %----------------------------------------------------------------------------
 
-\subsection{Newton módszerek}
+\subsection{Newton módszer}
+A Newton módszer\footnote{Newton's method} alkalmas nemkorlátos differenciálható függvények gyökeinek a megtalálására. Ezt felhasználva, $f(x)=0$ helyett $g(x)=f'(x)=0$ egyenlet megoldásait keresve az $f$ függvény lokális szélsőértékeit találhatjuk me. Az iteráció egyes lépéseiben ehhez az alábbi képletet kell alkalmagznunk:
+$$x_{n+1}=x_n-\gamma[Hf(x_n)]^{-1}\nabla f(x_n),$$ 
+ahol $\gamma<1$ egy általunk megadható lépéshossz, $H$ a Hesse-mátrix, $\nabla f(x)$ pedig a gradiens.
+
+A konvergálás várható ideje és iterációszáma nagyban függ attól, hogy az iteráció kezdőpontja mennyire esik közel a keresett gyökhöz. Mivel ez egy általunk megadott paraméter, rejteget magában nehézséget. Jó esetben viszont nagyon gyorsan tud jó eredményt szolgáltatni.
+
+Láthatjuk, hogy a mi esetünkben ez több kívánni valót is hagy maga után: szükséges hozzá a második derivált számítása minden iterációban, csak lokális szélsőérték keresést biztosít, és nincs lehetőségünk a korlátok kezelésére. Szerencsére azonban nem kell teljesen lemondanunk az algoritmusról, mivel több olyan megvalósítása is létezik, lehetővé teszi olyan függvények optimalizálást, ahol a Hesse-mátrix nem áll rendelkezésünkre. Ezeket az algoritmusokat kvázi-Newton módszerekként emlegetjük.
+
 \subsubsection{BFGS}
+A feltalálóiról elnevezett Broyden–Fletcher–Goldfarb–Shanno algoritmus egy a nagyon hatékony optimalizáló algoritmusok közül. A kvázi-Newton családba tartozó módszer a Hesse-mátrixot egy minden iterációban a gradiens alapján frissített, becsült mátrixszal helyettesíti. Ezzel számítási költséget spórolhatunk. A módosított algoritmus a következő lépéseket hajtja végre, míg nem konvergálunk a megoldáshoz:
+\begin{enumerate}
+	\item $B_kp_k=-\nabla f(x_k)$ egyenlet megoldásával kiszámoljuk $p_k$ értékét, ahol $B_k$ mátrix a Hesse-mátrix közelítése, kezdeti értéke $B_0=I$ egységmátrix.
+	\item Tetszőleges egydimenziós optimalizálással megkereshető az $f(x_k+\alpha p_k)$ függvény minimuma,
+	\item amivel ezután $x_{k+1}=x_k+s_k$, ahol $s_k=\alpha _kp_k$.
+	\item A becsült $B_k$ mátrixot a következő egyenlet alapján frissítjük, a gradienseket felhasználva:
+	$$y_k=\nabla f(x_{k+1})-\nabla f(x_k), \quad B_{k+1}=B_k+\frac{y_ky_k^T}{y_k^Ts_k}-\frac{B_ks_ks_k^TB_k}{s_k^TB_ks_k}.$$
+\end{enumerate}
+
+Eggyel tovább fejlesztett verziója, a Limitált memóriájú BFGS pedig azt is biztosítja, hogy az iterációk során az átlagosnál jóval kevesebb memóriát használunk.
+
+Az eredeti Newton módszernél megfelelőbb a mi céljainkra, mivel csak gradiens számítást igényel. A kezdőpontot azonban itt is nekünk kell megadni, és ebben az esetben sincsen biztosítva a globális optimalizálás.
+
 \subsection{Gradiens módszer}
+
+A gradiens módszer\footnote{Gradient descent} egy másik ismert megoldás az optimalizálásra. Arra a megfigyelésre alapul, hogy ha egy pontban a gradiens irányával ellentétes irányba megfelelően kis lépést teszünk, biztos, hogy a jelenlegi pontnál alacsonyabb helyre kerülünk. Megfelelően folytatva ezt a szekvenciát feltehetően egy lokális minimumba érkezünk. Az iterációs lépés tehát a következő:
+$$x_{n+1}=x_n-\gamma _n\nabla f(x_n),\quad \textnormal{ahol}\quad \gamma _n=\frac{(x_n-x_{n-1})^T[\nabla f(x_n)-\nabla f(x_{n-1})]}{\|\nabla f(x_n)-\nabla f(x_{n-1})\|^2}.$$
+Tehát minden lépésben a lépés nagyságát is módosítjuk a gradiens és a mozgás függvényében. A lokális minimumba való konvergálás ilyen módon biztosítva van. 
+
+Az általunk befolyásolható paraméter itt is a kezdőpont, máshonnan indítva az algoritmust más stacionárius pontot találhat meg.
 \subsection{Részecske raj optimalizációk}
+A részecske raj optimalizálás\footnote{Particle swarm optimization} során a keresési térben részecskéket veszünk fel. Ezek a részecskék egy egyszerű matematikai formula alapján járják be a teret, miközben a saját maguk és a globálisan ismert eddigi minimumhely ismeretében számolják ki minden iterációban, merre tegyék meg a következő lépést. Az i. részecske sebességének és pozíciójának kiszámításához használt képlet:
+\begin{equation}
+	\label{eq:pso}
+	v_{i+1}=\omega v_{i}+\phi _pr_p(p_{i}-x_{i})+\phi_gr_g(g-x_{i}), \quad\textnormal{majd ezzel}\quad x_{i+1}=x_i+v_{i+1}
+\end{equation}
+ahol $r_p, r_g \sim U(0,1)$ véletlen számok, $\omega, \phi_p$ és $\phi_g$ pedig általunk választott hiperparaméterek. Ezeknek a megválasztása nagy körültekintést igényel, hisz jelentősen befolyásolják az algoritmus eredményességét.
+
+Minden új pozíció kiszámításakor a részecske ellenőrzi, kisebb függvényértékű helyre érkezett-e, mint a lokálisan vagy globálisan ismert minimum, és ha igen, frissíti a megfelelő értékeket.
+
+Az algoritmus futása során lényegében úgy mozognak a részecskék, hogy adott mértékben az ismert legalacsonyabb hely felé, adott mértékben pedig az általuk ismert legjobb hely felé próbálnak tartani, mindkét tényezőt egy véletlen számmal súlyozva. Sejthető, hogy ezzel semmilyen biztosítékot nem garantálhatunk a végeredményt illetően. Bár a gradiens számítását itt megspóroljuk, a sok részecskéhez tartozó függvényszámítások olyan nagyobb költséget okozhatnak, mint egy gradienst is használó, de kevesebb iteráció alatt konvergáló algoritmus. Kellő számú részecskével, kellő számú iteráció alatt viszont jó eredmény érhető el.
+
+A tervező döntése a sebességek kiszámításában szereplő hiperparaméterek értéke, a részecskék és iterációk száma, illetve a tér azon részének a kiválasztása is, melyen a részecskéket elhelyezi. Ebből a térből a részecskék ki tudnak lépni, így a korlátok kezeléséhez plusz logika beépítése szükséges az algoritmusba.
+
 \subsubsection{Méh algoritmus}
+
+A természetben számtalan helyen visszaköszönnek a matematika szépségei. Rengeteg algoritmus mintázható az élőlények viselkedéséről vagy a természeti jelenségekről. Ezt teszi a méh algoritmus is. A részecske raj optimalizációk családjába tartozó módszer szintén nem használ deriváltszámítást, viszont a részecskék mozgása hierarchikusabb az alap algoritmus véletlenszerű mozgásánál. 
+
+A méhek úgy keresik meg a lehető legtöbb virágot tartalmazó területeket, hogy először felderítőket küldenek véletlenszerű helyekre, majd visszaérkezésük után azok a méhek toborozzák magukhoz a legtöbb segítőt, akik a legjobb helyeket találták. 
+Az első $b$ db, legjobb területet találó méhek a lebjobb méhek, azon belül az első $e$ db legjobbak az elit méhek. Értelem szerűen az elit méhek kapják a legtöbb segítőt maguk köré, a legjobbak, akik nem elitek, náluk kevesebbet. A többi toborzó marad véletlenszerű területek felderítőjének.
+
+Minden iteráció során a segítő méhek egy $r$ sugarú körben véletlenszerűen helyezkednek el a toborzójuk által talált legjobb pont körül. Ezt a számot aztán iterációnként adott mértékben csökkenthetjük, így koncentrálva minél jobban az optimális helyekre. Ha egy részecske az eddigi minimumnál jobb pontot talál, ő veszi át a toborzó szerepét, és az utána következő iterációban már hozzá viszonyítva helyezkednek el a többiek.
+
+Így a biztatónak ígérkező területek jóval több részecske által kerülnek felderítésre, ezzel növelve a lehető legjobb terület megtalálásának valószínűségét. Azok a méhek, akik nem kerültek a legjobbak közé, folytatják véletlenszerű felderítésüket, ezzel biztosítva azt is, hogy van esélyünk az eddig esetleg elkerült globálisan optimális helyet is megtalálni.
+
+Általunk megadandó paraméter itt a felderítők száma, hogy az első hány legjobb méh a legjobb, és azon belül az első hány legjobb az elit, ők hány segítőt toboroznak magukhoz, az iterációk száma, a keresési terület határai, a keresési kör sugara, és az iterációnként való csökkentési mértéke.
+
 \subsubsection{Gradiens módszerrel ötvözve}
+
+Sok esetben a célunk eléréséért nem egy, hanem egyszerre több algoritmus által nyújtott lehetőségeket kell kihasználnunk. A részecske raj algoritmusok globális keresési tulajdonsága csábító, de hatékonysága csekély. Ellenben a gradiens módszer, bár biztosítja egy minimumhely megtalálását, ennek globális voltáról nincs információja.
+
+Ideális megoldás lehet, ha a két ismert algoritmust ötvözzük. Ennek egy megvalósítása, ha minden iterációban a részecskék \aref({eq:pso}) képlet alapján kiszámolják az új pozíciójukat, majd az ezután ismert globális minimumhelyről indulva végzünk néhány lépést a gradiens módszerrel. Ezáltal biztosíthatjuk a keresési tér bejárását globális optimum után kutatva, és az ígéretesnek tűnő pozíciókból nem kell a véletlenre bíznunk magunkat, hogy mennyire tudjuk megközelíteni a tényleges szélsőértéket, a gradiens használatával biztosra mehetünk. Arany középút, mely a költséges műveletet, a derivált számítást csak ott végzi el, ahol a legnagyobb a valószínűsége az optimális hely megtalálásának.
+
 \subsection{Szimultán lehűtés}
+
+Szintén egy természetből vett példát utánozó algoritmus a szimultán lehűtés\footnote{Simulated annealing}. Köztudott, hogy egy anyag részecskéi annál jobban mozognak, minél magasabb az anyag hőmérséklete. A hőmérséklet csökkenésével ez a mozgás lassul, míg végül ki nem alakul a szilárd anyagra jellemző szabályos kristályszerkezet.
+
+Az optimalizáló algoritmusban a rendszerünket egy kezdeti hőmérséklettől indítjuk, és ezt minden iterációban egy meghatározott arányban csökkentjük. A jelenlegi pozíciónk körül egy R sugarú körben kiválasztunk egy véletlenszerű pontot, majd eldöntjük, oda ugrunk e. Ez a döntés egy olyan valószínűséget adó egyenleten kell, hogy alapuljon, aminek az eredményéül magas hőmérséklet esetén nagy valószínűséggel a jelenleginél kedvezőtlenebb helyekre is átugrunk, a hőmérséklet csökkenésével azonban egyre kevésbé kockáztatunk. Ezzel csökkenthető annak az esélye, hogy egy lokális minimumba ragad a rendszer.
+Valószínűséget adó egyenlet az én esetemben:
+
+EGYENLET!! KÉT SOROS
+% TODO
+
+Ahol T a rendszerünk jelenlegi hőmérséklete. Amennyiben a visszatérési érték nagyobb egy $r\sim U(0,1)$ eloszlású véletlen számnál, végrehajtjuk az ugrást. Ellenkező esetben nem változtatunk a pozíciónkon. Annak az érdekében, hogy több lehetőséget adjunk az ugrásra, beiktatható egy ciklus, hogy 2-3 alkalommal próbálkozzon a rendszer ugyanazon hőmérsékletén új pozícióba jutni.
+
+Egyszerűsége miatt közkedvelt algoritmus, hiszen itt sincs szükség derivált számítására. Hasonlóan azonban az előzőekhez, a hiperparaméterek beállítása itt is nagy hatással lehet az eredményességre.
+
+Általunk megadandó paraméter a kezdeti hőmérséklet, a hőmérséklet iterációnként való csökkentésének aránya, a keresés R sugarának nagysága, és a csökkentésének az aránya.
+
 
 
 %----------------------------------------------------------------------------
