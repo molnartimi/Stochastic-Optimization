@@ -20,15 +20,14 @@ A rendszer ilyen szintű megismerése után fontos mérföldköve a tervezésnek
 A kérdések tulajdonképpen informális megfogalmazásai olyan matematikai összefüggéseknek, melyek a rendszerünk viselkedésében játszanak jelentős szerepet. Ezek a reward függvények olyan metrikákat írnak le, melyek kimenete mérhető. 
 
 Ritka eset az, amikor teljes körű ismerettel rendelkezünk egy probléma minden részletéről. A legtöbb esetben elhanyagoljuk, vagy ismeretlen változóként a modellben hagyjuk azokat a részleteket, tulajdonságokat, értékeket, amelyekről nincs tudomásunk. 
-Sztochasztikus modell esetén valószínűségi eloszlásokról, várható értékekről, tüzelési valószínűségekről, rátákról beszélünk. Példáinkban a tüzelési valószínűségek exponenciális eloszlást követnek. Az exponenciális eloszlás rátája, LAMBDA %TODO
+Sztochasztikus modell esetén valószínűségi eloszlásokról, várható értékekről, tüzelési valószínűségekről, rátákról beszélünk. Példáinkban a tüzelési valószínűségek exponenciális eloszlást követnek. Az exponenciális eloszlás rátája, $\lambda$
 függhet a modell paramétereitől. Ezáltal befolyásolják a hatótényezők a rendszert. Konkrét példákat a \ref{sec:meresek}. fejezetben mutatok be.
 
 A metrikáink függenek ezektől a paraméterektől, azonban ennek a függésnek az alakját, tulajdonságait nem ismerjük. Ahhoz, hogy megtaláljuk egy sokdimenziós modell esetén azt az optimális paraméterlekötést, mellyel a rendszer teljesíti a követelményeket, paraméterszintézis során alkalmazunk különböző optimalizáló algoritmusokat.
 
 A szintézis minden iterációjában újabb és újabb paraméterekkel futtatjuk le az analízist, majd az adott algoritmus működése alapján műveleteket végzünk a kapott eredményen, mely alapján eldönthetjük, elértük-e a leállási feltételt, és ha nem, az értelmezési tartomány mely pontjának a kiértékelése visz minket a legnagyobb valószínűséggel közelebb az optimális ponthoz. Ez lesz az a pont, amelyre a szintézis következő iterációjában megismételjük az elvégzett műveleteket.
 
-A célfüggvény, melyet optimalizálunk, sokféleképpen definiálható. Mi az összes négyzetes hibát választottuk, mely egy azon megközelítések közül, mellyel általánosan leírható egy rendszer elvárt viselkedéstől való eltérése.
-% TODO esetleg ide is a képlet a bevezetésből?
+A célfüggvény, melyet optimalizálunk, sokféleképpen definiálható. Mi az összes négyzetes hibát választottuk (\ref{eq:celfgv}), mely egy azon megközelítések közül, mellyel általánosan leírható egy rendszer elvárt viselkedéstől való eltérése.
 
 \section{Algoritmusok használhatóságának szempontjai}
 
@@ -36,10 +35,10 @@ A paraméter optimalizálás során azt a pontot keressük, mely a rendszer hib�
 
 Az analízist végző keretrendszer költségesen skálázódik a paraméterek dimenziójának növekedésével. Célunk egy olyan optimalizáló használata, mely ezt a költséget - mely a mi esetünkben főleg a futási időt jelenti - is minimalizálja.
 
-Lehetőségünk van nemcsak függvényérték, de az egyes paraméterek szerinti érzékenység, vagyis parciális derivált kiszámítására is. Ennek köszönhetően szóba jöhetnek azok az ismert algoritmusok is, melyek egyszer, vagy többször differenciálható célfüggvényt feltételeznek. Tisztában kell lennünk azonban azzal, hogy ezért drága árat fizetünk, hisz a mi célfüggvényünk esetében egy gradiens számítás % TODO képletre hivatkozás
-ORDO(n), egy Hesse-mátrix számítás ORDO(n2) költséget jelent.
+Lehetőségünk van nemcsak függvényérték, de az egyes paraméterek szerinti érzékenység, vagyis parciális derivált kiszámítására is. Ennek köszönhetően szóba jöhetnek azok az ismert algoritmusok is, melyek egyszer, vagy többször differenciálható célfüggvényt feltételeznek. Tisztában kell lennünk azonban azzal, hogy ezért drága árat fizetünk, hisz a mi célfüggvényünk esetében (\ref{eq:celfgv}) egy gradiens számítás $O(n)$ számítást jelent, egy Hesse-mátrix $O(n^2)$ költséget jelentene, ahol a célfüggvény $j.$ paramétere szerinti parciális deriválja
+$$\frac{\partial f}{\partial p_j}=\sum_{i=1}^{rewards}\left\lbrace   2\cdot \left( \hat{R}_i-R_i\right) \cdot\left(-\frac{\partial R_i}{\partial p_j}\right)  \right\rbrace   $$
 
-DERIVÁLT KÉPLET % TODO
+
 
 Ahány ház, annyi szokás. Ahány programozó, annyi megvalósítás! Az algoritmusok hatékonyságában nagy szerepet játszanak a jól beállított hiperparaméterek. Ezek megtalálása közel olyan nehéz, mint maga a modell optimumának a megtalálása. Az algoritmusokat megkülönbözteti ez is, hogy mekkora teret engednek az algoritmus használójának, mennyi és milyen megkötésekkel, változókkal, feltételezett modellekkel egészíthető ki a modellünk a testreszabás érdekében. Minél jobban specializálható egy modellre az algoritmus, annál jobb eredményt érhetünk el az optimalizálás során.
 

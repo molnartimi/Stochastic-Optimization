@@ -70,9 +70,9 @@ Sok esetben a célunk eléréséért nem egy, hanem egyszerre több algoritmus �
 
 Ideális megoldás lehet, ha a két ismert algoritmust ötvözzük. Ennek egy megvalósítása, ha minden iterációban a részecskék \aref({eq:pso}) képlet alapján kiszámolják az új pozíciójukat, majd az ezután ismert globális minimumhelyről indulva végzünk néhány lépést a gradiens módszerrel. Ezáltal biztosíthatjuk a keresési tér bejárását globális optimum után kutatva, és az ígéretesnek tűnő pozíciókból nem kell a véletlenre bíznunk magunkat, hogy mennyire tudjuk megközelíteni a tényleges szélsőértéket, a gradiens használatával biztosra mehetünk. Arany középút, mely a költséges műveletet, a derivált számítást csak ott végzi el, ahol a legnagyobb a valószínűsége az optimális hely megtalálásának.
 
-\subsection{Szimultán lehűtés}
+\subsection{Szimulált lehűtés}
 
-Szintén egy természetből vett példát utánozó algoritmus a szimultán lehűtés\footnote{Simulated annealing}. Köztudott, hogy egy anyag részecskéi annál jobban mozognak, minél magasabb az anyag hőmérséklete. A hőmérséklet csökkenésével ez a mozgás lassul, míg végül ki nem alakul a szilárd anyagra jellemző szabályos kristályszerkezet.
+Szintén egy természetből vett példát utánozó algoritmus a szimulált lehűtés\footnote{Simulated annealing}. Köztudott, hogy egy anyag részecskéi annál jobban mozognak, minél magasabb az anyag hőmérséklete. A hőmérséklet csökkenésével ez a mozgás lassul, míg végül ki nem alakul a szilárd anyagra jellemző szabályos kristályszerkezet.
 
 Az optimalizáló algoritmusban a rendszerünket egy kezdeti hőmérséklettől indítjuk, és ezt minden iterációban egy meghatározott arányban csökkentjük. A jelenlegi pozíciónk körül egy R sugarú körben kiválasztunk egy véletlenszerű pontot, majd eldöntjük, oda ugrunk e. Ez a döntés egy olyan valószínűséget adó egyenleten kell, hogy alapuljon, aminek az eredményéül magas hőmérséklet esetén nagy valószínűséggel a jelenleginél kedvezőtlenebb helyekre is átugrunk, a hőmérséklet csökkenésével azonban egyre kevésbé kockáztatunk. Ezzel csökkenthető annak az esélye, hogy egy lokális minimumba ragad a rendszer.
 Valószínűséget adó egyenlet az én esetemben:
@@ -86,10 +86,88 @@ Egyszerűsége miatt közkedvelt algoritmus, hiszen itt sincs szükség derivál
 
 Általunk megadandó paraméter a kezdeti hőmérséklet, a hőmérséklet iterációnként való csökkentésének aránya, a keresés R sugarának nagysága, és a csökkentésének az aránya.
 
-
-
 %----------------------------------------------------------------------------
 \section{Bayesi optimalizáció}
 %----------------------------------------------------------------------------
-\subsection{Különböző implementációi}
+A Bayesi optimalizáció módszere eltér az eddig megismert algoritmusokétól. Fix képletek helyett megpróbáljuk az iterációk során megtanulni a modellünk viselkedését, az eddigi kiértékelt pontok és a belőlük számított előzetes becslések alapján. Nagy számításigényű sztochasztikus rendszereink esetében ez egy ideális működés, mivel minimális kiértékelésre törekszünk azáltal, hogy a becslések alapján a legígéretesebbnek tűnő helyen számítjuk ki a függvényértéket.
+\subsection{Gépi tanulás}
+A gépi tanulás\footnote{Machine learning} a számítástudomány azon területe, mely képessé teszi a számítógépeket a tanulásra anélkül, hogy azt közvetlenül leprogramoznánk. Kapcsolódik a számítási statisztikákhoz, melyek célja előfeltételezések, jóslások számítása a rendszerhez, még a kiértékelése előtt. Többek között ezért a matematikai optimalizálásban is nagyon jó eszköznek bizonyult.
+
+A kernel gépek a mintaelemzéses algoritmusok egy fajtája. Fő célja az adatok közötti kapcsolatok tulajdonságainak a vizsgálata és megismerése. Jellemzőjük, hogy tanulásuk során megjegyzik az összes eddigi bemenetüket és kimenetüket. Egy ismeretlen paraméterlekötés esetén annak kiértékelt értékét az ismert értékek és a kernel függvény segítségével becsülik meg.
+
+\subsection{Gauss-folyamat}
+A Gauss-folyamatok praktikus valószínűségi megközelítést nyújtanak a kernel gépekkel való tanuláshoz. 
+
+Egy sztochasztikus folyamat valójában egy valószínűségi eloszlás -- mely leír egy véges dimenziójú véletlen valószínűségi változót -- általánosítása függvényekként. Azon folyamatokat, melyek esetében ez egy normális eloszlás, Gauss-folyamtoknak nevezzük.
+
+Segítségükkel kétféle szempontból is tanulmányozhatjuk a modelljeinket. A regresszió lehetővé teszi a célfüggvényünk alakjának modellezését, ami által minden iteráció során előfeltételezéssel élhetünk az ismeretlen helyek függvényértékeiről is, és ezt felhasználva irányíthatjuk az optimalizáló algoritmust. Ez a feltételezett modell minden újabb megismert ponttal módosul, precízebb és -- reményeink szerint -- valósághűbb lesz.
+
+A klasszifikáció diszkrét osztályokba sorolja a tér pontjait. A mi esetünkben egy bináris osztályozásról beszélhetünk azt tekintve, az értelmezési tartomány adott pontján a megoldó keretrendszer által kiértékelhető-e (1), vagy nem (-1) a modell. A regresszióhoz hasonlóan itt is minden iterációval frissítjük a becsült modellünket, melyet felhasználva feltételezéseket vonhatunk le, a tér egyes területein valószínűleg értelmezhető-e a célfüggvényünk.\cite{GPKonyv}
+
+
+\subsection{Bayesi optimalizáció}
+A Bayesi optimalizáció egy olyan, függvények fölötti a posteriori\footnote{Tapasztalatból származó ismeret} eloszlással dolgozik, mely a legjobban leírja a függvényt, melyet optimalizálunk. Ahogy a megfigyelt értékek száma nő, a jósolt eloszlásunk úgy válik biztosabbá. Amint egyre nagyobb valószínűséggel tudjuk megállapítani, mely területek a legérdemesebbek az újabb iterációkra, és ezáltal a modell pontosabbá tételére, úgy válik az algoritmus egyre hatékonyabbá.
+
+Az algoritmus működése egyszerű és nagyszerű, az alábbi lépéseket ismétli, míg nem teljesül a megállási feltétel. Ez általában a végzendő iterációk számára vonatkozik.
+\begin{enumerate}
+	\item Tesztpontokkal való kezdeti modell betanítása.
+	\item Nyereség függvény\footnote{Acquisition function} maximumának megkeresése a modell alapján.
+	\item Célfüggvény kiértékelése a talált helyen.
+	\item Modell frissítése a kiértékelt ponttal.
+\end{enumerate}
+
+\subsubsection{Nyereség függvény}
+A Gauss folyamat által felállított modell várhatóérték függvénye nem áll rendelkezésünkre zárt alakban, így nem tudunk róla semmilyen konkrét információt sem. A nyereség függvény használatával ezt a problémát át tudjuk hidalni az algoritmus futása során. 
+
+A nyereség függvény az értelmezési tartomány pontjaihoz egy olyan értéket rendel, mely kifejezi, mennyire lenne hasznos az adott ismeretlen pontot kiértékelni a modell javítása érdekében, az ismert pontok értékeinek függvényében. Ennek a függvénynek a maximumát keressük, és itt fogjuk a következő kiértékelést elvégezni, az eredménnyel pedig a modellt frissíteni.
+
+A tervező döntése a megfelelő nyereség függvény kiválasztása. Hasznos lehet többet is kipróbálni, esetleg ötvözni őket, hisz érthető módon ez is befolyásolhatja az algoritmus hatékonyságát.
+
+Leggyakoribb nyereség függvények\cite{AcqFgvCikk}:
+\begin{itemize}
+	\item Javulás valószínűsége\footnote{Probability of improvement}\\
+	\begin{equation}
+	\label{eq:POI}
+		f_{PI}(x;\left\lbrace x_n,y_n\right\rbrace ,\theta)=\Phi(\gamma(x)), \qquad \gamma(x)=\frac{f(x_{best})-\mu(x;\left\lbrace x_n,y_n\right\rbrace ,\theta))}{\sigma(x; \left\lbrace x_n,y_n\right\rbrace ,\theta)},
+	\end{equation}
+	ahol $\left\lbrace x_n,y_n\right\rbrace$  kifejezés jelenti az eddig ismert pontokban a függvényértékeket, $\theta$ egy hiperparaméter mely a modellhez igazítandó, $\Phi$ a standard normális eloszlás függvénye, a  $\mu$ az aktuális modell váratóérték függvénye, $\sigma$ pedig a modell szórásfüggvénye.
+	\item Javulás várható értéke\footnote{Expected improvement}
+	\begin{equation}
+	\label{eq:EI}
+		f_{EI}(x;\left\lbrace x_n,y_n\right\rbrace ,\theta)=\sigma(x;\left\lbrace x_n,y_n\right\rbrace ,\theta)(\gamma(x)\Phi(\gamma(x))+\phi(\gamma(x)),
+	\end{equation}
+	ahol $\phi$ a standard normális eloszlás sűrűségfüggvénye (eloszlásfüggvény integrálja).
+	\item Alsó biztos határ\footnote{Lower confidence bound}
+	\begin{equation}
+	\label{eq:LCB}
+		f_{LCB}(x;\left\lbrace x_n,y_n\right\rbrace ,\theta)=\mu(x;\left\lbrace x_n,y_n\right\rbrace ,\theta)-\kappa \sigma(x;\left\lbrace x_n,y_n\right\rbrace ,\theta),
+	\end{equation}
+	ahol $\kappa$ hiperparaméter hivatott kifejezni a kizsákmányolás és felderítés módszere közötti egyensúlyozás mértékét, amiről bővebben a következő alfejezetben olvashatunk.
+\end{itemize}
+Ezek az ismert függvények esetében már a maximum megtalálása jóval egyszerűbb, mint az ismeretlen célfüggvényünk esetében. Agy alkalmas optimalizáló algoritmus -- akár a fentebb említettek közül -- jóval kisebb költséggel oldja meg, mint az eredeti problémát. Ebben rejlik tehát a Bayesi optimalizáció titka.
+
+\subsubsection{Kizsákmányolás vagy felderítés}
+A kizsákmányolás\footnote{exploitation} vagy felderítés\footnote{exploration} dilemmája ismert számos tudományterületen. Az optimalizálás során ugyanúgy hasznos az új tudás szerzése ismeretlen függvényterületekről, ahogy szükségünk lenne a már ismert tudás pontosságának, hatékonyságának növelésére is. Az algoritmus futása során nagy kérdés, mikor éri meg jobban egy olyan területről választani kiértékelendő pontot, ahonnan még nincsenek információink, és mikor válik nagyobb hasznunkra az eddig ismert, ígéretesnek tűnő területek precízebb feltérképezése, a globális minimum megközelítése érdekében.
+
+Ez a döntés szerencsére a javulás valószínűsége (\ref{eq:POI}) és várható értéke (\ref{eq:EI}) nyereség függvényekben implicit kódolva van. Az alsó biztos határ (\ref{eq:LCB}) esetében azonban nekünk kell a $\kappa$ változóval döntést hozni a megfelelő arányról.
+
+\subsubsection{Kernel függvény}
+A kernel, vagy más néven kovariancia függvények szintén nagyban kihatnak a Bayesi optimalizáció eredményére. Mint fentebb említettem, a Gauss folyamat a priori eloszlások összessége függvények felett.
+Egy 0 várható értékű modell esetén a kernel függvény teljes mértékben leírja a Gauss folyamat viselkedését.
+Általános esetben azonban a folyamat a priorjainak simaságát, periodikusságát, izotrópiáját és állandóságát adja meg.
+
+Sztochasztikus rendszereknél gyakran használt kernel függvények:
+\begin{itemize}
+	\item Exponenciális/Laplace: $exp(-\alpha\|x-y\|), \quad \alpha>0$.
+	\item Négyzetes exponenciális: $exp(-\alpha\|x-y\|^2), \quad \alpha>0$.
+	\item Gamma exponenciális: $exp(-\alpha\|x-y\|^\gamma), \quad \alpha>0, 0<\gamma\le1$.
+	\item Matérn 1/2: $\sigma^2exp\left( -\frac{\|x-y\|}{\rho}\right)$. 
+	\item Matérn 3/2: $\sigma^2\left( 1+\frac{\sqrt{3}d}{\rho}\right) exp\left(\frac{\sqrt{3}\|x-y\|}{\rho}\right)$.
+	\item Matérn 5/2: $\sigma^2\left( 1+\frac{\sqrt{5}\|x-y\|}{\rho}\frac{5\|x-y\|^2}{3\rho^2}\right) exp\left(\frac{\sqrt{5}\|x-y\|}{\rho}\right)$.
+\end{itemize}
+A képletekben $\alpha$ az euklideszi távolság skálázó paramétere, $\gamma$ a gamma eloszlás alakját meghatározó paraméter, $\rho$ a kovariancia nemnegatív hiperparamétere.\\
+
+Összességében láthatjuk, hogy a Bayesi optimalizáció törekszik a minimális számítási költségre, és számos ponton ad lehetőséget a tervezőnek a testre szabásra. Gradiens számítást sem igényel (habár léteznek már azzal kibővített megoldások a hatékonyság növelése érdekében). 
+A korlátok algoritmusba kódolására is van lehetőség, amit a későbbiekben látni fogunk. 
+A legnagyobb biztató jel azonban a klasszifikáció nyújtotta lehetőség a függvénytér azon területeinek a megbecsülésére, ahol a függvényérték a megoldó keretrendszer által kiszámítható.
 

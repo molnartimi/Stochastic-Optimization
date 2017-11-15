@@ -1,9 +1,9 @@
 %----------------------------------------------------------------------------
 \chapter{\bevezetes}
 %----------------------------------------------------------------------------
-% TODO szépen képletekkel formázva
-Az informatikában, akár a többi tudományterületen, elképzelhetetlen lenne a problémák vizsgálata, megoldása modellek, hipotézisek felállítása nélkül. Mérnökökként mi is a valós világot tetszőleges mértékben leegyszerűsítve végezzük feladatainkat. Sok esetben a világ egyik fontos tulajdonságát, az események bekövetkezésének valószínűségét nem hanyagolhatjuk el. A valószínűségszámítás alkalmazása során pedig gyakran kerülünk szembe matematikai időben lejátszódó véletlen jelenségekkel. Ezek leírásához használjuk a sztochasztikus folyamatok modelljét:
 
+Az informatikában, akár a többi tudományterületen, elképzelhetetlen lenne a problémák vizsgálata, megoldása modellek, hipotézisek felállítása nélkül. Mérnökökként mi is a valós világot tetszőleges mértékben leegyszerűsítve végezzük feladatainkat. Sok esetben a világ egyik fontos tulajdonságát, az események bekövetkezésének valószínűségét nem hanyagolhatjuk el. A valószínűségszámítás alkalmazása során pedig gyakran kerülünk szembe matematikai időben lejátszódó véletlen jelenségekkel. Ezek leírásához használjuk a sztochasztikus folyamatok modelljét:
+% TODO
 Legyen X={Xt:t eleme T} valószínűségi változóknak egy t paraméterrel indexelt családja. X-et sztochasztikus folyamatnak nevezzük. A t paramétert (főleg az alkalmazásokban gyakori jelentése miatt) rendszerint az idővel azonosítjuk. Ha T = {0,1,2,..}, akkor X-et diszkrét idejű folyamatnak vagy idősornak, ha pedig T=[0,végtelen], akkor folytonos idejű folyamat esetén pedig (a függvényszerű írásmóddal utalva a valós értékű paraméterre) X(t)-vel jelöljük. Azt az S halmazt, melyből az Xt valószínűségi változók értékeiket veszik, állapottérnek (vagy állapothalmaznak) nevezzük.
 
 A sztochasztikus modellek számos problémakörben jelentenek hatékony megoldást, ahol az egyszerűbb esetekre alkalmazott determinisztikus megoldások nem vezetnek eredményre.
@@ -33,10 +33,10 @@ Az iteratív megoldó egy adott kezdetleges becsült megoldásból indulva konve
 Sok esetben azonban a modell kiértékelése nem az elsődleges célunk. Az élet minden területén az optimális megoldásokat keressük, így van ez egy rendszer tervezésénél is. Egy optimalizáló algoritmus, mely megmondja a tervezőnek, milyen tulajdonságokkal bír az a modell, mely megfelel az elvárásoknak, számos területen nagy segítség lehet.
 
 Szakdolgozatomban erre keresem a lehető legjobb megoldást. A tanszéken fejlesztett PetriDotNet alkalmazásban leírt modelleket egy TDK keretein belül megalkotott megoldó\cite{SpdnTDK} segítségével értékelem ki, és különböző ismert optimalizáló algoritmusokkal keresem a modellek azon paramétereit, melyek a lehető legjobban közelítik a célfüggvényünk minimumát. Ez a célfüggvény nemes egyszerűséggel a reward függvények elvárt értékektől való eltérésének négyzetössze:
-
-%TODO
-IDE TESZEK MAJD EGY KÉPLETET
-
+\begin{equation}
+	\label{eq:celfgv}
+	f(p_1,p_2,...)=\sum_{i=1}^{rewards}\left( \hat{R}_i-R_i(p_1,p_2,...)\right) ^2
+\end{equation}
 Szeretnénk eléri, hogy az ezzel a képlettel leírt összesített hibaérték minél jobban nullához konvergáljon.
 
 A \ref{sec:optimalizacios-megkozelitesek}. fejezetben ismertetem az optimalizálás sztochasztikus rendszerek esetében fennálló jellegzetességeit, kihívásait és megoldásait.
