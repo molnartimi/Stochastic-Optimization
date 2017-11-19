@@ -36,7 +36,7 @@ A paraméter optimalizálás során azt a pontot keressük, mely a rendszer hib�
 Az analízist végző keretrendszer költségesen skálázódik a paraméterek dimenziójának növekedésével. Célunk egy olyan optimalizáló használata, mely ezt a költséget - mely a mi esetünkben főleg a futási időt jelenti - is minimalizálja.
 
 Lehetőségünk van nemcsak függvényérték, de az egyes paraméterek szerinti érzékenység, vagyis parciális derivált kiszámítására is. Ennek köszönhetően szóba jöhetnek azok az ismert algoritmusok is, melyek egyszer, vagy többször differenciálható célfüggvényt feltételeznek. Tisztában kell lennünk azonban azzal, hogy ezért drága árat fizetünk, hisz a mi célfüggvényünk esetében (\ref{eq:celfgv}) egy gradiens számítás $O(n)$ számítást jelent, egy Hesse-mátrix $O(n^2)$ költséget jelentene, ahol a célfüggvény $j.$ paramétere szerinti parciális deriválja
-$$\frac{\partial f}{\partial p_j}=\sum_{i=1}^{rewards}\left\lbrace   2\cdot \left( \hat{R}_i-R_i\right) \cdot\left(-\frac{\partial R_i}{\partial p_j}\right)  \right\rbrace   $$
+$$\frac{\partial f}{\partial p_j}=\sum_{i=1}^{rewards}\left\lbrace   2\cdot \left( \hat{R}_i-R_i\right) \cdot\left(-\frac{\partial R_i}{\partial p_j}\right)  \right\rbrace   .$$
 
 
 

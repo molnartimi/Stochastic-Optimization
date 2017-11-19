@@ -32,7 +32,9 @@ Az iteratív megoldó egy adott kezdetleges becsült megoldásból indulva konve
 
 Sok esetben azonban a modell kiértékelése nem az elsődleges célunk. Az élet minden területén az optimális megoldásokat keressük, így van ez egy rendszer tervezésénél is. Egy optimalizáló algoritmus, mely megmondja a tervezőnek, milyen tulajdonságokkal bír az a modell, mely megfelel az elvárásoknak, számos területen nagy segítség lehet.
 
-Szakdolgozatomban erre keresem a lehető legjobb megoldást. A tanszéken fejlesztett PetriDotNet alkalmazásban leírt modelleket egy TDK keretein belül megalkotott megoldó\cite{SpdnTDK} segítségével értékelem ki, és különböző ismert optimalizáló algoritmusokkal keresem a modellek azon paramétereit, melyek a lehető legjobban közelítik a célfüggvényünk minimumát. Ez a célfüggvény nemes egyszerűséggel a reward függvények elvárt értékektől való eltérésének négyzetössze:
+Szakdolgozatomban erre keresem a lehető legjobb megoldást. Mivel ez napjainkban is jelentős probléma, nem meglepő, hogy számos létező implementáció létezik az egyes algoritmusokhoz a világhálón. Célom -- egyúttal az én erőforrásaimat is optimalizálva -- ezeket is felhasználva megtalálni a számunkra ,,tökéletes'' algoritmust.
+
+A tanszéken fejlesztett PetriDotNet alkalmazásban leírt modelleket egy TDK keretein belül megalkotott megoldó\cite{SpdnTDK} segítségével értékelem ki, és a különböző ismert optimalizáló algoritmusokkal keresem a modellek azon paramétereit, melyek a lehető legjobban közelítik a célfüggvényünk minimumát. Ez a célfüggvény nemes egyszerűséggel a reward függvények elvárt értékektől való eltérésének négyzetössze:
 \begin{equation}
 	\label{eq:celfgv}
 	f(p_1,p_2,...)=\sum_{i=1}^{rewards}\left( \hat{R}_i-R_i(p_1,p_2,...)\right) ^2

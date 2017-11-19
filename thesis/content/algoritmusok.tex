@@ -17,7 +17,7 @@ A konvergálás várható ideje és iterációszáma nagyban függ attól, hogy 
 Láthatjuk, hogy a mi esetünkben ez több kívánni valót is hagy maga után: szükséges hozzá a második derivált számítása minden iterációban, csak lokális szélsőérték keresést biztosít, és nincs lehetőségünk a korlátok kezelésére. Szerencsére azonban nem kell teljesen lemondanunk az algoritmusról, mivel több olyan megvalósítása is létezik, lehetővé teszi olyan függvények optimalizálást, ahol a Hesse-mátrix nem áll rendelkezésünkre. Ezeket az algoritmusokat kvázi-Newton módszerekként emlegetjük.
 
 \subsubsection{BFGS}
-A feltalálóiról elnevezett Broyden–Fletcher–Goldfarb–Shanno algoritmus egy a nagyon hatékony optimalizáló algoritmusok közül. A kvázi-Newton családba tartozó módszer a Hesse-mátrixot egy minden iterációban a gradiens alapján frissített, becsült mátrixszal helyettesíti. Ezzel számítási költséget spórolhatunk. A módosított algoritmus a következő lépéseket hajtja végre, míg nem konvergálunk a megoldáshoz:
+A feltalálóiról elnevezett Broyden-–Fletcher--Goldfarb--Shanno algoritmus egy a nagyon hatékony optimalizáló algoritmusok közül. A kvázi-Newton családba tartozó módszer a Hesse-mátrixot egy minden iterációban a gradiens alapján frissített, becsült mátrixszal helyettesíti. Ezzel számítási költséget spórolhatunk. A módosított algoritmus a következő lépéseket hajtja végre, míg nem konvergálunk a megoldáshoz:
 \begin{enumerate}
 	\item $B_kp_k=-\nabla f(x_k)$ egyenlet megoldásával kiszámoljuk $p_k$ értékét, ahol $B_k$ mátrix a Hesse-mátrix közelítése, kezdeti értéke $B_0=I$ egységmátrix.
 	\item Tetszőleges egydimenziós optimalizálással megkereshető az $f(x_k+\alpha p_k)$ függvény minimuma,
@@ -106,6 +106,7 @@ A klasszifikáció diszkrét osztályokba sorolja a tér pontjait. A mi esetünk
 
 
 \subsection{Bayesi optimalizáció}
+\label{subsec:bayes}
 A Bayesi optimalizáció egy olyan, függvények fölötti a posteriori\footnote{Tapasztalatból származó ismeret} eloszlással dolgozik, mely a legjobban leírja a függvényt, melyet optimalizálunk. Ahogy a megfigyelt értékek száma nő, a jósolt eloszlásunk úgy válik biztosabbá. Amint egyre nagyobb valószínűséggel tudjuk megállapítani, mely területek a legérdemesebbek az újabb iterációkra, és ezáltal a modell pontosabbá tételére, úgy válik az algoritmus egyre hatékonyabbá.
 
 Az algoritmus működése egyszerű és nagyszerű, az alábbi lépéseket ismétli, míg nem teljesül a megállási feltétel. Ez általában a végzendő iterációk számára vonatkozik.

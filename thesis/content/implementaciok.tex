@@ -5,15 +5,196 @@
 \chapter{Implementációk}
 \label{sec:implementaciok}
 %----------------------------------------------------------------------------
+Az alábbiakban \aref{sec:algoritmusok}. fejezetben kifejtett algoritmusok implementációit részletezem. A nemkorlátos optimalizáló algoritmusok Java, a Bayesi optimalizálók viszont Python nyelven készültek. Ennek csupán annyi a magyarázata, hogy a kutatás kezdetén még nem vált világossá, mely algoritmusokhoz milyen nyelveken áll rendelkezésre a legtöbb létező implementáció, amik jó kiindulási alapot tudnak adni a fejlesztéshez.
 
 %----------------------------------------------------------------------------
-% TODO ide is lesz majd jobb cím
-\section{Önálló laboratórium algoritmusai}
+\section{Nemkorlátos optimalizáló algoritmusok}
 %----------------------------------------------------------------------------
-
+\subsection{L-BFGS}
+\subsection{Gradiens módszer}
+\subsection{Részecske raj optimalizációk}
+\subsubsection{Homogén részecskék}
+\subsubsection{Méh algoritmus}
+\subsubsection{Gradens módszerrel ötvözve}
+\subsection{Szimulált lehűtés}
 %----------------------------------------------------------------------------
 \section{Bayesi optimalizáció}
+
+\subsubsection{Modellek itegrációja}
+Minden optimalizálást végző osztályom az optimalizálandó modell beállításával kezdődik. Ez a Python kódok esetében egy Model nevű nevesített ennessel valósítottam meg. % TODO collections.namedtuple
+Ebben található az egyes modellekhez tartozó valamennyi szükséges információ:
+\begin{itemize}
+	\item Modell négy betűből álló azonosítója.
+	\item Modell tartalmazó pnml kiterjesztésű fájl neve.
+	\item Paraméterek neveinek listája.
+	\item Paraméterekhez tartozó valós értékek szótára, ezzel futtatva a megoldó keretrendszert kapjuk meg azon értékeket, melyeket követelményként fogalmazunk meg a reward függvények értékeinek. Tehát ez az a pont, melyet az optimalizálás során szeretnénk minél jobban megközelíteni.
+	\item Paraméterekhez tartozó alsó és felső korlátok szótára.
+	\item Reward függvények nevei.
+	\item Reward függvényekhez tartozó elvárt értékek.
+\end{itemize}
+
+Az adott modellel az objektum létrehozza a saját SPDN példányát, mely az optimalizálandó célfüggvényt szolgáltatja.
+
+\subsubsection{Stochastic Petri Dot Net megoldó keretrendszer integrálása}
+A program lelkét a tanszéken fejlesztett SPDN keretrendszer adja. A futtatásával, és a vele való folytonos kommunikálással kapjuk meg az egyes paraméterlekötések esetén a reward függvények értékét, melyből az összesített négyzetes hibát adó célfüggvényünket számítjuk. 
+
+Ezt a kommunikációt hivatott elvégezni az SPDN osztály. A másik szálon futó alkalmazást a Python subprocess modul segítségével irányítjuk, a bemenetére adjuk a paraméterek értékeit, valamint a reward függvények beállításait, majd a kimenetéről beolvassuk azok eredményeit, amit aztán a célfüggvényünkké transzformálunk.
+
+Lehetőségünk van a deriváltak kiszámítására is, ezt azonban a dolgozatom jelenlegi állapotában még használjuk.
+
+Mint már említettük, a megoldó bizonyos esetekben nem képes kiszámítani egy adott paraméter lekötéshez tartozó reward függvényértékeket. Ekkor a futtatott alkalmazás kimenetén egy hibát olvashatunk, mely arról tájékoztat, hogy a megoldó algoritmus az iterációi során NaN megoldásba futott. Ezt érzékelve egy SPDNException objektum dobódik, melynek kezelését az optimalizáló algoritmusok hivatottak kezelni, lehetőségeikhez mérten.
+% TODO nagy táblázat a megoldásokról, használt csomagokról, stb?
 %----------------------------------------------------------------------------
-\subsection{Sklearn használatával}
-\subsection{Tensorflow használatával}
-\subsection{Shogun toolbox használatával}
+\subsection{Optimalizálás Scikit-learn használatával}
+A Scikit-learn\footnote{\url{http://scikit-learn.org/stable/}} egy egyszerű és hatékony eszközcsomag, melyet főleg adatbányászathoz és adatok analizálásához használhatunk. Nyílt forráskódú, és változatos területeken hasznosítható. Számos szolgáltatása közül a Gauss folyamatokkal való számolást használja ki a Bayesian-Optimization-with-Gaussian-Processes\footnote{\url{https://github.com/fmfn/BayesianOptimization}}, mely egy korlátos globális optimalizációs csomag Bayesi megoldással és Gauss folyamatokkal, Python nyelven. Célja nagy költségű függvények globális maximumának a megkeresése, ahol különösen fontos a kizsákmányolás és felderítés közötti egyensúly megtalálása.
+
+% TODO táblázatba összefoglalni!!!
+\subsubsection{BayesianOptimization}
+
+A BayesianOptimization a csomag fő osztálya, mely az optimalizálást végzi. Paraméterei:
+
+f = lambda **args: number alakú függvény, melyet optimalizálunk\\
+pbounds = \{'x': (x\_min, x\_max), ...\} alakú szótár % TODO vagy dictionary? :(
+az f függvény bemenő paramétereinek nevével, és azoknak alsó és felső korlátaival\\
+verbose = \{0,1\} paraméterrel az optimalizálás logolását állíthatjuk be, vagy tilthatjuk le.
+
+Metódusai:
+
+initialize(points\_dict): arra ad lehetőséget, hogy az általunk ismert függvényértékeket még az optimalizálás előtt betöltsük a Gauss folyamat közelítő modelljébe. \{'target': [f1,f2,..], 'x':[x1,x2,..], ...\} alakban\\
+explore(points\_dict): megadhatunk pontokat a függvénytérben, melyeket rögtön az algoritmus futása elején kiszámol a program, ezzel segítve, hogy plusz információval segíthessük az optimalizálást, ha rendelkezünk ilyennel. \{'x':[x1,x2,..], ...\} alakban\\
+maximize(init\_points, restarts, n\_iter, acq, **gp\_params): Az optimalizálást végző metódus. Paraméterei a modell felállításához használt véletlenszerű kezdőpontok száma, hogy hány véletlen kezdőértékkel futtassa újra a nyereség függvény optimalizálását végző segédalgoritmust, hogy hány iterációt végezzen el, és hogy milyen nyereség függvényt alkalmazzon. Tetszőlegesen további paraméterek is megadhatók a Gauss folyamat még precízebb testreszabásához.\\
+
+\Aref{subsec:bayes}. fejezetben említett mindhárom nyereségfüggvény implementálva van a segédobjektumai között. A maximumkereséshez véletlen mintavételezést és a SciPy\footnote{Pythonban írt nyílt forráskódú csomag matemtaikai, mérnöki és tudományos problémákhoz. \url{https://www.scipy.org}} csomag minimize() metódusának L-BFGS-B variánsát alkalmazza.
+
+A nyereség függvények paraméterei az xi és az alsó biztos határ esetében a kappa. Ezekkel befolyásolhatjuk mi magunk a kizsákmányolás és felderítés megoszlását, aminek a hatását részletesebben \aref{sec:meresek}. fejezetben láthatjuk.
+
+\subsubsection{MyBayesianOptimization}
+Az általam implementált MyBayesianOptimization osztály példányosít egy SPDN objektumot, és ezt optimalizálhatjuk az optimize() metódussal. Megadható paraméterei megegyeznek a BayesianOptimization maximize() metódusának paramétereivel, a hívandó függvény kivételével, ugyanis azt az SPDN f() metódusának meghívásával kapjuk, ennek azonban a -1-szeresét kell átadnunk paraméterként, hiszen mi nem a függvényünk maximumát, hanem minimumát keressük.
+
+A BayesianOptimization megvalósítása lehetővé teszi ugyan a paraméterek korlátainak megadását, egyéb korlátkezelésre azonban nincs módunk. Ezért azokban az esetekben, amikor a célfüggvényünk SPDNException hibát dob, egy büntető értéket jelölünk meg függvényértéknek az adott pontban. Ez a büntetőérték tetszőlegesen nagy lehet, ezzel próbálva informálni a Gauss folyamatot, hogy ez egy nem megfelelő terület, ne a közelébe keresse az optimális pontot.
+
+\subsection{Optimalizálás Tensorflow használatával}
+A TensorFlow\footnote{\url{https://www.tensorflow.org}} egy nyílt forráskódú könyvtár adatfolyamokkal való numerikus számításokhoz. Egy gráffal dolgozik, melynek csomópontjai a matematikai műveletek, élei pedig a többdimenziós adattömbök, a tenzorok. A gépi intelligenciával foglalkozó problémakörök megoldásának nagy tárházát kínálja.
+
+A GPflowOpt\footnote{\url{https://github.com/GPflow/GPflowOpt}} egy Pythonban írt könyvtár Gauss folyamatokkal való Bayesi optimalizációhoz. Része a GPflow\footnote{\url{https://github.com/GPflow/GPflow/}} csomag, mely a Gauss folyamatokat hivatott kezelni. A TensorFlowt felhasználva teszi lehetővé a számítások felgyorsítását, skálázhatóságát, és nagy segítséget nyúlt a nyereség függvények kiszámításában is, mivel mentesíti a programot a gradiens számításának implementálási nehézségeitől.
+
+\subsubsection{GPflowOpt}
+
+A GPflowOpt fő osztálya az Optimizer ősosztás, melynek a gyereke a BayesianOptimizer. Paraméterei:\\
+BayesianOptimizer(domain, acquisition, optimizer, initial, scaling, hyper\_draws, callback)\\
+Domén: függvényparaméterek értelmezési tartományai\\
+Nyereség függvény: saját implementációjú objektumok\\
+Optimalizáló: opcionális paraméter, Optimizer osztály leszármazottja, a nyereség függvény optimalizálásához. Ha nem adjuk meg, a SciPy könyvtár optimize.minimize() metódusát használja.\\
+Kezdőpontok: Mely pontokat kiértékelve állítsa fel az algoritmus a Gauss folyamat kezdeti modelljét.\\
+Skálázás: Opcionális paraméter, default értéke igaz. Ha igaz, a bemenetek és kimenetek normalizáltak.\\
+Hiperparaméterek: Opcionális paraméter, lehetővé teszi hiperparaméterek specifikálását. Alapértelmezett működés esetén becsült értékeket használunk. A paramétert n értékre beállítva a valószínűségi becslés eloszlásából % TODO likelihood
+szerzünk n paramétert.\\
+Háttér függvényhívás: Opcionálisan megadható egy metódus, mely meghívódik minden modellfrissítés után. Ezzel lehetőséget nyújt a fejlesztőknek további funkcionalitásokat, módosításokat beiktatni az algoritmus menetébe.\\
+
+Metódusok:\\
+optimize(objectivefx, n\_iter): a kapott függvényt optimalizálja n\_iter iterációszámban, melynek default értéke 20.\\
+
+A Domain osztály reprezentálja a függvények paramétereit. Belőle öröklődik a Parameter osztály, abból pedig a ContinuousParameter, amit nekünk használni kell. Paraméterei: \\
+ContinuousParameter(label, lb, ub, xinit)\\
+Címke, alsó határ, felső határ, opcionális default érték (ha nem adjuk meg, a tartomány közepe).
+
+Amiről eddig még nem volt szó, az az optimalizáció kezdetén a függvénytér mintavételezésének a módszere. A GPflowOpt ebből is több variációt nyújt, a Design ősosztály leszármazottjai formájában: 
+\begin{itemize}
+	\item RandomDesign(size, domain): N véletlenszerűen kiválasztott pont a megadott tartományban.
+	\item FactorialDesign(level, domain): k-szintű felosztás minden dimenzió esetén, ezzel egy nagy rácshálóra bontva a teret.
+	\item LatinHyperCube(size, domain, max\_seed\_size): pontok közötti minimális távolságot optimalizálja, a teret adott méretű rácshálóra bontva, majd minden sorból és oszlopból csak egy mintát vételezve. Opcionális paraméter a tér felbontásánál alkalmazott maximális tartományszélesség.
+\end{itemize}
+
+A Gauss folyamat modelljét a GPflow csomag GPModel osztályának GPR leszármazottja állítja elő. Paraméterei:\\
+GPR(X, Y, kern, mean\_function)\\
+X: NxD méretű mátrix, ahol N a kezdőpontok száma, D a függvény dimenziója.\\
+Y: Nx1 méretű mátrix, a kezdőpontok kiértékelt függvényértékeivel.\\
+kern: Kernel objektum.\\
+mean\_function: opcionálisan megadható várhatóérték függvény, alapértelmezett értéke a konstans 0.
+
+A GPflowban számos kernel függvény implementálva van, melyek közös absztrakt őse a Kern osztály. Többek között megtalálhatóak \aref{subsec:bayes}. fejezetben említettek is:
+\begin{itemize}
+	% TODO \item RBF: négyzetes exponenciális kernel
+	% TODO ? \item Exponential: exponenciális kernel
+	\item Matern12
+	\item Matern32
+	\item Matern52
+\end{itemize} 
+
+Ezeknek a kombinálására is ad lehetőséget, összeadva vagy összeszorozva két kernel objektumot, a tulajdonságaik együtt jutnak érvényre a számításokban. Ezzel kellően nagy teret engedve a fejlesztőnek a neki megfelelő kernel függvény kialakításához. Paraméterük többek között a bemenetek dimenziója. Többdimenziós esetben lehetőségünk van az ARD\footnote{Automatic Relevance Determination} opcióval megadni, hogy a dimenziók egymástól függetlenek.
+
+A GPflowOpt a nyereség függvényekből is biztosítja a legnépszerűbbeket, és ezek esetében is lehetőségünk van a tetszőleges kombinálásra:
+\begin{itemize}
+	\item ExpectedImprovement
+	\item ProbabilityOfImprovement
+	\item LowerConfidenceBound
+\end{itemize}
+
+A GPflowOpt csomag fejlettségét mutatja, hogy lehetőséget ad az ismeretlen korlátok kezelésére is. Egy korlátfüggvényt definiálva beépíthető az algoritmusba, hogy a nyereség függvény azt is figyelembe vegye, az ismert korlátértékek alapján hol lehetnek a függvény által értelmezhető területek. Ezt tudja elvégezni a ProbabilityOfFeasibility osztály, amit az általunk használt egyéb nyereség függvénnyel kombinálhatunk. A működést azonban folytonos korlátfüggvényekre tervezték, így diszkrét értékkészletű függvények esetében, mint a mi "értelmezhető-nem-értelmezhető" bináris esetünk, nem ismert a függvény hatékonysága.
+
+\subsubsection{MyGPflowOpt}
+MyGPflowOpt osztályom célja a GPflowOpt által nyújtott testre szabható lehetőségeket kihasználva megoldani a kapott SPDN modell paraméter optimalizálását. A nyereség és kernel függvények közül az Acqisition és Kernel enum osztályok segítségével választhatunk, amelyek alapján aztán a MyAcquisiton és MyKernel segédosztályokat meghívva hozhatjuk létre a GPflow és GPflowOpt megfelelő objektumait.
+
+% TODO !!!!  MIT KEZDJEK A BLACK BOX CONSTRAINED MÓDDAL?? KÓDBAN NEM MŰKÖDIIIIK!! :'( 
+
+Mint említettem, ismeretlen korlátok kezelésére van lehetőség, azonban diszkrét esetre a működés nem kielégítő. Ezért ebben az implementációban is a büntető érték megoldását választottam a kiértékelhetetlen területek jelölésére és elkerülésének az ösztönzésére.
+
+\subsection{Optimalizálás Shogun toolbox használatával}
+
+A Shogun Machine learning Toolbox széles tárházat biztosít a hatékony és egységes gépi tanuláshoz. Nyílt forráskódú, C-ben implementált, de számos programozási nyelven elérhető, így Pythonul is. Hatékony eszköz a Gauss folyamatok kezeléséhez, akár regresszióról, akár klasszifikációról van szó. Erre alapozva írtam meg saját Bayesi optimalizációmat. Lehetővé teszi a hiperparaméterek optimalizálását is, ezzel csökkentve annak a lehetőségét, hogy a rosszul megválasztott beállítások csökkentik az optimalizáció hatékonyságát.
+
+\subsubsection{Shogun osztályok}
+
+A Bayesi optimalizáció során szükségünk van számos Shogun osztályra a Gauss folyamatok kezeléséhez.
+\begin{itemize}
+	\item RealFeatures: Azon pontokat reprezentálja, melyek ismertek a függvénytérben, erre illesztjük a prior modellt. Inicializáláskor oszlopvektoros kétdimenziós tömbben várja a paraméterek értékeit.
+	\item RegressionLabels: Az ismert pontokhoz tartozó függvényértékeket kezelő osztály, regressziónál.
+	\item BinaryLabels: Az ismert pontokhoz tartozó függvényértékeket kezelő osztály, bináris klasszifikációnál.
+	\item GaussianKernel: Gauss, vagy más néven négyzetes exponenciális kernel osztálya. Két paramétere van, az első a memória maximális mérete, nem jelentős, a második pedig a kernel működését befolyásoló paraméter ($\tau$).
+	\item ZeroMean: 0 várhatóérték függvény.
+	\item GaussianLikelihood: A Gauss valószínűséget reprezentálja.
+	\item LogitLikelihood: Szigmoidhoz hasonló függvény, valószínűségi eloszlás, a bináris klasszifikációt segíti.
+	\item ExactiInferenceMethod: Létrehozza a Gauss folyamatot a megadott tulajdonságokkal, mátrix függvények kiszámításával. Paraméterei a kernel, az ismert pontok és értékeik, a várhatóérték függvény és egy valószínűségi eloszlás. 
+	\item SingleLaplaceInferenceMethod: A bináris klasszifikáció Gauss folyamatát állítja fel. Paraméterei a kernel,az ismert pontok és értékeik, a várhatóérték függvény és egy valószínűségi eloszlás.
+	\item GaussianProcessRegression: A regressziót végző osztály. Paramétere egy Gauss folyamat.
+	\item GaussianProcessClassification: A klasszifikációt végző osztály. Paramétere egy Gauss folyamat.
+	\item GradientCriterion: Hiperparaméterek optimalizálásához szükséges gradiens kritériumot reprezentáló osztály. Nem igényel paramétereket.
+	\item GradientEvaluation: Hiperparaméterek optimalizálásához szükséges osztály, paraméterei egy Gauss folyamat, az ismert pontok és értékeik, egy gradiens kritérium, és egy boolean érték az automatikus zárolásról (esetünkben False).
+	\item GradientModelSelection: Az optimális hiperparamétereket kiválasztó osztály, paramétere eegy GradientEvaluation objektum.
+\end{itemize}
+
+\subsubsection{MyShogunOpt}
+
+Az általam implementált Bayesi optimalizációt végző osztály a MyShogunOpt. Az osztály paraméterei:\\
+Optimalizálandó SPDN modell\\
+Kezdőpontok száma\\
+Büntetőérték, ha nem kiszámítható helyen számítunk függvényértéket. Deafult értéke 10000.
+
+A Gauss folyamatokból a regressziót az ismeretlen nemlineáris célfüggvényünk közelítéséhez, a klasszifikációt pedig a nem kiszámítható területek feltérképezéséhez használom. Mivel mind a klasszifikációt, mind a regressziót minden esetben ugyanazokra a pontokra számítjuk ki, egészen egyszerűen az SPDN objektumunk által adott eredményt vizsgáljuk: helyes érték esetén a klasszifikáció célfüggvényének a pontban való értéke 1, SPDNException esetében azonban -1. Ekkor a regressziós modell frissítéséhez az adott büntetőértéket használjuk.
+
+A nyereség függvények közül a javulás várható értékét (\ref{eq:EI}) használtam, megszorozva a klasszifikáció által visszaadott valószínűséggel, hogy az adott pontban a célfüggvényünk értelmezhető-e. A maximumának a megkereséséhez a SciPy könyvtár minimize metódusát használtam, a nyereség függvényem -1-szeresével.
+
+Az algoritmus működése során az előző fejezetben leírt Shogun osztályokat alkalmaztam. Az algoritmus működése:
+
+% TODO ide mindenképpen jó lenne egy folyamatábra
+\begin{enumerate}
+	\item Megadott számú kezdeti pontot mintavételezünk, az aktuális globális minimumot egy változóban tároljuk.
+	\item Felállítjuk rá a Gauss folyamatokat, külön modellt a regresszióhoz, külön a klasszifikációhoz.
+	\item Hiperparaméter optimalizálás elvégzése a meglévő információkkal.
+	\item A felállított posterior modellek várhatóérték függvénye becslése a célfüggvényünknek.
+	\item Nyereség függvény maximumának megkeresése.
+	\item Az így kapott pontban a célfüggvény kiszámítása, globális minimum frissítése, ha annál jobbat találtunk. A pont és függvényérték hozzáadása az eddigi ismert pontokhoz és értékekhez. 
+	\item Regressziós és klasszifikációs modell frissítése az új ponthalmazzal.
+	\item Folytatjuk a 3. pontban, egészen addig, míg el nem végezzük a maximális iterációszámot, vagy a globális minimum bele nem esik a tűréshatárba, kellően közel 0-hoz.
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
