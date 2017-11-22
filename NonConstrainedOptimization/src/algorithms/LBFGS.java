@@ -1,9 +1,9 @@
 package algorithms;
 import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealVector;
 
 import hu.bme.mit.inf.optimization.wrapper.breeze.LbfgsWrapper;
 import models.Models;
+import spdn.SPDNResult;
 import spdn.SPDN;
 
 
@@ -16,7 +16,7 @@ public class LBFGS {
 		this.spdn = new SPDN(model,0);
 	}
 
-	public RealVector optimize(int m, int maxIter, double tolerance, double[] initPoint, int restart) {
+	public SPDNResult optimize(int m, int maxIter, double tolerance, double[] initPoint, int restart) {
 		m = m > 0 ? m : 4; 
 		maxIter = maxIter > 0 ? maxIter : 20;
 		tolerance = tolerance > 0 ? tolerance : 0.001;
@@ -40,6 +40,6 @@ public class LBFGS {
 			xn = model.getRandomPoint();
 		}
 		
-		return MatrixUtils.createRealVector(minPoint);
+		return new SPDNResult(SPDN.convertPoint(MatrixUtils.createRealVector(minPoint)).toArray(), spdn.f(minPoint), model.getAllParams());
 	}
 }

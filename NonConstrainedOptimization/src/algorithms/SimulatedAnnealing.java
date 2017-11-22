@@ -4,6 +4,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import models.Models;
+import spdn.SPDNResult;
 import spdn.SPDN;
 
 
@@ -27,7 +28,7 @@ public class SimulatedAnnealing {
 		this.spdn = new SPDN(model, 0);
 	}
 	
-	public RealVector optimize(double initTemp, double coolingRate, double border, double borderSmallerRate, int restart, double tolerance) {
+	public SPDNResult optimize(double initTemp, double coolingRate, double border, double borderSmallerRate, int restart, double tolerance) {
 		initParams(initTemp, coolingRate, border, borderSmallerRate, restart, tolerance);
 		
 		int i = 0;
@@ -66,7 +67,7 @@ public class SimulatedAnnealing {
 				minValue = bestF;
 			}
 		}
-		return minPoint;
+		return new SPDNResult(SPDN.convertPoint(minPoint).toArray(), spdn.f(minPoint), model.getAllParams());
 	}
 	
 	private double acceptanceProbability(double energy, double newEnergy, double temp) {

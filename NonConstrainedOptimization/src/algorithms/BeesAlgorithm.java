@@ -10,6 +10,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import models.Models;
+import spdn.SPDNResult;
 import spdn.SPDN;
 
 public class BeesAlgorithm{
@@ -67,7 +68,7 @@ public class BeesAlgorithm{
 		}
 	}
 	
-	public RealVector optimize(int maxIter, double initRadius, double radiusSmallerRate, int scoutSize, int bestBeesSize, int eliteBeesSize, int recruitedOfBestsSize, int recruitedOfElitesSize) {
+	public SPDNResult optimize(int maxIter, double initRadius, double radiusSmallerRate, int scoutSize, int bestBeesSize, int eliteBeesSize, int recruitedOfBestsSize, int recruitedOfElitesSize) {
 		initParams(maxIter, initRadius, radiusSmallerRate, scoutSize, bestBeesSize, eliteBeesSize, recruitedOfBestsSize, recruitedOfElitesSize);
 		List<Bee> scouts = initSwarm();
 		
@@ -83,7 +84,7 @@ public class BeesAlgorithm{
 			
 			radius *= this.radiusSmallerRate;
 		}
-		return scouts.get(0).getPos();
+		return new SPDNResult(SPDN.convertPoint(scouts.get(0).getPos()).toArray(), spdn.f(scouts.get(0).getPos()), model.getAllParams());
 	}
 	
 	private void calculateLeadsAndRecruiteds(List<Bee> scouts, int fromIdx, int count, int recruitedSize) {

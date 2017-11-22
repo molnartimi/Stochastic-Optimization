@@ -88,7 +88,6 @@ public class SPDN implements DiffFunction {
 		}
 	}
 		
-	
 	public int getDimension() {
 		return parameters.size();
 	}
@@ -135,5 +134,4 @@ public class SPDN implements DiffFunction {
         return MatrixUtils.createRealVector(fDResult);
 	}
 	
-
 }

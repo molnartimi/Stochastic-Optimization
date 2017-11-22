@@ -4,6 +4,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import models.Models;
+import spdn.SPDNResult;
 import spdn.SPDN;
 
 public class GradientDescent {
@@ -15,7 +16,7 @@ public class GradientDescent {
 		this.spdn = new SPDN(model,0);
 	}
 
-	public RealVector optimize(double gamma, double tolerance, double[] initPoint, int restart) {		
+	public SPDNResult optimize(double gamma, double tolerance, double[] initPoint, int restart) {		
 		RealVector minPoint = null;
 		Double minValue = null;
 		int iter = 0;
@@ -52,7 +53,7 @@ public class GradientDescent {
 			xn = MatrixUtils.createRealVector(model.getRandomPoint());
 		}
 		
-		return minPoint;
+		return new SPDNResult(SPDN.convertPoint(minPoint).toArray(), spdn.f(minPoint), model.getAllParams());
 	}
 
 }

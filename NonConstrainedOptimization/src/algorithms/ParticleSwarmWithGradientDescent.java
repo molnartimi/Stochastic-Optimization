@@ -7,6 +7,8 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import models.Models;
+import spdn.SPDNResult;
+import spdn.SPDN;
 
 public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
 	
@@ -17,7 +19,7 @@ public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
 		super(model);
 	}
 	
-	public RealVector optimize(int swarmSize, int maxIter, int gradientMaxIter, double gamma, double omega, double fiParticle, double fiGlobal) {
+	public SPDNResult optimize(int swarmSize, int maxIter, int gradientMaxIter, double gamma, double omega, double fiParticle, double fiGlobal) {
 		initParams(swarmSize, maxIter, gradientMaxIter, gamma, omega, fiParticle, fiGlobal);
 		
 		List<Particle> swarm = initSwarm();
@@ -31,7 +33,7 @@ public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
 			doGradientDescent();
 			
 		}
-		return bestPoint;
+		return new SPDNResult(SPDN.convertPoint(bestPoint).toArray(), spdn.f(bestPoint), model.getAllParams());
 	}
 	
 	protected void initParams(int swarmSize, int maxIter, int gradientMaxIter, double gamma, double omega, double fiParticle, double fiGlobal) {
