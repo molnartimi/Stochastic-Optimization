@@ -43,8 +43,8 @@ class MyShogunOpt:
 
             idx = 0
             while self.MIN_value > self.XTOL and idx < max_iter:
-                # EI function
                 reg_gp, class_gp = self._train_gps()
+                # EI function
                 def ei_pof(x):
                     X = self._array_1_to_2(x,len(self.model.parameters),1)
                     mean, variance, class_probability = self.get_mean_variance_classprobability(X, reg_gp)

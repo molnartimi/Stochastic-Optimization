@@ -79,9 +79,10 @@ class MyGPflowOpt:
 
         # Models
         objective_model = gpflow.gpr.GPR(X, Yo, self.KERNELS[kernel](len(self.model.parameters)))
+        objective_model.kern.lengthscales.transform = gpflow.transforms.Log1pe(1e-3)
         constraint_model = gpflow.gpr.GPR(np.copy(X), Yc, self.KERNELS[kernel](len(self.model.parameters)))
         constraint_model.kern.lengthscales.transform = gpflow.transforms.Log1pe(1e-3)
-        constraint_model.likelihood.variance.prior = self.PRIORS[constrain_prior](prior_param1,prior_param2)
+        #constraint_model.likelihood.variance.prior = self.PRIORS[constrain_prior](prior_param1,prior_param2) # TODO is it necessary?
 
         # Setup
         alpha = self.ACQS[acquisition](objective_model)
@@ -144,6 +145,7 @@ class Kernel:
 
 class MyKernel:
     def exp(input_dim): return gpflow.kernels.Exponential(input_dim)
+    # TODO RBF kernel!!
     def m12(input_dim): return gpflow.kernels.Matern12(input_dim)
     def m32(input_dim): return gpflow.kernels.Matern32(input_dim)
     def m52(input_dim): return gpflow.kernels.Matern52(input_dim)
@@ -156,8 +158,11 @@ class Acquisition:
 
 
 class MyAcquisition:
+    @staticmethod
     def ei(optmodel): return ExpectedImprovement(optmodel)
+    @staticmethod
     def poi(optmodel): return ProbabilityOfImprovement(optmodel)
+    @staticmethod
     def lcb(optmodel): return LowerConfidenceBound(optmodel)
 
 class Prior:
@@ -167,7 +172,11 @@ class Prior:
     UNIFORM = 'uniform'
 
 class MyPrior:
+    @staticmethod
     def gaussian(mu,variance): return Gaussian(mu,variance)
+    @staticmethod
     def lognormal(mu,variance): return LogNormal(mu,variance)
+    @staticmethod
     def gamma(shape,scale): return Gamma(shape,scale)
+    {staticmethod}
     def uniform(lower,upper): return Uniform(lower,upper)

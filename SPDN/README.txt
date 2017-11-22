@@ -18,6 +18,8 @@
 
 >> <JobsProcessing>[inst](incRate)
 
+<Expense>|<JobComplete>|<JobsProcessing>|<NoFailedServer>
+
 5. The answer is OK at successful read, otherwise begins with ERROR
 
 << OK

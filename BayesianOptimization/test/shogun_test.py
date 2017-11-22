@@ -6,7 +6,7 @@ from algorithm.myshogunopt import *
 
 
 class ShogunOptTest(unittest.TestCase):
-    @unittest.skip("works fine")
+    #@unittest.skip("works fine")
     def test_simple_server_opt(self):
         shogun = MyShogunOpt(models.simple_server, 100)
         result = shogun.optimize(10)
@@ -18,7 +18,7 @@ class ShogunOptTest(unittest.TestCase):
         result = shogun.optimize(2)
         print(result)
 
-    #@unittest.skip("too long")
+    @unittest.skip("too long")
     def test_hybrid_cloud_opt(self):
         shogun = MyShogunOpt(models.hybrid_cloud, 20)
         result = shogun.optimize(5)

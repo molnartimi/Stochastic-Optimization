@@ -13,10 +13,9 @@ class SPDN:
         """ Class to communicate with SPDN.exe
         :param model: Model namedtuple from test.models
         """
-        self.SPDN_LOCATION = os.path.dirname(os.path.abspath(__file__))
-        self.spdn_cmd = ('mono', self.SPDN_LOCATION + '/resource/SPDN.exe', 'reward', '-c',
-                         self.SPDN_LOCATION + '/resource/configs/SP_PAR_BICG.txt', '-m',
-                         self.SPDN_LOCATION + '/resource/models/' + model.file, '--interactive', '-l', 'File')
+        self.spdn_cmd = ('mono', '../SPDN/SPDN.exe', 'reward', '-c',
+                         '../SPDN/configs/SP_PAR_BICG.txt', '-m',
+                         '../SPDN/models/' + model.file, '--interactive', '-l', 'File')
         self.model_id = model.id
         self.params = model.parameters
         self.rewards = model.rewards
