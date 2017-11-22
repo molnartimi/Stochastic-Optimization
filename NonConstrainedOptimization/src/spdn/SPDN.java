@@ -52,6 +52,13 @@ public class SPDN implements DiffFunction {
 		}
 	}
 	
+	public static RealVector convertPoint(RealVector v){ 
+	    RealVector result = MatrixUtils.createRealVector(new double[v.getDimension()]); 
+	    for(int i = 0; i < v.getDimension(); i++) 
+	      result.setEntry(i, Math.exp(v.getEntry(i))); 
+	    return result; 
+	} 
+	
 	public RealVector Df(double[] variables) {
 		return Df(MatrixUtils.createRealVector(variables));
 	}

@@ -48,8 +48,6 @@ public class GradientDescent {
 				minPoint = xnNext;
 			}
 				
-			//System.out.println(minValue);
-				
 			iter++;
 			xn = MatrixUtils.createRealVector(model.getRandomPoint());
 		}

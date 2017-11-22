@@ -69,7 +69,6 @@ public enum Models {
 	
 	public double[] getRandomPoint() {
 		double[] point = new double[getDim()];
-		
 		Random rand = new Random();
 		
 		for(int i = 0; i < getDim(); i++) {
@@ -77,11 +76,18 @@ public enum Models {
 			point[i] = rand.nextDouble() * (border.get(1) - border.get(0)) + border.get(0);
 		}
 		
-		/*String pont = "";
-		for(int i=0; i<point.length; i++) {
-			pont += point[i] + ",";
+		return point;
+	}
+	
+	public double[] getRandomVelocity() {
+		double[] point = new double[getDim()];
+		Random rand = new Random();
+		
+		for(int i = 0; i < getDim(); i++) {
+			List<Double> border = borders.get(parameters.get(i));
+			double dif = border.get(1) - border.get(0);
+			point[i] = rand.nextDouble() * 2 * dif - dif;
 		}
-		System.out.println("RANDOM PONT: " + pont);	*/
 		return point;
 	}
 }

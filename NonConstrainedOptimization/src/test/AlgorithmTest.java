@@ -1,6 +1,5 @@
 package test;
 
-import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 import org.junit.After;
 import org.junit.Ignore;
@@ -72,13 +71,7 @@ public class AlgorithmTest {
 	
 	@After
 	public void writeOutResult(){
-		System.out.println("- Point:" + convertResult(result).toString() + "\n- Value: " + f.f(result));
+		System.out.println("- Point:" + result.toString() + "\n- Value: " + f.f(result));
 	}
 	
-	private RealVector convertResult(RealVector v){ 
-	    RealVector result = MatrixUtils.createRealVector(new double[f.getDimension()]); 
-	    for(int i=0; i<f.getDimension(); i++) 
-	      result.setEntry(i, Math.exp(v.getEntry(i))); 
-	    return result; 
-	} 
 }
