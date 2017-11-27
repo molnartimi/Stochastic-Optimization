@@ -6,16 +6,17 @@ import java.util.Random;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
-import models.Models;
+import models.Model;
 import spdn.SPDNResult;
 import spdn.SPDN;
 
 public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
+	public static final String ID = "PSGD";
 	
 	private int gradientMaxIter = 5;
-	private double gamma;
+	private double gamma = 1;
 	
-	public ParticleSwarmWithGradientDescent(Models model){
+	public ParticleSwarmWithGradientDescent(Model model){
 		super(model);
 	}
 	
@@ -33,7 +34,7 @@ public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
 			doGradientDescent();
 			
 		}
-		return new SPDNResult(SPDN.convertPoint(bestPoint).toArray(), spdn.f(bestPoint), model.getAllParams());
+		return new SPDNResult(SPDN.convertPoint(bestPoint).toArray(), spdn.f(bestPoint), model.getAllParams(), ID, model.getId());
 	}
 	
 	protected void initParams(int swarmSize, int maxIter, int gradientMaxIter, double gamma, double omega, double fiParticle, double fiGlobal) {
@@ -49,9 +50,9 @@ public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
 		RealVector xBefore = MatrixUtils.createRealVector(new double[spdn.getDimension()]);
 		
 		for (int j = 0; j < gradientMaxIter; j++) {
-			xn = xn.add(spdn.Df(xn).mapMultiply(-r.nextDouble() * gamma));
-			RealVector DxB = spdn.Df(xBefore);
-			RealVector Dxn = spdn.Df(xn);
+			xn = xn.add(spdn.df(xn).mapMultiply(-r.nextDouble() * gamma));
+			RealVector DxB = spdn.df(xBefore);
+			RealVector Dxn = spdn.df(xn);
 			gamma = xn.add(xBefore.mapMultiply(-1)).dotProduct(Dxn.add(DxB.mapMultiply(-1)));
 			gamma /= Dxn.add(DxB.mapMultiply(-1)).getNorm() * Dxn.add(DxB.mapMultiply(-1)).getNorm();
 		}

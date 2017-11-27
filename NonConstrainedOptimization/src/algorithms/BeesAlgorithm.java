@@ -9,13 +9,15 @@ import java.util.Random;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
-import models.Models;
+import models.Model;
 import spdn.SPDNResult;
 import spdn.SPDN;
 
 public class BeesAlgorithm{
-	Models model;
-	SPDN spdn;
+	public static final String ID = "BEES";
+	
+	private Model model;
+	private SPDN spdn;
 	
 	private int scoutSize = 20;
 	private int bestBeesSize = 8;
@@ -24,10 +26,10 @@ public class BeesAlgorithm{
 	private int recruitedOfElitesSize = 10;
 	
 	private int maxIter = 20;
-	private double radius = 0.3;
-	private double radiusSmallerRate = 0.7;
+	private double radius = 0.5;
+	private double radiusSmallerRate = 0.8;
 	
-	public BeesAlgorithm(Models model) {
+	public BeesAlgorithm(Model model) {
 		this.model = model;
 		this.spdn = new SPDN(model, 0);
 	}
@@ -84,7 +86,7 @@ public class BeesAlgorithm{
 			
 			radius *= this.radiusSmallerRate;
 		}
-		return new SPDNResult(SPDN.convertPoint(scouts.get(0).getPos()).toArray(), spdn.f(scouts.get(0).getPos()), model.getAllParams());
+		return new SPDNResult(SPDN.convertPoint(scouts.get(0).getPos()).toArray(), spdn.f(scouts.get(0).getPos()), model.getAllParams(), ID, model.getId());
 	}
 	
 	private void calculateLeadsAndRecruiteds(List<Bee> scouts, int fromIdx, int count, int recruitedSize) {

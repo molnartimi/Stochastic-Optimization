@@ -3,7 +3,7 @@ package algorithms;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
-import models.Models;
+import models.Model;
 import spdn.SPDNResult;
 import spdn.SPDN;
 
@@ -12,30 +12,31 @@ import spdn.SPDN;
  * source: http://www.theprojectspot.com/tutorial-post/simulated-annealing-algorithm-for-beginners/6
  */
 public class SimulatedAnnealing {
-	Models model;
+	public static final String ID = "SIMA";
+	
+	private Model model;
 	SPDN spdn;
 	
 	private double  temp = 100;
 	private double coolingRate = 0.9;
 	private double border = 0.3;
 	private double borderSmallerRate = 0.95;
-	private int restart = 2;
 	private int innerRestart = 3;
 	private double tolerance = 0.001;
 	
-	public SimulatedAnnealing(Models model) {
+	public SimulatedAnnealing(Model model) {
 		this.model = model;
 		this.spdn = new SPDN(model, 0);
 	}
 	
-	public SPDNResult optimize(double initTemp, double coolingRate, double border, double borderSmallerRate, int restart, double tolerance) {
-		initParams(initTemp, coolingRate, border, borderSmallerRate, restart, tolerance);
+	public SPDNResult optimize(double initTemp, double coolingRate, double border, double borderSmallerRate, int restart) {
+		initParams(initTemp, coolingRate, border, borderSmallerRate, restart);
 		
 		int i = 0;
 		RealVector minPoint = null;
 		double minValue = this.tolerance + 1;
 		
-		while (i < this.restart && minValue > this.tolerance) {
+		while (i < restart+1 && minValue > this.tolerance) {
 			RealVector xn = MatrixUtils.createRealVector(model.getRandomPoint());
 			
 			RealVector xnext = MatrixUtils.createRealVector(new double[spdn.getDimension()]);
@@ -47,7 +48,7 @@ public class SimulatedAnnealing {
 			while (temp > 1) {
 				for(int j = 0; j < innerRestart; j++){
 					for(int k = 0; k < spdn.getDimension(); k++)
-						xnext.setEntry(k, (xn.getEntry(k)-border)+Math.random()*2*this.border);
+						xnext.setEntry(k, (xn.getEntry(k)-this.border)+Math.random()*2*this.border);
 					fxnext = spdn.f(xnext);
 						
 					if (acceptanceProbability(fx,fxnext,temp) > Math.random())
@@ -66,8 +67,9 @@ public class SimulatedAnnealing {
 				minPoint = best.copy();
 				minValue = bestF;
 			}
+			i++;
 		}
-		return new SPDNResult(SPDN.convertPoint(minPoint).toArray(), spdn.f(minPoint), model.getAllParams());
+		return new SPDNResult(SPDN.convertPoint(minPoint).toArray(), spdn.f(minPoint), model.getAllParams(), ID, model.getId());
 	}
 	
 	private double acceptanceProbability(double energy, double newEnergy, double temp) {
@@ -78,13 +80,11 @@ public class SimulatedAnnealing {
         return result;
     }
 	
-	private void initParams(double initTemp, double coolingRate, double border, double borderSmallerRate, int restart, double tolerance) {
+	private void initParams(double initTemp, double coolingRate, double border, double borderSmallerRate, int restart) {
 		if (initTemp > 0) this.temp = initTemp;
 		if (coolingRate > 0) this.coolingRate = coolingRate;
 		if (border > 0) this.border = border;
 		if (borderSmallerRate > 0) this.borderSmallerRate = borderSmallerRate;
-		if (restart > 0) this.restart = restart;
-		if (tolerance > 0) this.tolerance = tolerance;
 	}
 
 }

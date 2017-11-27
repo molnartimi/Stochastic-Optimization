@@ -10,7 +10,7 @@ import java.util.Random;
 import hu.bme.mit.inf.petridotnet.spdn.Parameter;
 import hu.bme.mit.inf.petridotnet.spdn.Reward;
 
-public enum Models {
+public enum Model {
 	SIMPLE_SERVER("SMPL", "simple-server.pnml", new String[]{"requestRate","serviceTime"}, new Double[]{1.5, 0.25},
 			new Double[][] {{0.15, 15.0}, {0.025, 2.5}}, new String[] {"Idle", "ServedRequests"},
 			new Double[] {0.727272727272727, 1.09090909090909}),
@@ -36,7 +36,7 @@ public enum Models {
 	private List<Reward> rewards = new ArrayList<>();
 	private Map<Reward,Double> measurements = new HashMap<>();
 	
-	private Models(String id, String file, String[] parameters, Double[] validValues, Double[][] borders,
+	private Model(String id, String file, String[] parameters, Double[] validValues, Double[][] borders,
 			String[] rewards, Double[] measurements) {
 		this.id = id;
 		this.file = file;

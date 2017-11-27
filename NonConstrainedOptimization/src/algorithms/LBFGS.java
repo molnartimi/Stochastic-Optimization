@@ -2,16 +2,18 @@ package algorithms;
 import org.apache.commons.math3.linear.MatrixUtils;
 
 import hu.bme.mit.inf.optimization.wrapper.breeze.LbfgsWrapper;
-import models.Models;
+import models.Model;
 import spdn.SPDNResult;
 import spdn.SPDN;
 
 
 public class LBFGS {
-	private SPDN spdn;
-	private Models model;
+	public static final String ID = "BFGS";
 	
-	public LBFGS(Models model) {
+	private SPDN spdn;
+	private Model model;
+	
+	public LBFGS(Model model) {
 		this.model = model;
 		this.spdn = new SPDN(model,0);
 	}
@@ -40,6 +42,6 @@ public class LBFGS {
 			xn = model.getRandomPoint();
 		}
 		
-		return new SPDNResult(SPDN.convertPoint(MatrixUtils.createRealVector(minPoint)).toArray(), spdn.f(minPoint), model.getAllParams());
+		return new SPDNResult(SPDN.convertPoint(MatrixUtils.createRealVector(minPoint)).toArray(), spdn.f(minPoint), model.getAllParams(), ID, model.getId());
 	}
 }

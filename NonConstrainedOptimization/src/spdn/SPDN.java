@@ -18,7 +18,7 @@ import hu.bme.mit.inf.petridotnet.spdn.Reward;
 import hu.bme.mit.inf.petridotnet.spdn.Spdn;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnAnalyzer;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
-import models.Models;
+import models.Model;
 
 public class SPDN implements DiffFunction {
 	
@@ -29,7 +29,7 @@ public class SPDN implements DiffFunction {
 	private Map<Reward,Double> empiricalMeasurements;
 	private double errorValue;
 	
-	public SPDN(Models model, double errorValue) {
+	public SPDN(Model model, double errorValue) {
 		Spdn spdn = new Spdn("../../SPDN");
 		analyzer = spdn.openModel("../SPDN/models/" + model.getFileName(), AnalysisConfiguration.DEFAULT);
 		parameters = model.getAllParams();
@@ -43,7 +43,7 @@ public class SPDN implements DiffFunction {
 		return f(MatrixUtils.createRealVector(variables));
 	}
 	
-	public double f(RealVector variables) {		
+	public double f(RealVector variables) {	 // TODO refaktor SpdnException továbbdobásához!!	
 		try {
 			AnalysisResult result = runAnalyzer(variables, false);
 			return calcObjectiveF(result);
@@ -59,11 +59,11 @@ public class SPDN implements DiffFunction {
 	    return result; 
 	} 
 	
-	public RealVector Df(double[] variables) {
-		return Df(MatrixUtils.createRealVector(variables));
+	public RealVector df(double[] variables) {
+		return df(MatrixUtils.createRealVector(variables));
 	}
 
-	public RealVector Df(RealVector variables) {		
+	public RealVector df(RealVector variables) {		
         try {
         	AnalysisResult result = runAnalyzer(variables, true);
         	return calcObjectiveDf(result, variables);

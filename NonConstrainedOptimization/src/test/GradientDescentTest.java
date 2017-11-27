@@ -1,12 +1,12 @@
 package test;
 
 import algorithms.GradientDescent;
-import models.Models;
+import models.Model;
 
 public class GradientDescentTest extends BaseTest{
 
 	@Override
-	protected void test(Models model) {
+	protected void test(Model model) {
 		GradientDescent opt = new GradientDescent(model);
 		
 		System.out.println(opt.optimize(0, 0, new double[0], 5).toString());

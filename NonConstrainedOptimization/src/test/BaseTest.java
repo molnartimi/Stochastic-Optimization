@@ -2,24 +2,24 @@ package test;
 
 import org.junit.Test;
 
-import models.Models;
+import models.Model;
 
 public abstract class BaseTest {
 	
 	@Test
 	public void simpleServerTests() {
-		test(Models.SIMPLE_SERVER);
+		test(Model.SIMPLE_SERVER);
 	}
 	
 	@Test
 	public void vclStochasticTests() {
-		test(Models.VCL_STOCHASTIC);
+		test(Model.VCL_STOCHASTIC);
 	}
 
 	@Test
 	public void hybridCloudTests() {
-		test(Models.HYBRID_CLOUD);
+		test(Model.HYBRID_CLOUD);
 	}
 	
-	protected abstract void test(Models model);
+	protected abstract void test(Model model);
 }

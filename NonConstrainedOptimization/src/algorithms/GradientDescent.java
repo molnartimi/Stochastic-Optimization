@@ -3,15 +3,17 @@ package algorithms;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
-import models.Models;
+import models.Model;
 import spdn.SPDNResult;
 import spdn.SPDN;
 
 public class GradientDescent {
-	private SPDN spdn;
-	private Models model;
+	public static final String ID = "GRAD";
 	
-	public GradientDescent(Models model) {
+	private SPDN spdn;
+	private Model model;
+	
+	public GradientDescent(Model model) {
 		this.model = model;
 		this.spdn = new SPDN(model,0);
 	}
@@ -28,14 +30,14 @@ public class GradientDescent {
 			tolerance = tolerance > 0 ? tolerance : 0.001;
 			
 			RealVector xnBefore;
-			RealVector xnNext = xn.add(spdn.Df(xn).mapMultiply(-gamma));
+			RealVector xnNext = xn.add(spdn.df(xn).mapMultiply(-gamma));
 			
-			while (spdn.Df(xnNext).getNorm() >= tolerance){
+			while (spdn.df(xnNext).getNorm() >= tolerance){
 				xnBefore = xn.copy();
 				xn = xnNext.copy();
 					
-				RealVector DxB = spdn.Df(xnBefore);
-				RealVector Dx = spdn.Df(xn);
+				RealVector DxB = spdn.df(xnBefore);
+				RealVector Dx = spdn.df(xn);
 					
 				gamma = xn.add(xnBefore.mapMultiply(-1)).dotProduct(Dx.add(DxB.mapMultiply(-1)));
 				gamma /= Dx.add(DxB.mapMultiply(-1)).getNorm() * Dx.add(DxB.mapMultiply(-1)).getNorm();
@@ -53,7 +55,7 @@ public class GradientDescent {
 			xn = MatrixUtils.createRealVector(model.getRandomPoint());
 		}
 		
-		return new SPDNResult(SPDN.convertPoint(minPoint).toArray(), spdn.f(minPoint), model.getAllParams());
+		return new SPDNResult(SPDN.convertPoint(minPoint).toArray(), spdn.f(minPoint), model.getAllParams(), ID, model.getId());
 	}
 
 }

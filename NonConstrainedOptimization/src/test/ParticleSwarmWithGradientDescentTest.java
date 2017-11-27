@@ -1,12 +1,12 @@
 package test;
 
 import algorithms.ParticleSwarmWithGradientDescent;
-import models.Models;
+import models.Model;
 
 public class ParticleSwarmWithGradientDescentTest extends BaseTest{
 
 	@Override
-	protected void test(Models model) {
+	protected void test(Model model) {
 		ParticleSwarmWithGradientDescent opt = new ParticleSwarmWithGradientDescent(model);
 		
 		System.out.println(opt.optimize(0, 0, 0, 0, 0, 0, 0).toString());

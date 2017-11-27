@@ -1,12 +1,12 @@
 package test;
 
 import algorithms.ParticleSwarm;
-import models.Models;
+import models.Model;
 
 public class ParticleSwarmTest extends BaseTest{
 
 	@Override
-	protected void test(Models model) {
+	protected void test(Model model) {
 		ParticleSwarm opt = new ParticleSwarm(model);
 		
 		System.out.println(opt.optimize(0, 0, 0, 0, 0).toString());
