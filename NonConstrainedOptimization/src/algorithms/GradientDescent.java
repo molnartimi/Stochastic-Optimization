@@ -1,5 +1,8 @@
 package algorithms;
 
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -22,11 +25,13 @@ public class GradientDescent {
 		RealVector minPoint = null;
 		Double minValue = null;
 		int iter = 0;
+		double initGamma = gamma;
+		
 		RealVector xn = initPoint.length > 0 ? MatrixUtils.createRealVector(initPoint) : MatrixUtils.createRealVector(model.getRandomPoint());
 		
 		while (iter < restart+1 && (minValue == null || minValue > tolerance)) {
 			
-			gamma = gamma > 0 ? gamma : 1.0;
+			gamma = initGamma > 0 ? initGamma : 1.0;
 			tolerance = tolerance > 0 ? tolerance : 0.001;
 			
 			RealVector xnBefore;
@@ -55,7 +60,17 @@ public class GradientDescent {
 			xn = MatrixUtils.createRealVector(model.getRandomPoint());
 		}
 		
-		return new SPDNResult(SPDN.convertPoint(minPoint).toArray(), spdn.f(minPoint), model.getAllParams(), ID, model.getId());
+		return new SPDNResult(spdn.f(minPoint), SPDN.convertPoint(minPoint).toArray(), ID, getHyperParams(initGamma, tolerance, restart), model);
 	}
+	
+	private SortedMap<String, Double> getHyperParams(double gamma, double tolerance, int restart) {
+		TreeMap<String, Double> map = new TreeMap<>();
+		map.put("gamma", gamma);
+		map.put("tolerance", tolerance);
+		map.put("restart", (double) restart);
+		return map;
+	}
+	
+	
 
 }

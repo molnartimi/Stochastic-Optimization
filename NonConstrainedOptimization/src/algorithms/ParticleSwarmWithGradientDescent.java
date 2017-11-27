@@ -2,6 +2,8 @@ package algorithms;
 
 import java.util.List;
 import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
@@ -34,7 +36,7 @@ public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
 			doGradientDescent();
 			
 		}
-		return new SPDNResult(SPDN.convertPoint(bestPoint).toArray(), spdn.f(bestPoint), model.getAllParams(), ID, model.getId());
+		return new SPDNResult(spdn.f(bestPoint), SPDN.convertPoint(bestPoint).toArray(), ID, getHyperParams(), model);
 	}
 	
 	protected void initParams(int swarmSize, int maxIter, int gradientMaxIter, double gamma, double omega, double fiParticle, double fiGlobal) {
@@ -45,6 +47,7 @@ public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
 	
 	protected void doGradientDescent() {
 		Random r = new Random();
+		double gamma = this.gamma;
 		
 		RealVector xn = bestPoint.copy();
 		RealVector xBefore = MatrixUtils.createRealVector(new double[spdn.getDimension()]);
@@ -62,5 +65,17 @@ public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
 			bestPoint = xn.copy();
 			bestValue = newValue;
 		}
+	}
+	
+	private SortedMap<String, Double> getHyperParams() {
+		TreeMap<String, Double> map = new TreeMap<>();
+		map.put("swarmSize", (double) swarmSize);
+		map.put("maxIter", (double) maxIter);
+		map.put("omega", omega);
+		map.put("fiParticle", fiParticle);
+		map.put("fiGlobal", fiGlobal);
+		map.put("gradientMaxIter", (double) gradientMaxIter);
+		map.put("gamma", gamma);
+		return map;
 	}
 }

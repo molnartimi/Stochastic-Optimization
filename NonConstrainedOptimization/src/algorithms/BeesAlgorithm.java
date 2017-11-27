@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
@@ -86,7 +88,11 @@ public class BeesAlgorithm{
 			
 			radius *= this.radiusSmallerRate;
 		}
-		return new SPDNResult(SPDN.convertPoint(scouts.get(0).getPos()).toArray(), spdn.f(scouts.get(0).getPos()), model.getAllParams(), ID, model.getId());
+		return new SPDNResult(spdn.f(scouts.get(0).getPos()),
+				SPDN.convertPoint(scouts.get(0).getPos()).toArray(), 
+				ID, 
+				getHyperParams(initRadius),
+				model);
 	}
 	
 	private void calculateLeadsAndRecruiteds(List<Bee> scouts, int fromIdx, int count, int recruitedSize) {
@@ -139,5 +145,17 @@ public class BeesAlgorithm{
 		}
 		return swarm;
 	}
-
+	
+	private SortedMap<String, Double> getHyperParams(double initRadius) {
+		TreeMap<String, Double> map = new TreeMap<>();
+		map.put("maxIter", (double) this.maxIter);
+		map.put("initRadius", initRadius);
+		map.put("radiusSmallerRate", this.radiusSmallerRate);
+		map.put("scoutSize", (double) this.scoutSize);
+		map.put("bestBeesSize", (double) this.bestBeesSize);
+		map.put("eliteBeesSize", (double) this.eliteBeesSize);
+		map.put("recruitedOfBestsSize", (double) this.recruitedOfBestsSize);
+		map.put("recruitedOfElitesSize", (double) this.recruitedOfElitesSize);
+		return map;
+	}
 }

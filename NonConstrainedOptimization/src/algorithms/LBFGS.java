@@ -1,4 +1,7 @@
 package algorithms;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.apache.commons.math3.linear.MatrixUtils;
 
 import hu.bme.mit.inf.optimization.wrapper.breeze.LbfgsWrapper;
@@ -42,6 +45,19 @@ public class LBFGS {
 			xn = model.getRandomPoint();
 		}
 		
-		return new SPDNResult(SPDN.convertPoint(MatrixUtils.createRealVector(minPoint)).toArray(), spdn.f(minPoint), model.getAllParams(), ID, model.getId());
+		return new SPDNResult(spdn.f(minPoint), 
+				SPDN.convertPoint(MatrixUtils.createRealVector(minPoint)).toArray(), 
+				ID, 
+				getHyperParams(m, maxIter, tolerance, restart), 
+				model);
+	}
+	
+	private SortedMap<String, Double> getHyperParams(int m, int maxIter, double tolerance, int restart) {
+		TreeMap<String, Double> map = new TreeMap<>();
+		map.put("m", (double) m);
+		map.put("maxIter", (double) maxIter);
+		map.put("tolerance", tolerance);
+		map.put("restart", (double) restart);
+		return map;
 	}
 }
