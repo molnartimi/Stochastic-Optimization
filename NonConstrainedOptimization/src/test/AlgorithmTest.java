@@ -60,7 +60,7 @@ public class AlgorithmTest {
 	//@Ignore
 	public void simulatedAnnealingTest(){
 		SimulatedAnnealing opt = new SimulatedAnnealing(model);
-		SPDNResult result = opt.optimize(0,0,0.1,0,5);
+		SPDNResult result = opt.optimize(1000,0,0.1,0,5);
 		System.out.println(result.toString());
 		result.writeToCsv();
 	}

@@ -2,17 +2,17 @@ from modshogun import *
 import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize
-import matplotlib.pyplot as plt
 import sys
+import time
 sys.path.append("./")
 from spdn.spdn import SPDN
 from spdn.spdnexception import SPDNException
-from logger.csvwriter import CsvWriter
+from spdn.spdnresult import SPDNResult
 
 class MyShogunOpt:
-    def __init__(self,model,init_points, error_value=10000):
+    def __init__(self,model,error_value=10000):
         self.model = model
-        self.init_points = init_points
+        self.init_points = None
         self.tau = 5 # initial value, we will calculate the best value
         self.XTOL = 0.01
         self.ALGORITHM_ID = 'SHOG'
@@ -31,14 +31,13 @@ class MyShogunOpt:
         self.MIN_value = None
         self.MIN_point = []
 
-        self.csv_writer = CsvWriter(self.model.id, self.ALGORITHM_ID)
-        self._write_csv_header()
-
         self.spdn = SPDN(self.model)
 
-    def optimize(self,max_iter=20,verbose=False):
+    def optimize(self,max_iter=20,init_points=20,verbose=False):
+        start_time = time.time()
         self.spdn.start(verbose)
         if self.spdn.running:
+            self.init_points = init_points
             self._init()
 
             idx = 0
@@ -58,8 +57,13 @@ class MyShogunOpt:
                 # update with maxEI
                 self._update_gps(MyShogunOpt._array_1_to_2(res.x, len(self.model.parameters), 1))
                 idx += 1
-            self._write_csv_result(idx)
-            return {'min-value': self.MIN_value, 'min-point': self.MIN_point}
+
+            result = SPDNResult(self.MIN_value, self.MIN_point, self.ALGORITHM_ID, {"init_points": self.init_points, "max_iter": max_iter}, self.model)
+            result.execution_time = time.time() - start_time
+            self.spdn.close()
+            result.write_out_to_csv()
+
+            return result
 
     def get_mean_variance_classprobability(self, points, reg_gp=None, class_gp=None):
         if reg_gp is None or class_gp is None:
@@ -73,21 +77,6 @@ class MyShogunOpt:
 
         return means, variance, class_probability
 
-    def plot_posterior_mean(self,intervals):
-        XY_test = self._test_matrix(intervals)
-        means, _, _ = self.get_mean_variance_classprobability(XY_test)
-
-        M = MyShogunOpt._array_1_to_2(means, intervals[0], intervals[1])
-
-        borders = []
-        for param in self.model.parameters:
-            borders.append([self.model.borders[param][0], self.model.borders[param][1]])
-
-        plt.imshow(M, interpolation="nearest", aspect='auto', origin='lower',
-                   extent=(borders[0][0], borders[0][1], borders[1][0], borders[1][1]))
-        plt.plot(self.train_points[0], self.train_points[1], '*', color='black')
-        plt.colorbar()
-        plt.show()
 
     def _train_gps(self):
         feats_train = RealFeatures(np.atleast_2d(self.train_points))
@@ -204,16 +193,3 @@ class MyShogunOpt:
         # print("Selected sigma (observation noise):", best_sigma)
 
         return best_width, best_scale, best_sigma
-
-    def _write_csv_header(self):
-        row = ['init points', 'n iter', 'MIN VALUE']
-        for param in self.model.parameters: row.append(param + ' (' + str(self.model.validvalues[param]) + ')')
-        self.csv_writer.write(row)
-
-    def _write_csv_result(self, n_iter):
-        row = [self.init_points, n_iter, self.MIN_value]
-        for point in self.MIN_point: row.append(str(point))
-        self.csv_writer.write(row)
-
-    def __del__(self):
-        self.csv_writer.close()

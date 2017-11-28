@@ -1,4 +1,5 @@
 import sys
+import time
 sys.path.append("./")
 from gpflowopt.domain import ContinuousParameter
 import gpflow
@@ -9,22 +10,21 @@ from gpflowopt.acquisition import *
 from gpflow.priors import *
 from spdn.spdn import SPDN
 from spdn.spdnexception import SPDNException
-from logger.csvwriter import CsvWriter
+from spdn.spdnresult import SPDNResult
 
 
 class MyGPflowOpt:
     def __init__(self, model, error_value=10000):
-        self.model = model;
+        self.model = model
         self.ALGORITHM_ID = "GPFL"
         self.spdn = SPDN(self.model)
-        self.csv_writer = CsvWriter(self.model.id,self.ALGORITHM_ID)
-        self._write_csv_header()
         self.KERNELS = {'exp': MyKernel.exp, 'm12': MyKernel.m12, 'm32': MyKernel.m12, 'm52': MyKernel.m52}
         self.ACQS = {'ei': MyAcquisition.ei, 'poi': MyAcquisition.poi, 'lcb': MyAcquisition.lcb}
         self.PRIORS = {'gaussian': MyPrior.gaussian, 'lognormal': MyPrior.lognormal, 'gamma': MyPrior.gamma}
         self.ERROR_VALUE = error_value
 
     def optimize(self, init_points, n_iter, kernel, acquisition, constrain_prior=None, prior_param1=None, prior_param2=None, verbose=False):
+        start_time = time.time()
         self.spdn.start(verbose)
         if (self.spdn.running):
 
@@ -35,8 +35,9 @@ class MyGPflowOpt:
                 else:
                     result = self._optimize_constrained(domain, init_points, n_iter, kernel, acquisition, constrain_prior, prior_param1, prior_param2)
 
+                result.execution_time = time.time() - start_time
                 self.spdn.close()
-                self._write_csv_result(init_points,n_iter,kernel,acquisition,result)
+                result.write_out_to_csv()
 
                 return result
             except Exception as error:
@@ -68,7 +69,7 @@ class MyGPflowOpt:
         # Run the Bayesian optimization
         with optimizer.silent():
             r = optimizer.optimize(self._fx, n_iter=n_iter)
-            return r
+            return SPDNResult(r['fun'][0], r['x'][0], self.ALGORITHM_ID, {"init_points": init_points, "n_iter": n_iter, "kernel": kernel, "acq": acquisition}, self.model)
 
     def _optimize_constrained(self, domain, init_points, n_iter, kernel, acquisition, constrain_prior, prior_param1, prior_param2):
         # Initial evaluations
@@ -119,22 +120,6 @@ class MyGPflowOpt:
                 result[i] = -1
         return result
 
-    def _write_csv_header(self):
-        row = ['init points', 'n iter', 'kernel', 'acquisition', 'MIN VALUE']
-        for param in self.model.parameters: row.append(param + ' (' + str(self.model.validvalues[param]) + ')')
-        self.csv_writer.write(row)
-
-    def _write_csv_result(self, init_points, n_iter, kernel, acquisition, result):
-        row = [init_points, n_iter, kernel, acquisition]
-        if 'Error' in result: row.append(result)
-        else:
-            row.append(result['fun'][0])
-            for param in result['x'][0]: row.append(str(param))
-        self.csv_writer.write(row)
-
-    def __del__(self):
-        self.csv_writer.close()
-
 
 class Kernel:
     EXP = 'exp'
@@ -145,14 +130,14 @@ class Kernel:
 
 class MyKernel:
     @staticmethod
-    def exp(input_dim): return gpflow.kernels.Exponential(input_dim)
+    def exp(input_dim): return gpflow.kernels.Exponential(input_dim, ARD=True)
     # TODO RBF kernel!!
     @staticmethod
-    def m12(input_dim): return gpflow.kernels.Matern12(input_dim)
+    def m12(input_dim): return gpflow.kernels.Matern12(input_dim, ARD=True)
     @staticmethod
-    def m32(input_dim): return gpflow.kernels.Matern32(input_dim)
+    def m32(input_dim): return gpflow.kernels.Matern32(input_dim, ARD=True)
     @staticmethod
-    def m52(input_dim): return gpflow.kernels.Matern52(input_dim)
+    def m52(input_dim): return gpflow.kernels.Matern52(input_dim, ARD=True)
 
 
 class Acquisition:
