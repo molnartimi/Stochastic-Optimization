@@ -19,15 +19,15 @@ class BayesianOptimizationTest(unittest.TestCase):
         self._run_tests(models.hybrid_cloud,10,20)
 
     def _run_tests(self, model, init_points, n_iter):
-        testcases = [#{'acq': Acquisition.LCB, 'acq_param': 1},
-                     #{'acq': Acquisition.LCB, 'acq_param': 5},
-                     #{'acq': Acquisition.LCB, 'acq_param': 10},
-                     #{'acq': Acquisition.EI, 'acq_param': 0},
+        testcases = [{'acq': Acquisition.LCB, 'acq_param': 1},
+                     {'acq': Acquisition.LCB, 'acq_param': 5},
+                     {'acq': Acquisition.LCB, 'acq_param': 10},
+                     {'acq': Acquisition.EI, 'acq_param': 0},
                      {'acq': Acquisition.EI, 'acq_param': 0.1},
-                     {'acq': Acquisition.EI, 'acq_param': 2}]
-                     #{'acq': Acquisition.POI, 'acq_param': 0},
-                     #{'acq': Acquisition.POI, 'acq_param': 0.1},
-                     #{'acq': Acquisition.POI, 'acq_param': 2}]
+                     {'acq': Acquisition.EI, 'acq_param': 2},
+                     {'acq': Acquisition.POI, 'acq_param': 0},
+                     {'acq': Acquisition.POI, 'acq_param': 0.1},
+                     {'acq': Acquisition.POI, 'acq_param': 2}]
 
         bayo = MyBasienOptimization(model)
 

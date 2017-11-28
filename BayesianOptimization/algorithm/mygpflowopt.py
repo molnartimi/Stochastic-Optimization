@@ -144,10 +144,14 @@ class Kernel:
 
 
 class MyKernel:
+    @staticmethod
     def exp(input_dim): return gpflow.kernels.Exponential(input_dim)
     # TODO RBF kernel!!
+    @staticmethod
     def m12(input_dim): return gpflow.kernels.Matern12(input_dim)
+    @staticmethod
     def m32(input_dim): return gpflow.kernels.Matern32(input_dim)
+    @staticmethod
     def m52(input_dim): return gpflow.kernels.Matern52(input_dim)
 
 

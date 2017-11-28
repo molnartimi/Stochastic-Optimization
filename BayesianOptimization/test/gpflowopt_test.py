@@ -8,24 +8,24 @@ from algorithm.mygpflowopt import MyGPflowOpt, Kernel, Acquisition, Prior
 class GPflowOptTest(unittest.TestCase):
     #@unittest.skip("works fine")
     def test_simple_server(self):
-        self._run_tests(models.simple_server, 20, 10)
+        self._run_tests(models.simple_server, 20, 20)
 
     @unittest.skip("too long")
     def test_vcl_stochastic(self):
-        self._run_tests(models.vcl_stochastic, 20, 10)
+        self._run_tests(models.vcl_stochastic, 20, 20)
 
     @unittest.skip("too long")
     def test_hybrid_cloud(self):
-        self._run_tests(models.hybrid_cloud, 10, 10)
+        self._run_tests(models.hybrid_cloud, 20, 20)
 
     @unittest.skip("not working")
     def test_constrained_simple_server(self):
         self._run_tests_constrained(models.simple_server, 20, 10)
 
     def _run_tests(self, model, init_points, n_iter):
-        testcases = [#{'kernel': Kernel.EXP, 'acq': Acquisition.EI},
-                     #{'kernel': Kernel.EXP, 'acq': Acquisition.POI},
-                     #{'kernel': Kernel.EXP, 'acq': Acquisition.LCB},
+        testcases = [{'kernel': Kernel.EXP, 'acq': Acquisition.EI},
+                     {'kernel': Kernel.EXP, 'acq': Acquisition.POI},
+                     {'kernel': Kernel.EXP, 'acq': Acquisition.LCB},
                      {'kernel': Kernel.M12, 'acq': Acquisition.EI},
                      {'kernel': Kernel.M12, 'acq': Acquisition.POI},
                      {'kernel': Kernel.M12, 'acq': Acquisition.LCB},
