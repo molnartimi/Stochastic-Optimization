@@ -2,18 +2,18 @@
 \chapter{Optimalizációs megközelítések}
 \label{sec:optimalizacios-megkozelitesek}
 
-A mérnököktől nap, mint nap problémák megoldását várják el. A probléma megjelenésétől a felismerésén át, a megoldás megtalálásáig és megvalósításáig számos kisebb és nagyobb feladat vár megvalósításra. Ezt a folyamatot a sztochasztikus modellek paramétereinek optimalizálása esetében a \ref{fig:folyamat}. ábra szemlélteti.
+A mérnököktől nap, mint nap problémák megoldását várják el. A probléma megjelenésétől a felismerésén át, a megoldás megtalálásáig és megvalósításáig számos kisebb és nagyobb feladat vár elkészítésre. Ezt a folyamatot a sztochasztikus modellek paramétereinek optimalizálása esetében a \ref{fig:folyamat}. ábra szemlélteti.
 
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[width=90mm, keepaspectratio]{figures/abra.png}
+	\includegraphics[width=90mm, keepaspectratio]{figures/optmeg.png}
 	\caption{Paraméter optimalizálás folyamata.}
 	\label{fig:folyamat}
 \end{figure}
 
 Egy modellben összefoglalhatjuk az összes jelentékeny tényezőjét a feladatnak. Kapcsolatokat definiálhatunk állapotok között, eseményeket köthetünk hozzájuk, úgy általában magunk előtt láthatjuk általa a rendszer viselkedését. Jó példa erre a Petri hálóval való modellezés. A Petri hálók tökéletesen alkalmasak információs folyamatrendszerek leírására és tanulmányozására, akár aszinkron, párhuzamos, nem-determinisztikus vagy sztochasztikus rendszerről van szó. Grafikus és matematikai eszköz is egyben, így lehetővé teszi számunkra, hogy matematikai viselkedéssel ruházzuk fel a rendszerünket, egyenlőségekkel, egyenletekkel, valószínűségekkel, paraméterekkel.\cite{PetriCikk}
 
-Tulajdonképpen egy irányított gráfot definiálunk, melyben az irányított élek helyeket és átmeneteket kötnek össze. Minden helyen tetszőleges számban lehetnek "tokenek", melyek a folyamat nyomon követését teszik szemléletesebbé. Ha egy átmenetnél teljesülnek a tüzelési feltételek, az átmenet tüzel, és a bemenő helyeken lévő adott számú tokent a kimeneti helyek tokenjeivé "alakítja át".
+Tulajdonképpen egy irányított gráfot definiálunk, melyben az irányított élek helyeket és átmeneteket kötnek össze. Minden helyen tetszőleges számban lehetnek ,,tokenek'', melyek a folyamat nyomon követését teszik szemléletesebbé. Ha egy átmenetnél teljesülnek a tüzelési feltételek, az átmenet tüzel, és a bemenő helyeken lévő adott számú tokent a kimeneti helyek tokenjeivé ,,alakítja át''.
 
 A rendszer ilyen szintű megismerése után fontos mérföldköve a tervezésnek olyan kérdések keresése és feltevése, melyek kulcsfontosságúak lehetnek a rendszer működésében. Mikor következik be? Mik hatnak egymásra? Milyen kapcsolat van közöttük? Hogyan befolyásolja a folyamatot? A jó kérdések feltevése nem könnyű, de elengedhetetlen ahhoz, hogy újabb lépéseket tudjunk tenni a célunk felé.
 
@@ -27,23 +27,20 @@ A metrikáink függenek ezektől a paraméterektől, azonban ennek a függésnek
 
 A szintézis minden iterációjában újabb és újabb paraméterekkel futtatjuk le az analízist, majd az adott algoritmus működése alapján műveleteket végzünk a kapott eredményen, mely alapján eldönthetjük, elértük-e a leállási feltételt, és ha nem, az értelmezési tartomány mely pontjának a kiértékelése visz minket a legnagyobb valószínűséggel közelebb az optimális ponthoz. Ez lesz az a pont, amelyre a szintézis következő iterációjában megismételjük az elvégzett műveleteket.
 
-A célfüggvény, melyet optimalizálunk, sokféleképpen definiálható. Mi az összes négyzetes hibát választottuk (\ref{eq:celfgv}), mely egy azon megközelítések közül, mellyel általánosan leírható egy rendszer elvárt viselkedéstől való eltérése.
+A célfüggvény, melyet optimalizálunk, sokféleképpen definiálható. Mi \aref({eq:celfgv}) képlettel leírt összes négyzetes hibát választottuk, mely egy azon megközelítések közül, mellyel általánosan leírható egy rendszer elvárt viselkedéstől való eltérése.
 
 \section{Algoritmusok használhatóságának szempontjai}
 
-A paraméter optimalizálás során azt a pontot keressük, mely a rendszer hibáját 0-ra csökkenti. Ennek az elérését azonban számos tényező nehezíti, mind a tervező, mind az algoritmusok szempontjából.
+A paraméter optimalizálás során azt a pontot keressük, mely a rendszer hibáját nullára csökkenti. Ennek az elérését azonban számos tényező nehezíti, mind a tervező, mind az algoritmusok szempontjából.
 
-Az analízist végző keretrendszer költségesen skálázódik a paraméterek dimenziójának növekedésével. Célunk egy olyan optimalizáló használata, mely ezt a költséget - mely a mi esetünkben főleg a futási időt jelenti - is minimalizálja.
+Az \textbf{analízist végző keretrendszer költséges}en skálázódik a paraméterek dimenziójának növekedésével. Célunk egy olyan optimalizáló használata, mely ezt a költséget - mely a mi esetünkben főleg a futási időt jelenti - is minimalizálja.
 
-Lehetőségünk van nemcsak függvényérték, de az egyes paraméterek szerinti érzékenység, vagyis parciális derivált kiszámítására is. Ennek köszönhetően szóba jöhetnek azok az ismert algoritmusok is, melyek egyszer, vagy többször differenciálható célfüggvényt feltételeznek. Tisztában kell lennünk azonban azzal, hogy ezért drága árat fizetünk, hisz a mi célfüggvényünk esetében (\ref{eq:celfgv}) egy gradiens számítás $O(n)$ számítást jelent, egy Hesse-mátrix $O(n^2)$ költséget jelentene, ahol a célfüggvény $j.$ paramétere szerinti parciális deriválja
+Lehetőségünk van nemcsak függvényérték, de az egyes paraméterek szerinti érzékenység, vagyis parciális derivált kiszámítására is. Ennek köszönhetően szóba jöhetnek azok az ismert algoritmusok is, melyek egyszer, vagy többször differenciálható célfüggvényt feltételeznek. Tisztában kell lennünk azonban azzal, hogy ezért drága árat fizetünk, hisz a mi célfüggvényünk esetében (\ref{eq:celfgv}) egy \textbf{gradiens számítás} $O(n)$ számítást jelent, egy Hesse-mátrix $O(n^2)$ költséget jelentene, ahol a célfüggvény $j.$ paramétere szerinti parciális deriválja
 $$\frac{\partial f}{\partial p_j}=\sum_{i=1}^{rewards}\left\lbrace   2\cdot \left( \hat{R}_i-R_i\right) \cdot\left(-\frac{\partial R_i}{\partial p_j}\right)  \right\rbrace   .$$
 
+Ahány ház, annyi szokás. Ahány programozó, annyi megvalósítás! Az algoritmusok hatékonyságában nagy szerepet játszanak a jól beállított \textbf{hiperparaméterek}. Ezek megtalálása közel olyan nehéz, mint maga a modell optimumának a megtalálása. Az algoritmusokat megkülönbözteti ez is, hogy mekkora teret engednek az algoritmus használójának, mennyi és milyen megkötésekkel, változókkal, feltételezett modellekkel egészíthető ki a modellünk a testreszabás érdekében. Minél jobban specializálható egy modellre az algoritmus, annál jobb eredményt érhetünk el az optimalizálás során.
 
-
-Ahány ház, annyi szokás. Ahány programozó, annyi megvalósítás! Az algoritmusok hatékonyságában nagy szerepet játszanak a jól beállított hiperparaméterek. Ezek megtalálása közel olyan nehéz, mint maga a modell optimumának a megtalálása. Az algoritmusokat megkülönbözteti ez is, hogy mekkora teret engednek az algoritmus használójának, mennyi és milyen megkötésekkel, változókkal, feltételezett modellekkel egészíthető ki a modellünk a testreszabás érdekében. Minél jobban specializálható egy modellre az algoritmus, annál jobb eredményt érhetünk el az optimalizálás során.
-
-Sztochasztikus, nemlineáris modelleket szeretnénk optimalizálni. Ezeknek az ismeretlen célfüggvényeinek megvan az a sajnálatos tulajdonsága, hogy bizonyos pontokban nem értelmezhetőek. Ezen pontok (területek), akár csak maga függvény alakja, természetesen nem ismertek. Fekete doboz kényszerek mellett keressük a fekete doboz függvényünk globális minimumát. % :D 
-Elengedhetetlen tehát a hatékony működés érdekében, hogy -- jobb esetben -- elkerüljük az iterációk során ezen kiértékelhetetlen pontokat, vagy -- rosszabb esetben -- valamiképp kezelni tudjuk az algoritmus futása során ezen kiértékelhetetlen pontok számítására való igényt.
+Sztochasztikus, nemlineáris modelleket szeretnénk optimalizálni. Ezeknek az ismeretlen célfüggvényeinek megvan az a sajnálatos tulajdonsága, hogy bizonyos \textbf{pontokban nem értelmezhetőek}. Ezen pontok (területek), akár csak maga függvény alakja, természetesen nem ismertek. Fekete doboz kényszerek mellett keressük a fekete doboz függvényünk globális minimumát. Elengedhetetlen tehát a hatékony működés érdekében, hogy -- jobb esetben -- elkerüljük az iterációk során ezen kiértékelhetetlen pontokat, vagy -- rosszabb esetben -- valamiképp kezelni tudjuk az algoritmus futása során ezen kiértékelhetetlen pontok számítására való igényt.
 
 Összefoglalva tehát az alábbi szempontok alapján fogom vizsgálni a következő fejezetekben kipróbált optimalizáló algoritmusokat:
 
@@ -54,13 +51,3 @@ Elengedhetetlen tehát a hatékony működés érdekében, hogy -- jobb esetben 
 	\item Kényszerek implementálhatósága
 	\item Iterációk során kiszámítható és nem kiszámítható pontok aránya
 \end{enumerate}
-
-
-
-
-
-
-
-
-
-

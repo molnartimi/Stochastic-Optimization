@@ -16,13 +16,13 @@ Mint már említettük, a megoldó bizonyos esetekben nem képes kiszámítani e
 \subsubsection{Modellek itegrációja}
 Minden optimalizálást végző osztályom az optimalizálandó modell beállításával kezdődik. A programkódban a modellekhez az alábbi információkat tároljuk:
 \begin{itemize}
-	\item Modell négy betűből álló azonosítója.
-	\item Modellt tartalmazó (.pnml kiterjesztésű) fájl neve.
-	\item Paraméterek nevei.
-	\item Paraméterekhez tartozó default értékek. Ezzel futtatva a megoldó keretrendszert kapjuk meg azon értékeket, melyeket követelményként fogalmazunk meg a reward függvények értékeinek. Tehát ez az a pont, melyet az optimalizálás során szeretnénk minél jobban megközelíteni. Valós esetekben ezt nem ismerjük, most csak a mérések eredményének ellenőrzéséhez használjuk.
-	\item Paraméterekhez tartozó alsó és felső korlátok. A Nem korlátos algoritmusok esetén ezt csak ahhoz használjuk, hogy milyen tartományban válasszuk a véletlenszerű kezdőpontokat, a futás során azonban a tartományon kívülre is eljuthat az algoritmus. A Bayesi algoritmusok a határok között maradnak.
-	\item Reward függvények nevei.
-	\item Reward függvényekhez tartozó elvárt értékek.
+	\item \textbf{Modell} négy betűből álló \textbf{azonosítója}.
+	\item Modellt tartalmazó (.pnml kiterjesztésű) \textbf{fájl neve}.
+	\item \textbf{Paraméterek} nevei.
+	\item Paraméterekhez tartozó \textbf{default értékek}. Ezzel futtatva a megoldó keretrendszert kapjuk meg azon értékeket, melyeket követelményként fogalmazunk meg a reward függvények értékeinek. Tehát ez az a pont, melyet az optimalizálás során szeretnénk minél jobban megközelíteni. Valós esetekben ezt nem ismerjük, most csak a mérések eredményének ellenőrzéséhez használjuk.
+	\item Paraméterekhez tartozó alsó és felső \textbf{korlátok}. A Nem korlátos algoritmusok esetén ezt csak ahhoz használjuk, hogy milyen tartományban válasszuk a véletlenszerű kezdőpontokat, a futás során azonban a tartományon kívülre is eljuthat az algoritmus. A Bayesi algoritmusok a határok között maradnak.
+	\item \textbf{Reward függvények} nevei.
+	\item Reward függvényekhez tartozó \textbf{elvárt értékek}.
 \end{itemize}
 
 Az adott modellel az objektum létrehozza a saját SPDN példányát, mely az optimalizálandó célfüggvényt szolgáltatja.
@@ -54,61 +54,163 @@ Az algoritmusok által adott végeredményt az SPDNResult osztály kezeli, mely 
 Az algoritmus osztályok optimize() metódusát meghívva tudjuk azt a modellt optimalizálni, melyet az objektum létrehozásakor paraméterül átadunk. Visszatérési értéke egy SPDNResult objektum. A metódus paraméterei jelentősen befolyásolhatják az algoritmus hatékonyságát és eredményét. A könnyebbség kedvéért, ha valamely paraméterről nincsen információnk, típustól függően nullát vagy üres tömböt paraméterül adva, az algoritmus az előre beállított default paraméter értékkel fog lefutni.
 
 \subsection{L-BFGS - LBFGS.java}
-A Breeze könyvtár\footnote{\url{https://github.com/scalanlp/breeze}} számos algoritmus implementációját tartalmazza. Osztályai hatékony, gyors és generikus numerikus számításokat szolgáltatnak. Innen használtuk fel az L-BFGS algoritmust, melyhez, mivel Scala nyelven van írva, egy tanszéki segédalkalmazást használok a nyelvi konverzióhoz. Optimize metódusának paraméterei:
-\paragraph{int m} a Hesse mátrix becslésének pontosságát befolyásoló paraméter, 0 esetén a beállított default érték 4,
-\paragraph{int maxIter} az algoritmus futása során felhasznált egydimenziós optimalizálás maximális iterációszáma, 0 esetén 20, 
-\paragraph{double tolerance} az elfogadott maximális tolerancia, 0 esetén 0.001,
-\paragraph{double[] initPoint} az algoritmus kezdőpontja, üres tömb esetén a modell egy véletlen pontja, melyet a getRandomPoint() metódus szolgáltat,
-\paragraph{int restart} ennyiszer indítjuk újra az algoritmust, különböző véletlen kezdőpontokkal, a pontosabb megoldás megtalálásának érdekében.
+A Breeze könyvtár\footnote{\url{https://github.com/scalanlp/breeze}} számos algoritmus implementációját tartalmazza. Osztályai hatékony, gyors és generikus numerikus számításokat szolgáltatnak. Innen használtuk fel az L-BFGS algoritmust, melyhez, mivel Scala nyelven van írva, egy tanszéki segédalkalmazást használok a nyelvi konverzióhoz. Optimize metódusának paramétereit \aref{table:lbfgs}. táblázat mutatja.
+
+\begin{table}
+	\center
+	\begin{tabular}{|ll>{\tabsorvege{\raggedright}\mbox{}}p{70mm}r|}
+		\hline
+		\textbf{Típus} & \textbf{Paraméter} & \textbf{Leírás} & \textbf{Default érték}\\
+		\hline \hline
+		int & \textbf{m} & Hesse mátrix becslésének pontosságát befolyásolja & 4\\
+		\hline
+		int & \textbf{maxIter} & Algoritmus futása során felhasznált egydimenziós optimalizálás maximális iterációszáma & 20\\
+		\hline
+		double & \textbf{tolerance} & Elfogadható maximális tolerancia & 0.001\\
+		\hline
+		double[] & \textbf{initPoint} & Algoritmus kezdőpontja & véletlen pont\footnote{Model.getRandomPoint() metódustól}\\
+		\hline
+		int & \textbf{restart} & Algoritmus újraindításának a száma, különböző véletlen kezdőpontokkal, a pontosabb megoldás megtalálásának érdekében & -\\
+		\hline
+	\end{tabular}
+	\caption{LBFGS.optimize() metódus beállítható paraméterei}
+	\label{table:lbfgs}
+\end{table}
+
 
 \subsection{Gradiens módszer - GradientDescent.java}
-Optimize metódus paraméterei:
-\paragraph{double gamma} lépéshossz kezdeti értéke, 0 esetén 1,
-\paragraph{double tolerance} az algoritmus leáll, ha a pontban a gradiens hossza kisebb mint ez a tolerancia, 0 esetén 0.001
-\paragraph{double[] initPoint} kezdőpont, üres tömb esetén véletlen pont a modell objektum getRandomPoint() metódusától,
-\paragraph{int restart} ennyiszer indítjuk újra az algoritmust, különböző véletlen kezdőpontokkal.
+Optimize metódusának paramétereit \aref{table:gd}. táblázat mutatja.
+
+\begin{table}
+	\center
+	\begin{tabular}{|ll>{\tabsorvege{\raggedright}\mbox{}}p{70mm}r|}
+		\hline
+		\textbf{Típus} & \textbf{Paraméter} & \textbf{Leírás} & \textbf{Default érték}\\
+		\hline \hline
+		double & \textbf{gamma} & Lépéshossz kezdeti értéke & 1\\
+		\hline
+		double & \textbf{tolerance} & Az algoritmus leáll, ha a pontban a gradiens hossza kisebb, mint a tolerancia & 0.001\\
+		\hline
+		double[] & \textbf{initPoint} & Kezdőpont & véletlen pont\footnote{Model.getRandomPoint() metódustól}\\
+		\hline
+		int & \textbf{restart} & Algoritmus újraindításának a száma & -\\
+		\hline
+	\end{tabular}
+	\caption{GradientDescent.optimize() metódus beállítható paraméterei}
+	\label{table:gd}
+\end{table}
 
 \subsection{Részecske raj optimalizációk}
 
 \subsubsection{Homogén részecskék - ParticleSwarm.java}
 
-Optimize metódus paraméterei:
-\paragraph{int swarmSize} a részecskék száma, 0 esetén 20,
-\paragraph{int maxIter} iterációk száma, 0 esetén 20,
-\paragraph{double omega} az új sebesség számításakor mekkora súlya legyen az előző sebességnek, 0 esetén 0.2,
-\paragraph{double fiParticle} új sebesség számításakor a részecske által ismert minimumpont súlya, 0 esetén 0.4,
-\paragraph{double fiGlobal} új sebesség számításakor a globálisan ismert minimumpont súlya, 0 esetén 0.8.
+Optimize metódusának paramétereit \aref{table:pso}. táblázat mutatja.
+
+\begin{table}
+	\center
+	\begin{tabular}{|ll>{\tabsorvege{\raggedright}\mbox{}}p{70mm}r|}
+		\hline
+		\textbf{Típus} & \textbf{Paraméter} & \textbf{Leírás} & \textbf{Default érték}\\
+		\hline \hline
+		int & \textbf{swarmSize} & Részecskék száma & 20\\
+		\hline
+		int & \textbf{maxIter} & Iterációk száma & 20\\
+		\hline
+		double & \textbf{omega} & Új sebesség számításakor a régi sebesség súlya & 0.2\\
+		\hline
+		double & \textbf{fiParticle} & Új sebesség számításakor a részecske által ismert minimumpont súlya & 0.4\\
+		\hline
+		double & \textbf{fiGlobal} & Új sebesség számításakor a globálisan ismert minimumpont súlya & 0.8\\
+		\hline
+	\end{tabular}
+	\caption{ParticleSwarm.optimize() metódus beállítható paraméterei}
+	\label{table:pso}
+\end{table}
 
 \subsubsection{Gradens módszerrel ötvözve - ParticleSwarmWithGradientDescent.java}
 
-A ParticleSwarm osztály leszármazottja, saját optimize metódusának paraméterei részben megegyeznek a részecske raj és a gradiens módszer paramétereivel:
-\paragraph{int swarmSize} a részecskék száma, 0 esetén 20,
-\paragraph{int maxIter} iterációk száma, 0 esetén 20,
-\paragraph{int gradientMaxIter} ennyi lépést teszünk gradiens módszerrel, minden iteráció végén az aktuális globális minimum pontból indulva. 0 esetén 5.
-\paragraph{double gamma} lépéshossz kezdeti értéke, 0 esetén 1,
-\paragraph{double omega} az új sebesség számításakor mekkora súlya legyen az előző sebességnek, 0 esetén 0.2,
-\paragraph{double fiParticle} új sebesség számításakor a részecske által ismert minimumpont súlya, 0 esetén 0.4,
-\paragraph{double fiGlobal} új sebesség számításakor a globálisan ismert minimumpont súlya, 0 esetén 0.8.
+A ParticleSwarm osztály leszármazottja, saját optimize metódusának paraméterei részben megegyeznek a részecske raj és a gradiens módszer paramétereivel. Összefoglalva \aref{table:psogd}.~táblázatban láthatóak.
+
+\begin{table}
+	\center
+	\begin{tabular}{|ll>{\tabsorvege{\raggedright}\mbox{}}p{60mm}r|}
+		\hline
+		\textbf{Típus} & \textbf{Paraméter} & \textbf{Leírás} & \textbf{Default érték}\\
+		\hline \hline
+		int & \textbf{swarmSize} & Részecskék száma & 20\\
+		\hline
+		int & \textbf{maxIter} & Iterációk száma & 20\\
+		\hline
+		int & \textbf{gradientMaxIter} & Gradiens módszer lépésszáma iterációnként, az aktuális globális minimum pontból indulva & 5\\
+		\hline
+		double & \textbf{gamma} & Lépéshossz kezdeti értéke & 1\\
+		\hline
+		double & \textbf{omega} & Új sebesség számításakor a régi sebesség súlya & 0.2\\
+		\hline
+		double & \textbf{fiParticle} & Új sebesség számításakor a részecske által ismert minimumpont súlya & 0.4\\
+		\hline
+		double & \textbf{fiGlobal} & Új sebesség számításakor a globálisan ismert minimumpont súlya & 0.8\\
+		\hline
+	\end{tabular}
+	\caption{ParticleSwarmWithGradientDescent.optimize() metódus beállítható paraméterei}
+	\label{table:psogd}
+\end{table}
 
 \subsubsection{Méh algoritmus - BeesAlgorithm.java}
-Optimize metódus paraméterei:
-\paragraph{int maxIter} iterációk száma, 0 esetén 20,
-\paragraph{double initRadius} ekkora körben választjuk a véletlen pontokat a vezetők, legjobb pontokat ismerő méhek körül, 0 esetén 0.5,
-\paragraph{double radiusSmallerRate} 1-nél kisebb pozitív szám, iterációnként ezzel  szorozzuk a sugárt, amekkora körben keresünk, ezzel egyre precízebb keresést biztosítva. 0 esetén 0.8.
-\paragraph{int scoutSize} méhek száma (toborzott méheket nem ide számítva), 0 esetén 20,
-\paragraph{int bestBeesSize} legjobb méhek száma, 0 esetén 8
-\paragraph{int eliteBeesSize} elit méhek száma, 0 esetén 3
-\paragraph{int recruitedOfBestsSize} legjobb méheket követő, toborzott méhek száma, 0 esetén 5,
-\paragraph{int recruitedOfElitesSize} elit méheket követő, toborzott méhek száma, 0 esetén 10.
+
+Optimize metódusának paramétereit \aref{table:bees}. táblázat mutatja.
+
+\begin{table}
+	\center
+	\begin{tabular}{|ll>{\tabsorvege{\raggedright}\mbox{}}p{55mm}r|}
+		\hline
+		\textbf{Típus} & \textbf{Paraméter} & \textbf{Leírás} & \textbf{Default érték}\\
+		\hline \hline
+		int & \textbf{maxIter} & Iterációk száma & 20\\
+		\hline
+		double & \textbf{initRadius} & Kör kezdeti sugara, amin belül véletlen pontokat választunk a toborzáskor a vezető méhek körül & 0.5\\
+		\hline
+		double & \textbf{radiusSmallerRate} & 1-nél kisebb pozitív szám, iterációnként ezzel szorozva csökkentjük a keresési kör sugarát, ezzel egyre precízebb keresést biztosítva & 0.8\\
+		\hline
+		int & \textbf{scoutSize} & Méhek száma (toborzott méheket nem ide számítva) & 20\\
+		\hline
+		int & \textbf{bestBeesSize} & Legjobb méhek száma & 8\\
+		\hline
+		int & \textbf{eliteBeesSize} & Elit méhek száma & 3\\
+		\hline
+		int & \textbf{recruitedOfBestsSize} & Legjobb méheket követő, toborzott méhek száma & 5\\
+		\hline
+		int & \textbf{recruitedOfElitesSize} & Elit méheket követő, toborzott méhek száma & 10\\
+		\hline
+	\end{tabular}
+	\caption{BeesAlgorithm.optimize() metódus beállítható paraméterei}
+	\label{table:bees}
+\end{table}
 
 \subsection{Szimulált lehűtés - SimulatedAnnealing.java}
 
-Optimize metódus paraméterei:
-\paragraph{double initTemp} rendszer kezdő hőmérséklete, 0 esetén 100.
-\paragraph{double coolingRate} 1-nél kisebb pozitív szám, ezzel szorozzuk minden iterációban az aktuális hőmérsékletet. 0 esetén 0.9.
-\paragraph{double border} ekkora körben választunk véletlenszerűen új pontot, ahova döntünk, hogy átugrunk-e. 0 esetén 0.3. 
-\paragraph{double borderSmallerRate} 1nél kisebb pozitív szám, ezzel szorozva a border méretét csökkentjük minden iterációban a tartományt, ahova ugorhatunk. 0 esetén 0.95.
-\paragraph{int restart} ennyiszer indítjuk újra az algoritmust, különböző véletlen kezdőpontokról.
+Optimize metódusának paramétereit \aref{table:sima}. táblázat mutatja.
+
+\begin{table}
+	\center
+	\begin{tabular}{|ll>{\tabsorvege{\raggedright}\mbox{}}p{60mm}r|}
+		\hline
+		\textbf{Típus} & \textbf{Paraméter} & \textbf{Leírás} & \textbf{Default érték}\\
+		\hline \hline
+		double & \textbf{initTemp} & Rendszer kezdeti hőmérséklete & 100\\
+		\hline
+		double & \textbf{coolingRate} & 1-nél kisebb pozitív szám, ezzel szorozva csökkentjük az aktuális hőmérsékletet iterációnként & 0.9\\
+		\hline
+		double & \textbf{border} & A pont ekkora sugarú környezetében választunk új véletlen pontot & 0.3\\
+		\hline
+		double & \textbf{borderSmallerRate} & 1-nél kisebb pozitív szám, ezzel szorozva a csökkentjük a sugarat iterációnként, melyen belül ugrálunk & 0.95\\
+		\hline
+		int & \textbf{restart} & Algoritmus újraindításának a száma & -\\
+		\hline
+	\end{tabular}
+	\caption{SimulatedAnnealing.optimize() metódus beállítható paraméterei}
+	\label{table:sima}
+\end{table}
 
 %----------------------------------------------------------------------------
 \section{Bayesi optimalizáció}

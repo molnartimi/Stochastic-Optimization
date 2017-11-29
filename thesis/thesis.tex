@@ -21,6 +21,8 @@
 
 \newcommand{\szerzoMeta}{\vikszerzoVezeteknev{} \vikszerzoKeresztnev} % egy szerző esetén
 
+\newcommand*{\tabsorvege}[1]{\let\tmp=\\#1\let\\=\tmp}
+
 % Beállítások magyar nyelvű dolgozathoz
 \input{include/thesis-hu}
 
@@ -69,8 +71,8 @@
 
 % List of Figures, Tables
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-%\listoffigures\addcontentsline{toc}{chapter}{\listfigurename}
-%\listoftables\addcontentsline{toc}{chapter}{\listtablename}
+\listoffigures
+\listoftables
 
 
 % Bibliography
