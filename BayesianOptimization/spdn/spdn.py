@@ -16,6 +16,7 @@ class SPDN:
         self.spdn_cmd = ('mono', '../SPDN/SPDN.exe', 'reward', '-c',
                          '../SPDN/configs/SP_PAR_BICG.txt', '-m',
                          '../SPDN/models/' + model.file, '--interactive', '-l', 'File')
+        self.model = model
         self.model_id = model.id
         self.params = model.parameters
         self.rewards = model.rewards
@@ -41,6 +42,9 @@ class SPDN:
         else:
             self.running = True
             self.csvwriter = CsvWriter(self.model_id,'DATAS',spdn=True)
+            header = ["Random_ID","Feasibility","Obj_func_value"]
+            for i in range(len(self.model.parameters)): header.append(self.model.parameters[i])
+            self.csvwriter.write(header, header=True)
 
     def f(self, values):
 
@@ -56,13 +60,13 @@ class SPDN:
             self._get_results()
 
             f_result = 0
-            self._write_csv_result(values,1)
+
             for r in self.rewards:
                 f_result += (self._fR(r) - self.measures[r]) ** 2
-
+            self._write_csv_result(values, f_result, 1)
             return f_result
         except SPDNException as error:
-            self._write_csv_result(values,-1)
+            self._write_csv_result(values, "ERROR", -1)
             raise(error)
 
 
@@ -148,24 +152,26 @@ class SPDN:
         #print(rewards)
         return rewards
 
-    def _write_csv_result(self, points, feasibility):
-        row = [self.csv_data_id, feasibility]
+    def _write_csv_result(self, points, value, feasibility):
+        row = [self.csv_data_id, feasibility, value]
         for point in points: row.append(str(point))
         self.csvwriter.write(row)
 
     def close(self):
         """ Close the running processes """
-        self.csvwriter.close()
-        self._write_to_spdn('END\n')
-        self.running = False
-        self.pipe.stdin.close()
-        self.pipe.stdout.close()
-        self.pipe.stderr.close()
+        if self.csvwriter != None: self.csvwriter.close()
+        if self.running:
+            self._write_to_spdn('END\n')
+            self.running = False
+            self.pipe.stdin.close()
+            self.pipe.stdout.close()
+            self.pipe.stderr.close()
         os.kill(self.pipe.pid,15)
         self.pipe.terminate()
 
     def __del__(self):
-        self.close()
+        if self.running:
+            self.close()
 
 
 

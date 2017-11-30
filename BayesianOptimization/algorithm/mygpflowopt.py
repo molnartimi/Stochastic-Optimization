@@ -18,7 +18,7 @@ class MyGPflowOpt:
         self.model = model
         self.ALGORITHM_ID = "GPFL"
         self.spdn = SPDN(self.model)
-        self.KERNELS = {'exp': MyKernel.exp, 'm12': MyKernel.m12, 'm32': MyKernel.m12, 'm52': MyKernel.m52}
+        self.KERNELS = {'exp': MyKernel.exp, 'rbf': MyKernel.rbf, 'm12': MyKernel.m12, 'm32': MyKernel.m12, 'm52': MyKernel.m52}
         self.ACQS = {'ei': MyAcquisition.ei, 'poi': MyAcquisition.poi, 'lcb': MyAcquisition.lcb}
         self.PRIORS = {'gaussian': MyPrior.gaussian, 'lognormal': MyPrior.lognormal, 'gamma': MyPrior.gamma}
         self.ERROR_VALUE = error_value
@@ -42,15 +42,18 @@ class MyGPflowOpt:
                 return result
             except Exception as error:
                 print(repr(error))
-                self._write_csv_result(init_points,n_iter,kernel,acquisition,'Error: ' + repr(error))
+                result = SPDNResult(repr(error), [""]*len(self.model.parameters), self.ALGORITHM_ID,
+                                  {"init_points": init_points, "n_iter": n_iter, "kernel": kernel, "acq": acquisition},
+                                  self.model)
+                result.write_out_to_csv()
 
     def _getdomain(self):
         domain = None
-        for key in self.model.borders:
+        for param in self.model.parameters:
             if domain is None:
-                domain = ContinuousParameter(key, self.model.borders[key][0], self.model.borders[key][1])
+                domain = ContinuousParameter(param, self.model.borders[param][0], self.model.borders[param][1])
             else:
-                domain = domain + ContinuousParameter(key, self.model.borders[key][0], self.model.borders[key][1])
+                domain = domain + ContinuousParameter(param, self.model.borders[param][0], self.model.borders[param][1])
         return domain
 
     def _optimize(self, domain, init_points, n_iter, kernel, acquisition):
@@ -123,6 +126,7 @@ class MyGPflowOpt:
 
 class Kernel:
     EXP = 'exp'
+    RBF = 'rbf'
     M12 = 'm12'
     M32 = 'm32'
     M52 = 'm52'
@@ -131,7 +135,8 @@ class Kernel:
 class MyKernel:
     @staticmethod
     def exp(input_dim): return gpflow.kernels.Exponential(input_dim, ARD=True)
-    # TODO RBF kernel!!
+    @staticmethod
+    def rbf(input_dim): return gpflow.kernels.RBF(input_dim, ARD=True)
     @staticmethod
     def m12(input_dim): return gpflow.kernels.Matern12(input_dim, ARD=True)
     @staticmethod

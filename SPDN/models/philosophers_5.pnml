@@ -1,0 +1,1714 @@
+<?xml version="1.0" encoding="UTF-8"?><pnml>
+  <net id="n1" type="http://www.pnml.org/version-2009/grammar/ptnet">
+    <name>
+      <text>DiningPhilosophers</text>
+    </name>
+    <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+      <reward-configs>
+        <ArrayOfStateRewardConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <StateRewardConfiguration>
+            <ConfigurationName>phil5_thinkingTime</ConfigurationName>
+            <CtlBasedRewards>
+              <CtlReward>
+                <Guid>be849d1b-6cab-4c7a-9f89-32ae89955253</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil5__thinking&gt;=1</CtlExpression>
+                <RewardExpression>1</RewardExpression>
+              </CtlReward>
+            </CtlBasedRewards>
+            <PlaceRateRewards/>
+            <TransitionImpulseRewards/>
+          </StateRewardConfiguration>
+          <StateRewardConfiguration>
+            <ConfigurationName>Table_totalThinkingTime</ConfigurationName>
+            <CtlBasedRewards>
+              <CtlReward>
+                <Guid>36285738-f93a-413a-9f78-c4e3b877c267</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil1__thinking&gt;=1</CtlExpression>
+                <RewardExpression>1</RewardExpression>
+              </CtlReward>
+              <CtlReward>
+                <Guid>6e2a7036-db4f-4e16-98b5-417c69c50e1b</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil2__thinking&gt;=1</CtlExpression>
+                <RewardExpression>1</RewardExpression>
+              </CtlReward>
+              <CtlReward>
+                <Guid>9a701862-be77-4b0b-9afd-b06de2217054</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil5__thinking&gt;=1</CtlExpression>
+                <RewardExpression>1</RewardExpression>
+              </CtlReward>
+              <CtlReward>
+                <Guid>84c8aa34-ed0f-4ca4-89f9-6570c9c86a47</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil4__thinking&gt;=1</CtlExpression>
+                <RewardExpression>1</RewardExpression>
+              </CtlReward>
+              <CtlReward>
+                <Guid>10b94c10-1437-45a7-bdca-0691abf82ae8</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil3__thinking&gt;=1</CtlExpression>
+                <RewardExpression>1</RewardExpression>
+              </CtlReward>
+            </CtlBasedRewards>
+            <PlaceRateRewards/>
+            <TransitionImpulseRewards/>
+          </StateRewardConfiguration>
+          <StateRewardConfiguration>
+            <ConfigurationName>phil4_thinkingTime</ConfigurationName>
+            <CtlBasedRewards>
+              <CtlReward>
+                <Guid>2f87b2db-710d-4012-b414-74dafd0e630f</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil4__thinking&gt;=1</CtlExpression>
+                <RewardExpression>1</RewardExpression>
+              </CtlReward>
+            </CtlBasedRewards>
+            <PlaceRateRewards/>
+            <TransitionImpulseRewards/>
+          </StateRewardConfiguration>
+          <StateRewardConfiguration>
+            <ConfigurationName>phil1_thinkingTime</ConfigurationName>
+            <CtlBasedRewards>
+              <CtlReward>
+                <Guid>ba482a25-ab92-430b-adf0-bb689d2786a2</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil1__thinking&gt;=1</CtlExpression>
+                <RewardExpression>1</RewardExpression>
+              </CtlReward>
+            </CtlBasedRewards>
+            <PlaceRateRewards/>
+            <TransitionImpulseRewards/>
+          </StateRewardConfiguration>
+          <StateRewardConfiguration>
+            <ConfigurationName>phil2_thinkingTime</ConfigurationName>
+            <CtlBasedRewards>
+              <CtlReward>
+                <Guid>13d49523-80d1-4b9c-9072-87743dcd505c</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil2__thinking&gt;=1</CtlExpression>
+                <RewardExpression>1</RewardExpression>
+              </CtlReward>
+            </CtlBasedRewards>
+            <PlaceRateRewards/>
+            <TransitionImpulseRewards/>
+          </StateRewardConfiguration>
+          <StateRewardConfiguration>
+            <ConfigurationName>phil3_thinkingTime</ConfigurationName>
+            <CtlBasedRewards>
+              <CtlReward>
+                <Guid>cd42d332-177b-47f9-90b8-78d91166e0ec</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil3__thinking&gt;=1</CtlExpression>
+                <RewardExpression>1</RewardExpression>
+              </CtlReward>
+            </CtlBasedRewards>
+            <PlaceRateRewards/>
+            <TransitionImpulseRewards/>
+          </StateRewardConfiguration>
+        </ArrayOfStateRewardConfiguration>
+      </reward-configs>
+      <mtff-failure-configs>
+        <ArrayOfMtffFaultConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <MtffFaultConfiguration>
+            <ConfigurationName>phil5_isHungry</ConfigurationName>
+            <FaultModes>
+              <MtffFault>
+                <Guid>04d533e1-9a85-41a8-824e-31686f6c754f</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil5__waiting&gt;=1</CtlExpression>
+              </MtffFault>
+            </FaultModes>
+          </MtffFaultConfiguration>
+          <MtffFaultConfiguration>
+            <ConfigurationName>Table_hungryFaultModes</ConfigurationName>
+            <FaultModes>
+              <MtffFault>
+                <Guid>e609aaf5-594f-420f-b520-a3580bb6edba</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil1__waiting&gt;=1</CtlExpression>
+              </MtffFault>
+              <MtffFault>
+                <Guid>ea5d9f7b-f575-4420-85a6-df4e20133b49</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil4__waiting&gt;=1</CtlExpression>
+              </MtffFault>
+              <MtffFault>
+                <Guid>829882e2-349a-46a2-bed1-a55d8462c8c3</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil3__waiting&gt;=1</CtlExpression>
+              </MtffFault>
+              <MtffFault>
+                <Guid>df5a522a-3ec9-41ee-b154-ee8867917c8a</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil5__waiting&gt;=1</CtlExpression>
+              </MtffFault>
+              <MtffFault>
+                <Guid>e8667489-fec8-4b54-8f89-9bc7169c0c51</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil2__waiting&gt;=1</CtlExpression>
+              </MtffFault>
+            </FaultModes>
+          </MtffFaultConfiguration>
+          <MtffFaultConfiguration>
+            <ConfigurationName>phil4_isHungry</ConfigurationName>
+            <FaultModes>
+              <MtffFault>
+                <Guid>5ca89006-0704-4401-b167-2309deee35c1</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil4__waiting&gt;=1</CtlExpression>
+              </MtffFault>
+            </FaultModes>
+          </MtffFaultConfiguration>
+          <MtffFaultConfiguration>
+            <ConfigurationName>phil1_isHungry</ConfigurationName>
+            <FaultModes>
+              <MtffFault>
+                <Guid>61d43df1-f2e4-4f6b-8a60-3558714a9062</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil1__waiting&gt;=1</CtlExpression>
+              </MtffFault>
+            </FaultModes>
+          </MtffFaultConfiguration>
+          <MtffFaultConfiguration>
+            <ConfigurationName>phil2_isHungry</ConfigurationName>
+            <FaultModes>
+              <MtffFault>
+                <Guid>ba971e78-ce32-4a07-8c59-7e1d47f3dc0c</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil2__waiting&gt;=1</CtlExpression>
+              </MtffFault>
+            </FaultModes>
+          </MtffFaultConfiguration>
+          <MtffFaultConfiguration>
+            <ConfigurationName>phil3_isHungry</ConfigurationName>
+            <FaultModes>
+              <MtffFault>
+                <Guid>73be6ee2-1193-443e-83f9-fba46c411ff8</Guid>
+                <CtlExpression>DiningPhilosophers.philosopher_Table_phil3__waiting&gt;=1</CtlExpression>
+              </MtffFault>
+            </FaultModes>
+          </MtffFaultConfiguration>
+        </ArrayOfMtffFaultConfiguration>
+      </mtff-failure-configs>
+      <sensitivity-parameters>
+        <ArrayOfSensitivityNetParameter xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <SensitivityNetParameter>
+            <Name>phil3_eatingRate</Name>
+            <Description>The rate at which this philosopher can consume "rice".</Description>
+            <DefaultValue>9.680783503298795</DefaultValue>
+          </SensitivityNetParameter>
+          <SensitivityNetParameter>
+            <Name>phil5_eatingRate</Name>
+            <Description>The rate at which this philosopher can consume "rice".</Description>
+            <DefaultValue>9.47722968486562</DefaultValue>
+          </SensitivityNetParameter>
+          <SensitivityNetParameter>
+            <Name>phil1_eatingRate</Name>
+            <Description>The rate at which this philosopher can consume "rice".</Description>
+            <DefaultValue>7.33569408796258</DefaultValue>
+          </SensitivityNetParameter>
+          <SensitivityNetParameter>
+            <Name>phil4_eatingRate</Name>
+            <Description>The rate at which this philosopher can consume "rice".</Description>
+            <DefaultValue>9.640677490529756</DefaultValue>
+          </SensitivityNetParameter>
+          <SensitivityNetParameter>
+            <Name>phil2_eatingRate</Name>
+            <Description>The rate at which this philosopher can consume "rice".</Description>
+            <DefaultValue>2.156376928966199</DefaultValue>
+          </SensitivityNetParameter>
+        </ArrayOfSensitivityNetParameter>
+      </sensitivity-parameters>
+    </toolspecific>
+    <declaration>
+      <structure>
+        <declarations/>
+      </structure>
+    </declaration>
+    <place id="id1">
+      <name>
+        <text>philosopher_Table_phil3__eating</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+      <graphics>
+        <position x="1035" y="1458"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id3">
+      <name>
+        <text>philosopher_Table_phil3__rightFork</text>
+      </name>
+      <initialMarking>
+        <text>1</text>
+      </initialMarking>
+      <graphics>
+        <position x="923" y="1314"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id4">
+      <name>
+        <text>philosopher_Table_phil3__waiting</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+      <graphics>
+        <position x="189" y="1098"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id6">
+      <name>
+        <text>philosopher_Table_phil3__thinking</text>
+      </name>
+      <initialMarking>
+        <text>1</text>
+      </initialMarking>
+      <graphics>
+        <position x="357" y="1242"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id8">
+      <name>
+        <text>philosopher_Table_phil4__waiting</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+      <graphics>
+        <position x="887" y="882"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id10">
+      <name>
+        <text>philosopher_Table_phil4__eating</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+      <graphics>
+        <position x="760" y="1170"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id12">
+      <name>
+        <text>philosopher_Table_phil4__thinking</text>
+      </name>
+      <initialMarking>
+        <text>1</text>
+      </initialMarking>
+      <graphics>
+        <position x="829" y="1026"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id14">
+      <name>
+        <text>philosopher_Table_phil4__rightFork</text>
+      </name>
+      <initialMarking>
+        <text>1</text>
+      </initialMarking>
+      <graphics>
+        <position x="496" y="1026"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id15">
+      <name>
+        <text>philosopher_Table_phil5__thinking</text>
+      </name>
+      <initialMarking>
+        <text>1</text>
+      </initialMarking>
+      <graphics>
+        <position x="516" y="738"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id18">
+      <name>
+        <text>philosopher_Table_phil5__waiting</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+      <graphics>
+        <position x="683" y="594"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id19">
+      <name>
+        <text>philosopher_Table_phil5__eating</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+      <graphics>
+        <position x="515" y="882"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id21">
+      <name>
+        <text>philosopher_Table_phil5__rightFork</text>
+      </name>
+      <initialMarking>
+        <text>1</text>
+      </initialMarking>
+      <graphics>
+        <position x="184" y="738"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id22">
+      <name>
+        <text>philosopher_Table_phil1__eating</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+      <graphics>
+        <position x="291" y="594"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id23">
+      <name>
+        <text>philosopher_Table_phil1__thinking</text>
+      </name>
+      <initialMarking>
+        <text>1</text>
+      </initialMarking>
+      <graphics>
+        <position x="235" y="450"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id24">
+      <name>
+        <text>philosopher_Table_phil1__rightFork</text>
+      </name>
+      <initialMarking>
+        <text>1</text>
+      </initialMarking>
+      <graphics>
+        <position x="561" y="450"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id27">
+      <name>
+        <text>philosopher_Table_phil1__waiting</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+      <graphics>
+        <position x="187" y="306"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id30">
+      <name>
+        <text>philosopher_Table_phil2__eating</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+      <graphics>
+        <position x="655" y="306"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id31">
+      <name>
+        <text>philosopher_Table_phil2__waiting</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+      <graphics>
+        <position x="431" y="18"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id33">
+      <name>
+        <text>philosopher_Table_phil2__rightFork</text>
+      </name>
+      <initialMarking>
+        <text>1</text>
+      </initialMarking>
+      <graphics>
+        <position x="902" y="162"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <place id="id35">
+      <name>
+        <text>philosopher_Table_phil2__thinking</text>
+      </name>
+      <initialMarking>
+        <text>1</text>
+      </initialMarking>
+      <graphics>
+        <position x="526" y="162"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <capacity>Unlimited</capacity>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <interface>False</interface>
+      </toolspecific>
+    </place>
+    <transition id="id2">
+      <name>
+        <text>philosopher_Table_phil3__finishEating</text>
+      </name>
+      <graphics>
+        <position x="959" y="1386"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>9.680783503298795</param1>
+          <rate-function>phil3_eatingRate</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id5">
+      <name>
+        <text>philosopher_Table_phil3__startEating</text>
+      </name>
+      <graphics>
+        <position x="995" y="90"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>1000.0</param1>
+          <rate-function>1000.0</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id7">
+      <name>
+        <text>philosopher_Table_phil3__getHungry</text>
+      </name>
+      <graphics>
+        <position x="287" y="1170"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>0.08028005221551844</param1>
+          <rate-function>0.08028005221551844</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id9">
+      <name>
+        <text>philosopher_Table_phil4__startEating</text>
+      </name>
+      <graphics>
+        <position x="776" y="1242"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>1000.0</param1>
+          <rate-function>1000.0</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id11">
+      <name>
+        <text>philosopher_Table_phil4__getHungry</text>
+      </name>
+      <graphics>
+        <position x="847" y="954"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>4.702333674470454</param1>
+          <rate-function>4.702333674470454</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id13">
+      <name>
+        <text>philosopher_Table_phil4__finishEating</text>
+      </name>
+      <graphics>
+        <position x="812" y="1098"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>9.640677490529756</param1>
+          <rate-function>phil4_eatingRate</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id16">
+      <name>
+        <text>philosopher_Table_phil5__getHungry</text>
+      </name>
+      <graphics>
+        <position x="523" y="666"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>4.68855663703505</param1>
+          <rate-function>4.68855663703505</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id17">
+      <name>
+        <text>philosopher_Table_phil5__startEating</text>
+      </name>
+      <graphics>
+        <position x="515" y="954"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>1000.0</param1>
+          <rate-function>1000.0</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id20">
+      <name>
+        <text>philosopher_Table_phil5__finishEating</text>
+      </name>
+      <graphics>
+        <position x="425" y="810"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>9.47722968486562</param1>
+          <rate-function>phil5_eatingRate</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id25">
+      <name>
+        <text>philosopher_Table_phil1__finishEating</text>
+      </name>
+      <graphics>
+        <position x="259" y="522"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>7.33569408796258</param1>
+          <rate-function>phil1_eatingRate</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id26">
+      <name>
+        <text>philosopher_Table_phil1__startEating</text>
+      </name>
+      <graphics>
+        <position x="260" y="666"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>1000.0</param1>
+          <rate-function>1000.0</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id28">
+      <name>
+        <text>philosopher_Table_phil1__getHungry</text>
+      </name>
+      <graphics>
+        <position x="221" y="378"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>2.079900016886398</param1>
+          <rate-function>2.079900016886398</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id29">
+      <name>
+        <text>philosopher_Table_phil2__getHungry</text>
+      </name>
+      <graphics>
+        <position x="505" y="90"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>1.6969494269995804</param1>
+          <rate-function>1.6969494269995804</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id32">
+      <name>
+        <text>philosopher_Table_phil2__finishEating</text>
+      </name>
+      <graphics>
+        <position x="590" y="234"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>2.156376928966199</param1>
+          <rate-function>phil2_eatingRate</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <transition id="id34">
+      <name>
+        <text>philosopher_Table_phil2__startEating</text>
+      </name>
+      <graphics>
+        <position x="636" y="378"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <toolspecific tool="Petri.NET" version="1.5.5945.12338">
+        <orientation>Vertical</orientation>
+        <priority>-1</priority>
+        <textalign>Bottom</textalign>
+        <textvisible visible="true"/>
+        <important>False</important>
+        <abnormal>False</abnormal>
+        <distribution type="Exponential">
+          <param1>1000.0</param1>
+          <rate-function>1000.0</rate-function>
+        </distribution>
+        <condition/>
+        <command/>
+      </toolspecific>
+    </transition>
+    <arc id="id36" source="id1" target="id2">
+      <graphics>
+        <position x="1016" y="1439"/>
+        <position x="1007" y="1431"/>
+        <position x="996" y="1420"/>
+        <position x="986" y="1411"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id37" source="id3" target="id9">
+      <graphics>
+        <position x="887" y="1296"/>
+        <position x="868" y="1286"/>
+        <position x="843" y="1274"/>
+        <position x="822" y="1264"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id38" source="id3" target="id5">
+      <graphics>
+        <position x="962" y="1296"/>
+        <position x="1006" y="1274"/>
+        <position x="1070" y="1230"/>
+        <position x="1070" y="1170"/>
+        <position x="1070" y="1170"/>
+        <position x="1070" y="1170"/>
+        <position x="1070" y="378"/>
+        <position x="1070" y="274"/>
+        <position x="1118" y="236"/>
+        <position x="1070" y="144"/>
+        <position x="1064" y="131"/>
+        <position x="1054" y="121"/>
+        <position x="1042" y="113"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id39" source="id2" target="id6">
+      <graphics>
+        <position x="884" y="1367"/>
+        <position x="769" y="1340"/>
+        <position x="551" y="1288"/>
+        <position x="435" y="1260"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id40" source="id25" target="id24">
+      <graphics>
+        <position x="335" y="503"/>
+        <position x="380" y="493"/>
+        <position x="438" y="479"/>
+        <position x="483" y="468"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id41" source="id25" target="id23">
+      <graphics>
+        <position x="253" y="503"/>
+        <position x="250" y="496"/>
+        <position x="247" y="486"/>
+        <position x="245" y="478"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id42" source="id11" target="id8">
+      <graphics>
+        <position x="857" y="935"/>
+        <position x="862" y="927"/>
+        <position x="867" y="918"/>
+        <position x="872" y="909"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id43" source="id2" target="id3">
+      <graphics>
+        <position x="950" y="1367"/>
+        <position x="946" y="1359"/>
+        <position x="941" y="1350"/>
+        <position x="937" y="1341"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id44" source="id4" target="id5">
+      <graphics>
+        <position x="133" y="1081"/>
+        <position x="78" y="1060"/>
+        <position x="2" y="1020"/>
+        <position x="2" y="954"/>
+        <position x="2" y="954"/>
+        <position x="2" y="954"/>
+        <position x="2" y="378"/>
+        <position x="2" y="337"/>
+        <position x="-7" y="316"/>
+        <position x="21" y="288"/>
+        <position x="131" y="183"/>
+        <position x="560" y="246"/>
+        <position x="696" y="180"/>
+        <position x="717" y="169"/>
+        <position x="714" y="154"/>
+        <position x="734" y="144"/>
+        <position x="758" y="131"/>
+        <position x="813" y="119"/>
+        <position x="867" y="109"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id45" source="id26" target="id22">
+      <graphics>
+        <position x="268" y="647"/>
+        <position x="271" y="639"/>
+        <position x="275" y="630"/>
+        <position x="279" y="621"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id46" source="id12" target="id11">
+      <graphics>
+        <position x="834" y="1007"/>
+        <position x="836" y="1000"/>
+        <position x="838" y="990"/>
+        <position x="840" y="982"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id47" source="id13" target="id3">
+      <graphics>
+        <position x="878" y="1116"/>
+        <position x="895" y="1124"/>
+        <position x="912" y="1135"/>
+        <position x="922" y="1152"/>
+        <position x="948" y="1192"/>
+        <position x="940" y="1251"/>
+        <position x="931" y="1285"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id48" source="id10" target="id13">
+      <graphics>
+        <position x="773" y="1151"/>
+        <position x="779" y="1143"/>
+        <position x="786" y="1133"/>
+        <position x="793" y="1124"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id49" source="id13" target="id12">
+      <graphics>
+        <position x="816" y="1079"/>
+        <position x="818" y="1072"/>
+        <position x="820" y="1062"/>
+        <position x="822" y="1054"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id50" source="id9" target="id10">
+      <graphics>
+        <position x="772" y="1223"/>
+        <position x="770" y="1216"/>
+        <position x="768" y="1206"/>
+        <position x="766" y="1198"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id51" source="id8" target="id9">
+      <graphics>
+        <position x="928" y="899"/>
+        <position x="945" y="908"/>
+        <position x="964" y="920"/>
+        <position x="977" y="936"/>
+        <position x="1005" y="968"/>
+        <position x="1014" y="982"/>
+        <position x="1014" y="1026"/>
+        <position x="1014" y="1098"/>
+        <position x="1014" y="1098"/>
+        <position x="1014" y="1098"/>
+        <position x="1014" y="1164"/>
+        <position x="945" y="1201"/>
+        <position x="881" y="1221"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id52" source="id5" target="id1">
+      <graphics>
+        <position x="1037" y="108"/>
+        <position x="1082" y="130"/>
+        <position x="1146" y="173"/>
+        <position x="1146" y="234"/>
+        <position x="1146" y="1314"/>
+        <position x="1146" y="1314"/>
+        <position x="1146" y="1314"/>
+        <position x="1146" y="1364"/>
+        <position x="1102" y="1408"/>
+        <position x="1070" y="1434"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id53" source="id22" target="id25">
+      <graphics>
+        <position x="283" y="575"/>
+        <position x="280" y="567"/>
+        <position x="275" y="558"/>
+        <position x="271" y="549"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id54" source="id15" target="id16">
+      <graphics>
+        <position x="518" y="719"/>
+        <position x="519" y="712"/>
+        <position x="520" y="702"/>
+        <position x="520" y="694"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id55" source="id29" target="id31">
+      <graphics>
+        <position x="486" y="71"/>
+        <position x="477" y="63"/>
+        <position x="467" y="52"/>
+        <position x="457" y="42"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id56" source="id32" target="id24">
+      <graphics>
+        <position x="530" y="252"/>
+        <position x="513" y="260"/>
+        <position x="497" y="271"/>
+        <position x="487" y="288"/>
+        <position x="462" y="329"/>
+        <position x="482" y="353"/>
+        <position x="506" y="396"/>
+        <position x="512" y="406"/>
+        <position x="521" y="416"/>
+        <position x="530" y="425"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id57" source="id30" target="id32">
+      <graphics>
+        <position x="639" y="287"/>
+        <position x="631" y="279"/>
+        <position x="622" y="269"/>
+        <position x="614" y="259"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id58" source="id18" target="id17">
+      <graphics>
+        <position x="687" y="612"/>
+        <position x="694" y="639"/>
+        <position x="704" y="692"/>
+        <position x="704" y="738"/>
+        <position x="704" y="810"/>
+        <position x="704" y="810"/>
+        <position x="704" y="810"/>
+        <position x="704" y="850"/>
+        <position x="712" y="869"/>
+        <position x="684" y="900"/>
+        <position x="673" y="912"/>
+        <position x="641" y="923"/>
+        <position x="607" y="933"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id59" source="id32" target="id33">
+      <graphics>
+        <position x="668" y="215"/>
+        <position x="715" y="205"/>
+        <position x="775" y="191"/>
+        <position x="822" y="180"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id60" source="id33" target="id5">
+      <graphics>
+        <position x="926" y="143"/>
+        <position x="937" y="134"/>
+        <position x="951" y="123"/>
+        <position x="964" y="114"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id61" source="id27" target="id26">
+      <graphics>
+        <position x="140" y="323"/>
+        <position x="122" y="331"/>
+        <position x="102" y="343"/>
+        <position x="88" y="360"/>
+        <position x="60" y="392"/>
+        <position x="55" y="407"/>
+        <position x="55" y="450"/>
+        <position x="55" y="522"/>
+        <position x="55" y="522"/>
+        <position x="55" y="522"/>
+        <position x="55" y="585"/>
+        <position x="123" y="623"/>
+        <position x="180" y="644"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id62" source="id17" target="id19">
+      <graphics>
+        <position x="515" y="935"/>
+        <position x="515" y="928"/>
+        <position x="515" y="918"/>
+        <position x="515" y="910"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id63" source="id6" target="id7">
+      <graphics>
+        <position x="339" y="1223"/>
+        <position x="331" y="1215"/>
+        <position x="321" y="1204"/>
+        <position x="312" y="1195"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id64" source="id14" target="id9">
+      <graphics>
+        <position x="503" y="1044"/>
+        <position x="515" y="1077"/>
+        <position x="547" y="1149"/>
+        <position x="598" y="1188"/>
+        <position x="617" y="1202"/>
+        <position x="640" y="1212"/>
+        <position x="663" y="1220"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id65" source="id13" target="id14">
+      <graphics>
+        <position x="733" y="1079"/>
+        <position x="685" y="1069"/>
+        <position x="625" y="1055"/>
+        <position x="577" y="1044"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id66" source="id14" target="id17">
+      <graphics>
+        <position x="501" y="1007"/>
+        <position x="503" y="1000"/>
+        <position x="505" y="990"/>
+        <position x="508" y="982"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id67" source="id33" target="id34">
+      <graphics>
+        <position x="898" y="180"/>
+        <position x="891" y="213"/>
+        <position x="869" y="285"/>
+        <position x="823" y="324"/>
+        <position x="809" y="336"/>
+        <position x="771" y="347"/>
+        <position x="734" y="357"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id68" source="id34" target="id30">
+      <graphics>
+        <position x="641" y="359"/>
+        <position x="643" y="352"/>
+        <position x="645" y="342"/>
+        <position x="648" y="334"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id69" source="id31" target="id34">
+      <graphics>
+        <position x="409" y="36"/>
+        <position x="398" y="45"/>
+        <position x="386" y="58"/>
+        <position x="378" y="72"/>
+        <position x="353" y="114"/>
+        <position x="338" y="134"/>
+        <position x="356" y="180"/>
+        <position x="387" y="260"/>
+        <position x="415" y="275"/>
+        <position x="487" y="324"/>
+        <position x="508" y="337"/>
+        <position x="532" y="348"/>
+        <position x="555" y="356"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id70" source="id24" target="id34">
+      <graphics>
+        <position x="580" y="431"/>
+        <position x="589" y="423"/>
+        <position x="600" y="412"/>
+        <position x="610" y="403"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id71" source="id20" target="id14">
+      <graphics>
+        <position x="384" y="828"/>
+        <position x="369" y="836"/>
+        <position x="354" y="848"/>
+        <position x="346" y="864"/>
+        <position x="339" y="878"/>
+        <position x="342" y="884"/>
+        <position x="346" y="900"/>
+        <position x="355" y="935"/>
+        <position x="358" y="946"/>
+        <position x="384" y="972"/>
+        <position x="398" y="985"/>
+        <position x="417" y="996"/>
+        <position x="435" y="1004"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id72" source="id19" target="id20">
+      <graphics>
+        <position x="492" y="863"/>
+        <position x="481" y="854"/>
+        <position x="468" y="844"/>
+        <position x="456" y="834"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id73" source="id24" target="id26">
+      <graphics>
+        <position x="555" y="468"/>
+        <position x="542" y="501"/>
+        <position x="510" y="574"/>
+        <position x="459" y="612"/>
+        <position x="443" y="624"/>
+        <position x="402" y="636"/>
+        <position x="361" y="645"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id74" source="id23" target="id28">
+      <graphics>
+        <position x="232" y="431"/>
+        <position x="230" y="424"/>
+        <position x="228" y="414"/>
+        <position x="227" y="406"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id75" source="id28" target="id27">
+      <graphics>
+        <position x="213" y="359"/>
+        <position x="209" y="351"/>
+        <position x="204" y="342"/>
+        <position x="200" y="333"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id76" source="id20" target="id21">
+      <graphics>
+        <position x="365" y="791"/>
+        <position x="330" y="781"/>
+        <position x="286" y="768"/>
+        <position x="250" y="757"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id77" source="id25" target="id21">
+      <graphics>
+        <position x="170" y="540"/>
+        <position x="151" y="548"/>
+        <position x="134" y="559"/>
+        <position x="123" y="576"/>
+        <position x="96" y="615"/>
+        <position x="110" y="640"/>
+        <position x="130" y="684"/>
+        <position x="135" y="694"/>
+        <position x="144" y="704"/>
+        <position x="152" y="713"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id78" source="id21" target="id17">
+      <graphics>
+        <position x="197" y="756"/>
+        <position x="223" y="789"/>
+        <position x="281" y="860"/>
+        <position x="346" y="900"/>
+        <position x="369" y="914"/>
+        <position x="396" y="924"/>
+        <position x="422" y="932"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id79" source="id21" target="id26">
+      <graphics>
+        <position x="203" y="719"/>
+        <position x="213" y="711"/>
+        <position x="224" y="700"/>
+        <position x="234" y="691"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id80" source="id16" target="id18">
+      <graphics>
+        <position x="564" y="647"/>
+        <position x="585" y="638"/>
+        <position x="612" y="625"/>
+        <position x="635" y="615"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id81" source="id7" target="id4">
+      <graphics>
+        <position x="262" y="1151"/>
+        <position x="250" y="1142"/>
+        <position x="235" y="1131"/>
+        <position x="222" y="1122"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id82" source="id35" target="id29">
+      <graphics>
+        <position x="521" y="143"/>
+        <position x="519" y="136"/>
+        <position x="516" y="126"/>
+        <position x="513" y="118"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id83" source="id32" target="id35">
+      <graphics>
+        <position x="574" y="215"/>
+        <position x="566" y="207"/>
+        <position x="557" y="196"/>
+        <position x="549" y="187"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id84" source="id20" target="id15">
+      <graphics>
+        <position x="448" y="791"/>
+        <position x="459" y="782"/>
+        <position x="473" y="772"/>
+        <position x="485" y="762"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    <arc id="id85" source="id2" target="id33">
+      <graphics>
+        <position x="1037" y="1367"/>
+        <position x="1056" y="1359"/>
+        <position x="1076" y="1348"/>
+        <position x="1089" y="1332"/>
+        <position x="1115" y="1300"/>
+        <position x="1108" y="1282"/>
+        <position x="1108" y="1242"/>
+        <position x="1108" y="1242"/>
+        <position x="1108" y="1242"/>
+        <position x="1108" y="378"/>
+        <position x="1108" y="286"/>
+        <position x="1009" y="217"/>
+        <position x="948" y="184"/>
+        <fill color="White"/>
+        <line color="Black"/>
+      </graphics>
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+  </net>
+</pnml>

@@ -32,7 +32,7 @@ class MyBasienOptimization:
             except SPDNException:
                 return -self.ERROR_VALUE
 
-        bo = BayesianOptimization(f, self.model.borders)
+        bo = BayesianOptimization(f, self.model.borders, verbose=False)
 
         self.ACQS[acq](bo, init_points, n_iter, acq, acq_param)
         return SPDNResult(-bo.res['max']['max_val'],
