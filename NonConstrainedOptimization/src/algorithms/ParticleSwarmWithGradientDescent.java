@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
+import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
 import models.Model;
 import spdn.SPDNResult;
 import spdn.SPDN;
@@ -23,6 +24,8 @@ public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
 	}
 	
 	public SPDNResult optimize(int swarmSize, int maxIter, int gradientMaxIter, double gamma, double omega, double fiParticle, double fiGlobal) {
+		long startTime = System.nanoTime();
+		
 		initParams(swarmSize, maxIter, gradientMaxIter, gamma, omega, fiParticle, fiGlobal);
 		
 		List<Particle> swarm = initSwarm();
@@ -30,13 +33,21 @@ public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
 		for(int i = 0; i < this.maxIter; i++){
 			for (int j=0; j < this.swarmSize; j++){
 				Particle p = swarm.get(j);
-				RealVector xnew = stepParticle(p);
-				updateBestsIfNeeded(p, xnew);
+				stepParticle(p);
+				if (bestValue > p.getLocalBestValue()) {
+					bestValue = p.getLocalBestValue();
+					bestPoint = p.getLocalBestPoint().copy();
+				}
 			}
 			doGradientDescent();
 			
 		}
-		return new SPDNResult(spdn.f(bestPoint), SPDN.convertPoint(bestPoint).toArray(), ID, getHyperParams(), model);
+		
+		SPDNResult result = new SPDNResult(bestValue, SPDN.convertPoint(bestPoint).toArray(), ID, getHyperParams(), model);
+		result.setTime(System.nanoTime() - startTime);
+		result.writeToCsv();
+		spdn.writeCountedDataToCsv(ID);
+		return result;
 	}
 	
 	protected void initParams(int swarmSize, int maxIter, int gradientMaxIter, double gamma, double omega, double fiParticle, double fiGlobal) {
@@ -52,12 +63,16 @@ public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
 		RealVector xn = bestPoint.copy();
 		RealVector xBefore = MatrixUtils.createRealVector(new double[spdn.getDimension()]);
 		
-		for (int j = 0; j < gradientMaxIter; j++) {
-			xn = xn.add(spdn.df(xn).mapMultiply(-r.nextDouble() * gamma));
-			RealVector DxB = spdn.df(xBefore);
-			RealVector Dxn = spdn.df(xn);
-			gamma = xn.add(xBefore.mapMultiply(-1)).dotProduct(Dxn.add(DxB.mapMultiply(-1)));
-			gamma /= Dxn.add(DxB.mapMultiply(-1)).getNorm() * Dxn.add(DxB.mapMultiply(-1)).getNorm();
+		try {
+			for (int j = 0; j < gradientMaxIter; j++) {
+				xn = xn.add(spdn.df(xn).mapMultiply(-r.nextDouble() * gamma));
+				RealVector DxB = spdn.df(xBefore);
+				RealVector Dxn = spdn.df(xn);
+				gamma = xn.add(xBefore.mapMultiply(-1)).dotProduct(Dxn.add(DxB.mapMultiply(-1)));
+				gamma /= Dxn.add(DxB.mapMultiply(-1)).getNorm() * Dxn.add(DxB.mapMultiply(-1)).getNorm();
+			}
+		} catch (SpdnException e) {
+			// Nothing to do. xn contains the last valid point
 		}
 		
 		double newValue = spdn.f(xn);

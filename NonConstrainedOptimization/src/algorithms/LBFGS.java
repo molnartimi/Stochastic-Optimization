@@ -5,6 +5,7 @@ import java.util.TreeMap;
 import org.apache.commons.math3.linear.MatrixUtils;
 
 import hu.bme.mit.inf.optimization.wrapper.breeze.LbfgsWrapper;
+import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
 import models.Model;
 import spdn.SPDNResult;
 import spdn.SPDN;
@@ -18,10 +19,12 @@ public class LBFGS {
 	
 	public LBFGS(Model model) {
 		this.model = model;
-		this.spdn = new SPDN(model,0);
+		this.spdn = new SPDN(model);
 	}
 
 	public SPDNResult optimize(int m, int maxIter, double tolerance, double[] initPoint, int restart) {
+		long startTime = System.nanoTime();
+		
 		m = m > 0 ? m : 4; 
 		maxIter = maxIter > 0 ? maxIter : 20;
 		tolerance = tolerance > 0 ? tolerance : 0.001;
@@ -33,23 +36,30 @@ public class LBFGS {
 		
 		LbfgsWrapper lbfgs = new LbfgsWrapper(maxIter,m,tolerance);
 		while (iter < restart+1 && minValue > tolerance) {
-			double[] result = lbfgs.minimize(spdn, xn);
-			
-			double value = spdn.f(result);
-			if (minPoint.length == 0 || value < minValue) {
-				minValue = value;
-				minPoint = result;
+			try {
+				double[] result = lbfgs.minimize(spdn, xn);
+				
+				double value = spdn.f(result);
+				if (minPoint.length == 0 || value < minValue) {
+					minValue = value;
+					minPoint = result;
+				}
+			} catch (SpdnException e) {
+				// Nothing to do, go and try again.
 			}
-			
 			iter++;
 			xn = model.getRandomPoint();
 		}
 		
-		return new SPDNResult(spdn.f(minPoint), 
-				SPDN.convertPoint(MatrixUtils.createRealVector(minPoint)).toArray(), 
-				ID, 
-				getHyperParams(m, maxIter, tolerance, restart), 
-				model);
+		SPDNResult result = new SPDNResult(minValue, 
+											SPDN.convertPoint(MatrixUtils.createRealVector(minPoint)).toArray(), 
+											ID, 
+											getHyperParams(m, maxIter, tolerance, restart), 
+											model);
+		result.setTime(System.nanoTime() - startTime);
+		result.writeToCsv();
+		spdn.writeCountedDataToCsv(ID);
+		return result;
 	}
 	
 	private SortedMap<String, Double> getHyperParams(int m, int maxIter, double tolerance, int restart) {

@@ -12,7 +12,7 @@ public class AlgorithmTest {
 	private Model model = Model.SIMPLE_SERVER;
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void lbfgsTest(){
 		LBFGS opt = new LBFGS(model);
 		SPDNResult result = opt.optimize(0,0,0, new double[0], 5);
@@ -21,16 +21,16 @@ public class AlgorithmTest {
 	}
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void gradientTest(){
 		GradientDescent opt = new GradientDescent(model);
-		SPDNResult result = opt.optimize(0,0,new double[0], 5);
+		SPDNResult result = opt.optimize(0,0,new double[0], 10);
 		System.out.println(result.toString());
 		result.writeToCsv();
 	}
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void particleSwarmTest(){
 		ParticleSwarm opt = new ParticleSwarm(model);
 		SPDNResult result = opt.optimize(0,0,0,0,0);
@@ -39,7 +39,7 @@ public class AlgorithmTest {
 	}
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void particleSwarmWithGradientDescentTest(){
 		ParticleSwarmWithGradientDescent opt = new ParticleSwarmWithGradientDescent(model);
 		SPDNResult result = opt.optimize(0,0,0,0,0,0,0);
@@ -48,7 +48,7 @@ public class AlgorithmTest {
 	}
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void beesTest(){
 		BeesAlgorithm opt = new BeesAlgorithm(model);
 		SPDNResult result = opt.optimize(0,0,0,0,0,0,0,0);
@@ -60,7 +60,7 @@ public class AlgorithmTest {
 	//@Ignore
 	public void simulatedAnnealingTest(){
 		SimulatedAnnealing opt = new SimulatedAnnealing(model);
-		SPDNResult result = opt.optimize(1000,0,0.1,0,5);
+		SPDNResult result = opt.optimize(100,0,0.1,0,5);
 		System.out.println(result.toString());
 		result.writeToCsv();
 	}

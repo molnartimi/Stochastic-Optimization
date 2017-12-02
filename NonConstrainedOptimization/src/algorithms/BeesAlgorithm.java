@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
+import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
 import models.Model;
 import spdn.SPDNResult;
 import spdn.SPDN;
@@ -33,7 +34,7 @@ public class BeesAlgorithm{
 	
 	public BeesAlgorithm(Model model) {
 		this.model = model;
-		this.spdn = new SPDN(model, 0);
+		this.spdn = new SPDN(model);
 	}
 	
 	private class Bee{
@@ -73,6 +74,8 @@ public class BeesAlgorithm{
 	}
 	
 	public SPDNResult optimize(int maxIter, double initRadius, double radiusSmallerRate, int scoutSize, int bestBeesSize, int eliteBeesSize, int recruitedOfBestsSize, int recruitedOfElitesSize) {
+		long startTime = System.nanoTime();
+		
 		initParams(maxIter, initRadius, radiusSmallerRate, scoutSize, bestBeesSize, eliteBeesSize, recruitedOfBestsSize, recruitedOfElitesSize);
 		List<Bee> scouts = initSwarm();
 		
@@ -88,11 +91,17 @@ public class BeesAlgorithm{
 			
 			radius *= this.radiusSmallerRate;
 		}
-		return new SPDNResult(spdn.f(scouts.get(0).getPos()),
-				SPDN.convertPoint(scouts.get(0).getPos()).toArray(), 
-				ID, 
-				getHyperParams(initRadius),
-				model);
+		
+		SPDNResult result= new SPDNResult(scouts.get(0).getVal(),
+										  SPDN.convertPoint(scouts.get(0).getPos()).toArray(), 
+										  ID, 
+										  getHyperParams(initRadius),
+										  model);
+		
+		result.setTime(System.nanoTime() - startTime);
+		result.writeToCsv();
+		spdn.writeCountedDataToCsv(ID);
+		return result;
 	}
 	
 	private void calculateLeadsAndRecruiteds(List<Bee> scouts, int fromIdx, int count, int recruitedSize) {
@@ -108,11 +117,16 @@ public class BeesAlgorithm{
 					pos.setEntry(d, localBest.getEntry(d) + (r.nextDouble()*2-1) * radius);
 				}
 				
-				double newPosValue = spdn.f(pos);
-				if (newPosValue < scouts.get(i).getVal()) {
-					localBest = pos;
-					scouts.set(i, new Bee(pos, newPosValue));
+				try {
+					double newPosValue = spdn.f(pos);
+					if (newPosValue < scouts.get(i).getVal()) {
+						localBest = pos;
+						scouts.set(i, new Bee(pos, newPosValue));
+					}
+				} catch (SpdnException e) {
+					// Nothing to do if position of recruited is an unfeasible point
 				}
+				
 			}
 		}
 	}
@@ -120,7 +134,11 @@ public class BeesAlgorithm{
 	private void randomizeOtherScouts(List<Bee> scouts, int fromIdx) {
 		for (int i = fromIdx; i < scouts.size(); i++) {
 			RealVector pos = MatrixUtils.createRealVector(model.getRandomPoint());
-			scouts.get(i).setPos(pos, spdn.f(pos));
+			try {
+				scouts.get(i).setPos(pos, spdn.f(pos));
+			} catch (SpdnException e) {
+				i--;
+			}
 		}
 	}
 	
@@ -141,7 +159,11 @@ public class BeesAlgorithm{
 		
 		for(int i=0; i<scoutSize; i++) {
 			RealVector pos = MatrixUtils.createRealVector(model.getRandomPoint());
-			swarm.add(new Bee(pos, spdn.f(pos)));
+			try {
+				swarm.add(new Bee(pos, spdn.f(pos)));
+			} catch (SpdnException e) {
+				i--;
+			}
 		}
 		return swarm;
 	}

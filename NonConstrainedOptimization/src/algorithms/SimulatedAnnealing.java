@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
+import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
 import models.Model;
 import spdn.SPDNResult;
 import spdn.SPDN;
@@ -29,10 +30,12 @@ public class SimulatedAnnealing {
 	
 	public SimulatedAnnealing(Model model) {
 		this.model = model;
-		this.spdn = new SPDN(model, 0);
+		this.spdn = new SPDN(model);
 	}
 	
 	public SPDNResult optimize(double initTemp, double coolingRate, double initBorder, double borderSmallerRate, int restart) {
+		long startTime = System.nanoTime();
+		
 		initParams(initTemp, coolingRate, initBorder, borderSmallerRate, restart);
 		
 		int i = 0;
@@ -43,39 +46,51 @@ public class SimulatedAnnealing {
 			RealVector xn = MatrixUtils.createRealVector(model.getRandomPoint());
 			
 			RealVector xnext = MatrixUtils.createRealVector(new double[spdn.getDimension()]);
-			double fx = spdn.f(xn);
-			double fxnext;
-			RealVector best = xn.copy();
-			double bestF = fx;
-			
-			double temp = this.initTemp;
-			double border = this.initBorder;
-			
-			while (temp > 1) {
-				for(int j = 0; j < innerRestart; j++){
-					for(int k = 0; k < spdn.getDimension(); k++)
-						xnext.setEntry(k, (xn.getEntry(k)-border)+Math.random()*2*border);
-					fxnext = spdn.f(xnext);
-						
-					if (acceptanceProbability(fx,fxnext,temp) > Math.random())
-						xn = xnext.copy();
-						
-					if (spdn.f(xn) < bestF){
-						best = xn.copy();
-						bestF = spdn.f(best);
+			try {
+				double fx = spdn.f(xn);
+				double fxnext;
+				RealVector best = xn.copy();
+				double bestF = fx;
+				
+				double temp = this.initTemp;
+				double border = this.initBorder;
+				
+				while (temp > 1) {
+					for(int j = 0; j < innerRestart; j++){
+						try {
+							for(int k = 0; k < spdn.getDimension(); k++)
+								xnext.setEntry(k, (xn.getEntry(k)-border)+Math.random()*2*border);
+							fxnext = spdn.f(xnext);
+							if (acceptanceProbability(fx,fxnext,temp) > Math.random())
+								xn = xnext.copy();
+								
+							if (spdn.f(xn) < bestF){
+								best = xn.copy();
+								bestF = spdn.f(best);
+							}
+						} catch (SpdnException e) {
+							// Nothing to do, go on.
+						}
 					}
+							
+					temp *= this.coolingRate;
+					border *= this.borderSmallerRate;
 				}
-						
-				temp *= this.coolingRate;
-				border *= this.borderSmallerRate;
-			}
-			if (minPoint == null || minValue < bestF) {
-				minPoint = best.copy();
-				minValue = bestF;
-			}
-			i++;
+				if (minPoint == null || minValue < bestF) {
+					minPoint = best.copy();
+					minValue = bestF;
+				}
+				i++;
+			} catch (SpdnException e) {
+				continue;
+			}			
 		}
-		return new SPDNResult(spdn.f(minPoint), SPDN.convertPoint(minPoint).toArray(),ID, getHyperParams(), model);
+		
+		SPDNResult result = new SPDNResult(minValue, SPDN.convertPoint(minPoint).toArray(),ID, getHyperParams(), model);
+		result.setTime(System.nanoTime() - startTime);
+		result.writeToCsv();
+		spdn.writeCountedDataToCsv(ID);
+		return result;
 	}
 	
 	private double acceptanceProbability(double energy, double newEnergy, double temp) {

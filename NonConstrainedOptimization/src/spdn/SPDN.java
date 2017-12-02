@@ -1,54 +1,55 @@
 package spdn;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import hu.bme.mit.inf.optimization.wrapper.breeze.DiffFunction;
 import hu.bme.mit.inf.optimization.wrapper.breeze.ValueAndGradient;
-import hu.bme.mit.inf.petridotnet.spdn.AnalysisBuilder;
-import hu.bme.mit.inf.petridotnet.spdn.AnalysisConfiguration;
-import hu.bme.mit.inf.petridotnet.spdn.AnalysisResult;
-import hu.bme.mit.inf.petridotnet.spdn.Parameter;
-import hu.bme.mit.inf.petridotnet.spdn.Reward;
-import hu.bme.mit.inf.petridotnet.spdn.Spdn;
-import hu.bme.mit.inf.petridotnet.spdn.SpdnAnalyzer;
-import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
+import hu.bme.mit.inf.petridotnet.spdn.*;
 import models.Model;
 
 public class SPDN implements DiffFunction {
-	
+	private Model model;
 	private SpdnAnalyzer analyzer;
 	private AnalysisBuilder builder;
 	private List<Parameter> parameters;
 	private List<Reward> rewards;
 	private Map<Reward,Double> empiricalMeasurements;
-	private double errorValue;
+	private ArrayList<String> countedValuesToCsv = new ArrayList<>();
 	
-	public SPDN(Model model, double errorValue) {
+	public SPDN(Model model) {
+		this.model = model;
 		Spdn spdn = new Spdn("../../SPDN");
 		analyzer = spdn.openModel("../SPDN/models/" + model.getFileName(), AnalysisConfiguration.DEFAULT);
 		parameters = model.getAllParams();
 		rewards = model.getAllRewards();
 		empiricalMeasurements = model.getAllMeasurements();
 		builder = analyzer.createAnalysisBuilder();
-		this.errorValue = errorValue > 0 ? errorValue : 1000000;
+		
 	}
 	
 	public double f(double[] variables) {
 		return f(MatrixUtils.createRealVector(variables));
 	}
 	
-	public double f(RealVector variables) {	 // TODO refaktor SpdnException továbbdobásához!!	
+	public double f(RealVector variables) throws SpdnException {	
 		try {
 			AnalysisResult result = runAnalyzer(variables, false);
-			return calcObjectiveF(result);
-		} catch(SpdnException e) {
-			return errorValue;
+			double fx = calcObjectiveF(result);
+			saveCountedValues(fx,variables);
+			return fx;
+		} catch (SpdnException e) {
+			saveCountedValues(null,variables);
+			throw e;
 		}
 	}
 	
@@ -63,33 +64,64 @@ public class SPDN implements DiffFunction {
 		return df(MatrixUtils.createRealVector(variables));
 	}
 
-	public RealVector df(RealVector variables) {		
+	public RealVector df(RealVector variables) throws SpdnException {		
         try {
-        	AnalysisResult result = runAnalyzer(variables, true);
-        	return calcObjectiveDf(result, variables);
-        } catch(SpdnException e) {
-        	double[] errorGradient = new double[getDimension()];
-        	Arrays.fill(errorGradient, errorValue);
-        	return MatrixUtils.createRealVector(errorGradient);
+			AnalysisResult result = runAnalyzer(variables, true);
+			double fx = calcObjectiveF(result);
+			saveCountedValues(fx, variables);
+	        return calcObjectiveDf(result, variables);
+        } catch (SpdnException e) {
+        	saveCountedValues(null, variables);
+        	throw e;
         }
-        
 	}
 	
 	@Override
 	public ValueAndGradient calculate(double[] x) throws SpdnException {
-		RealVector variables = MatrixUtils.createRealVector(x);
-		try{
+		try {
+			RealVector variables = MatrixUtils.createRealVector(x);
 			AnalysisResult result = runAnalyzer(variables, true);
-			return new ValueAndGradient(calcObjectiveF(result), calcObjectiveDf(result, variables).toArray());
-		} catch(SpdnException e) {
-			double[] errorGradient = new double[getDimension()];
-        	Arrays.fill(errorGradient, errorValue);
-        	return new ValueAndGradient(errorValue, errorGradient);
+			double fx = calcObjectiveF(result);
+			saveCountedValues(fx, variables);
+			return new ValueAndGradient(fx, calcObjectiveDf(result, variables).toArray());
+		} catch (SpdnException e) {
+			saveCountedValues(null, MatrixUtils.createRealVector(x));
+			throw e;
 		}
 	}
 		
 	public int getDimension() {
 		return parameters.size();
+	}
+	
+	public void writeCountedDataToCsv(String algorithmId) {
+		PrintWriter csvWriter = null;
+		try {
+			Random r = new Random();
+			int randId = (int) (r.nextDouble() * 10000);
+			String name = System.getProperty("user.dir");
+			File f = new File(name + "\\src\\spdn\\results\\" + model.getId() + "_DATAS_points.csv");
+			boolean exist = f.exists();
+			csvWriter = new PrintWriter(new FileOutputStream(f, true));
+			
+			if (!exist) {
+				String header = "Random_ID;Feasibility;Obj_func_value;";
+				for (Parameter param: parameters) {
+					header += param.getName() + ";";
+				}
+				header += "\n";
+				csvWriter.append(header);
+			}
+			
+			for(String row: countedValuesToCsv) {
+				csvWriter.append(algorithmId + randId + ";" + row + "\n");
+			}
+			
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		} finally{
+			csvWriter.close();
+		}
 	}
 	
 	private AnalysisResult runAnalyzer(RealVector variables, boolean derivatives) throws SpdnException{
@@ -134,4 +166,11 @@ public class SPDN implements DiffFunction {
         return MatrixUtils.createRealVector(fDResult);
 	}
 	
+	private void saveCountedValues(Double value, RealVector variables) {
+		String csvRow = value == null ? "-1;ERROR;" : "1;" + String.valueOf(value) + ";";
+		RealVector convertedVariables = convertPoint(variables);
+		for(int i=0; i<variables.getDimension(); i++)
+			csvRow += String.valueOf(convertedVariables.getEntry(i)) + ";";
+		countedValuesToCsv.add(csvRow);
+	}
 }

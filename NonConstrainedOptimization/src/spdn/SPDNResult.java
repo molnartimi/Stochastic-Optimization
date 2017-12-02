@@ -16,6 +16,7 @@ public class SPDNResult {
 	private SortedMap<String,Double> hyperParams;
 	private Model model;
 	private PrintWriter csvWriter = null;
+	private long time;
 	
 	public SPDNResult(double value, double[] result, String aId, SortedMap<String,Double> hyperParams, Model model) {
 		this.resultValue = value;
@@ -29,9 +30,11 @@ public class SPDNResult {
 	
 	public double[] getPoint() { return resultPoint; }
 	
+	public void setTime(long time) { this.time = time; }
+	
 	@Override
 	public String toString() {
-		String s = "Algorithm: " + algorithmID + "\nModel: " + model.getId() + "\nValue = " + resultValue;
+		String s = "Done in " + time / 60. / 1000000000. + " min\nAlgorithm: " + algorithmID + "\nModel: " + model.getId() + "\nValue = " + resultValue;
 		for (int i = 0; i < model.getDim(); i++) {
 			s += "\n" + model.getParam(i).getName() + " = " + resultPoint[i];
 		}
@@ -66,7 +69,7 @@ public class SPDNResult {
 		for(String key: hyperParams.keySet()) {
 			header += "HP_" + key + ";";
 		}
-		
+		header += "EXEC TIME(min)";
 		csvWriter.append(header + "\n");
 	}
 	
@@ -78,6 +81,7 @@ public class SPDNResult {
 		for(Double hyperparam: hyperParams.values()) {
 			row += hyperparam + ";";
 		}
+		row += String.valueOf(time / 60. / 1000000000.);
 		
 		csvWriter.append(row + "\n");
 	}
