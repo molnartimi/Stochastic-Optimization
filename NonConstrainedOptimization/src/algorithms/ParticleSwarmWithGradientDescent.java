@@ -70,15 +70,15 @@ public class ParticleSwarmWithGradientDescent extends ParticleSwarm{
 				RealVector Dxn = spdn.df(xn);
 				gamma = xn.add(xBefore.mapMultiply(-1)).dotProduct(Dxn.add(DxB.mapMultiply(-1)));
 				gamma /= Dxn.add(DxB.mapMultiply(-1)).getNorm() * Dxn.add(DxB.mapMultiply(-1)).getNorm();
+				
+				double newValue = spdn.f(xn);
+				if(newValue < bestValue){
+					bestPoint = xn.copy();
+					bestValue = newValue;
+				}
 			}
 		} catch (SpdnException e) {
 			// Nothing to do. xn contains the last valid point
-		}
-		
-		double newValue = spdn.f(xn);
-		if(newValue < bestValue){
-			bestPoint = xn.copy();
-			bestValue = newValue;
 		}
 	}
 	
