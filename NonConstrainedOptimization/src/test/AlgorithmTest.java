@@ -9,7 +9,7 @@ import spdn.SPDNResult;
 
 public class AlgorithmTest {
 	public static double epszilon=0.001;
-	private Model model = Model.SIMPLE_SERVER;
+	private Model model = Model.FIL3;
 	
 	@Test
 	//@Ignore

@@ -44,7 +44,12 @@ public class SPDNResult {
 	public void writeToCsv() {
 		try {
 			String name = System.getProperty("user.dir");
-			File f = new File(name + "\\src\\spdn\\results\\" +algorithmID + "-" + model.getId() + ".csv");
+			File f;
+			if (name.contains("\\")) {
+				f = new File(name + "\\src\\spdn\\results\\" +algorithmID + "-" + model.getId() + ".csv");
+			} else {
+				f = new File(name + "/src/spdn/results/" +algorithmID + "-" + model.getId() + ".csv");
+			}
 			boolean exist = f.exists();
 			csvWriter = new PrintWriter(new FileOutputStream(f, true));
 			

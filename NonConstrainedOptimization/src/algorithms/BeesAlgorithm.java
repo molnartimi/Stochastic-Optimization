@@ -30,7 +30,7 @@ public class BeesAlgorithm{
 	
 	private int maxIter = 20;
 	private double radius = 0.5;
-	private double radiusSmallerRate = 0.8;
+	private double radiusSmallerRate = 0.9;
 	
 	public BeesAlgorithm(Model model) {
 		this.model = model;
@@ -73,7 +73,9 @@ public class BeesAlgorithm{
 		}
 	}
 	
-	public SPDNResult optimize(int maxIter, double initRadius, double radiusSmallerRate, int scoutSize, int bestBeesSize, int eliteBeesSize, int recruitedOfBestsSize, int recruitedOfElitesSize) {
+	public SPDNResult optimize(int maxIter, double initRadius, double radiusSmallerRate, 
+			int scoutSize, int bestBeesSize, int eliteBeesSize, 
+			int recruitedOfBestsSize, int recruitedOfElitesSize) {
 		long startTime = System.nanoTime();
 		
 		initParams(maxIter, initRadius, radiusSmallerRate, scoutSize, bestBeesSize, eliteBeesSize, recruitedOfBestsSize, recruitedOfElitesSize);

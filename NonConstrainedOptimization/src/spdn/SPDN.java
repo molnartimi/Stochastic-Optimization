@@ -100,7 +100,12 @@ public class SPDN implements DiffFunction {
 			Random r = new Random();
 			int randId = (int) (r.nextDouble() * 10000);
 			String name = System.getProperty("user.dir");
-			File f = new File(name + "\\src\\spdn\\results\\" + model.getId() + "_DATAS_points.csv");
+			File f;
+			if (name.contains("\\")) {
+				f = new File(name + "\\src\\spdn\\results\\" + model.getId() + "_DATAS_points.csv");
+			} else {
+				f = new File(name + "/src/spdn/results/" + model.getId() + "_DATAS_points.csv");
+			}
 			boolean exist = f.exists();
 			csvWriter = new PrintWriter(new FileOutputStream(f, true));
 			
