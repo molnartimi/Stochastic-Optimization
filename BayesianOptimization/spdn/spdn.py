@@ -8,7 +8,7 @@ from logger.csvwriter import CsvWriter
 
 class SPDN:
 
-    def __init__(self,model):
+    def __init__(self,model,algorithm_id):
 
         """ Class to communicate with SPDN.exe
         :param model: Model namedtuple from test.models
@@ -26,7 +26,7 @@ class SPDN:
         self.last_result = {}
         self.verbose = False
         self.csvwriter = None
-        self.csv_data_id = int(random.random() * 10000) # id to csv rows those belong to one process
+        self.csv_data_id = algorithm_id + str(int(random.random() * 10000)) # id to csv rows those belong to one process
 
     def start(self,verbose=False):
 

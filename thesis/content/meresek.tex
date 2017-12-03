@@ -2,16 +2,88 @@
 \chapter{Mérési eredmények}
 \label{sec:meresek}
 %----------------------------------------------------------------------------
+Az algoritmusok működését a saját laptopomon, egy virtuális gépen teszteltem, VirtualBox segítségével. Adataik:\\
+\begin{center}
+	\begin{tabular}{ll}
+		\hline
+		\textbf{Gép} & \\
+		\hline
+		Operációs rendszer & Windows 10 Pro\\
+		Processzor & Intel(R) Core(TM) i3-3217U CPU @ 1.80GHz\\
+		Memória (RAM) mérete & 4 GB\\
+		\hline
+		\textbf{Virtuális gép} & \\
+		\hline
+		Név & StochOpt\\
+		Operációs rendszer & Ubuntu (64-bit)\\
+		Alapmemória & 2549 MB\\
+		SATA port 0 & StochOpt.vdi (Normál, 10 GB)
+	\end{tabular}
+\end{center}
+
+\section{Modellek}
+A tesztelést az alábbi modellekkel végeztem, melyek részletei \aref{sec:fuggelek} függelékben találhatóak.\\
+\begin{center}
+	\begin{tabular}{lcc}
+		\textbf{Modell} & \textbf{Paraméterek} & \textbf{Reward függvények} \\
+		\hline
+		simple-server.pnml & 2 & 2 \\
+		vcl\_stochastic.pnml & 7 & 7 \\
+		hybrid\_cloud.pnml & 10 & 4\\
+		philosophers\_3.pnml & 3 & 3\\
+		philosophers\_5.pnml & 5 & 5\\
+		philosophers\_7.pnml & 7 & 7\\
+		philosophers\_9.pnml & 9 & 9\\
+	\end{tabular}	
+\end{center}
+
+
+Az következőekben \aref{sec:optimalizacios-megkozelitesek}. fejezetben felállított szempontrendszer szerint értelmezem és értékelem a különböző algoritmusok működését a mérések eredménye alapján.
 
 %----------------------------------------------------------------------------
-% TODO itt is lesz jobb cím
-\section{Önálló laboratórium algoritmusai}
+\section{Futási idő}
 %----------------------------------------------------------------------------
+A tesztesetek futási idejéről csak óvatosan tudunk következtetéseket levonni. Az eredmények alapján nemcsak a modellek nagysága, de főként a bonyolultsága is nagyban befolyásolja az egyes algoritmusok futási idejét, melyről így nem állapítható meg lineáris kapcsolat. Szintén, nem meglepő módon, nagy befolyásoló tényező az is, hogy az algoritmusok milyen pontokban kérdezik le a modell értékét, a megoldó keretrendszer válaszideje nagy változékonyságot mutat, a másodperc töredékétől akár 20 percig is terjedhet.\\
+% TODO
+TODO Valamilyen diagram a futási időkről, a modellek és az algoritmusok függvényében, pl boxplot. + esetleg, hogy hány függvényszámítást igényelt!
+%----------------------------------------------------------------------------
+\section{Deriváltak használata}
+%----------------------------------------------------------------------------
+Gradiens számítást az L-BFGS, a gradiens módszer és a részecske raj optimalizáció gradiens módszerrel való ötvözése igényel.\\
+%TODO
+{\Huge TODO elemzés mérések alapján:}
+\begin{itemize}
+	\item Futásidő: több időt igényelt-e átlagosan?
+	\item Pontosság: mérések eredményessége?
+	\item Számítások száma: több-kevesebb a többiekhez képest?
+\end{itemize}
 
 %----------------------------------------------------------------------------
-\section{Bayesi algoritmusok}
+\section{Hiperparaméterek}
 %----------------------------------------------------------------------------
+A mérésekben a legnagyobb nehézséget a sokféle algoritmus sokféle hiperparaméterének a beállítása jelentette. A változtatásuknak az eredménye helyenként megfeleltek a várakozásainknak, néhol azonban meglepő dolgokat tapasztalhatunk.
 
+\subsection{LBFGS}
+\subsection{GradientDescent}
+\subsection{ParticleSwarm}
+\subsection{ParticleSwarmWithGradientDescent}
+\subsection{BeesAlgorithm}
+\subsection{SimulatedAnnealing}
+\subsection{MyBayesianOptimization}
+\subsection{MyGPflowOpt}
+\subsection{MgShogunOpt}
+%----------------------------------------------------------------------------
+\section{Kényszerek implementálhatósága}
+%----------------------------------------------------------------------------
+A paraméterekre vonatkozó ismert korlátok kezelhetősége látványos különbséget mutat a nem korlátos és a Bayesi algoritmusok között. Míg a célfüggvény minimalizálása akár hasonlóan jól is sikerül, a talált, és az általunk várt minimumpont különbsége jól mutatja a Bayesi optimalizálás nagyszerűségét a többi, véletlenekre és gradiensekre alapuló algoritmussal szemben.\\
+%TODO
+{\Huge TODO táblázat vagy diagram a talált pontokról}
+%----------------------------------------------------------------------------
+\section{Értelmezhető - nem értelmezhető területek aránya}
+%----------------------------------------------------------------------------
+A paraméterekre vonatkozó ismeretlen korlátok kezelése algoritmusonként eltérő. Míg a nem korlátos algoritmusoknál főként az algoritmus újraindítását, újra próbálkozást alkalmaztunk, a Bayesi optimalizálásnál kihasználva azt, hogy egy regressziót építünk a célfüggvényünkre, alkalmasnak bizonyult a büntető érték használata a kiszámíthatatlan pontok esetén. A klasszifikáció bevezetése a MyShogunOpt esetében szintén önmagáért beszél.\\
+{\Huge TODO táblázat vagy diagram vagy összesítés, az algoritmusok az egyes modellek esetén hányszor találtak kiszámítható és kiszámíthatatlan pontot -- ebből valami nagyon szépet lehet majd csinálni :D}
 %----------------------------------------------------------------------------
 \section{Tapasztalatok}
 %----------------------------------------------------------------------------
+{\Huge TODO na ez lesz a tuti!}

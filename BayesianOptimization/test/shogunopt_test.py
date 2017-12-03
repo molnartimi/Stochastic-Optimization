@@ -8,9 +8,7 @@ from algorithm.myshogunopt import *
 class ShogunOptTest(unittest.TestCase):
     #@unittest.skip("works fine")
     def test_simple_server_opt(self):
-        shogun = MyShogunOpt(models.simple_server)
-        result = shogun.optimize(20,20)
-        result.print_result()
+        self._test(models.simple_server)
 
     #@unittest.skip("long")
     def test_vcl_stochastic_opt(self):
@@ -23,6 +21,13 @@ class ShogunOptTest(unittest.TestCase):
         shogun = MyShogunOpt(models.hybrid_cloud)
         result = shogun.optimize(20,20)
         print(result)
+
+    def _test(self, model):
+        init_points = 10
+        n_iter = 10
+        shogun = MyShogunOpt(model)
+        result = shogun.optimize(init_points, n_iter)
+        result.print_result()
 
 if __name__ == '__main__':
     unittest.main()

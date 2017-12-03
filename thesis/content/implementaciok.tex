@@ -229,22 +229,20 @@ NaN ERROR esetén egy SPDNException objektum dobódik, melynek kezelését az op
 \paragraph{f(values):} Célfüggvény kiszámítása a listában kapott paraméter értékekkel.
 \paragraph{df(values):} Célfüggvény gradiensének kiszámítása a listában kapott értékekkel.
 \paragraph{close():} Megnyitott fájlok, futó folyamatok leállítása.
-% TODO nagy táblázat a megoldásokról, használt csomagokról, stb?
+
 %----------------------------------------------------------------------------
 \subsection{Scikit-learn csomaggal - MyBayesianOptimization}
 A Scikit-learn\footnote{\url{http://scikit-learn.org/stable/}} egy egyszerű és hatékony eszközcsomag, melyet főleg adatbányászathoz és adatok analizálásához használhatunk. Nyílt forráskódú, és változatos területeken hasznosítható. Számos szolgáltatása közül a Gauss folyamatokkal való számolást használja ki a Bayesian-Optimization-with-Gaussian-Processes\footnote{\url{https://github.com/fmfn/BayesianOptimization}}, mely egy korlátos globális optimalizációs csomag Bayesi megoldással és Gauss folyamatokkal, Python nyelven. Célja nagy költségű függvények globális maximumának a megkeresése, ahol különösen fontos a kizsákmányolás és felderítés közötti egyensúly megtalálása.
 
-% TODO táblázatba összefoglalni!!!
 \subsubsection{BayesianOptimization}
 
-A BayesianOptimization a csomag fő osztálya, mely az optimalizálást végzi.\\\\
-Paraméterei:
+A BayesianOptimization a csomag fő osztálya, mely az optimalizálást végzi. Példányosításánál megadandó paraméterek:
 
 \paragraph{f} (lambda **args: number) alakú függvény, melyet optimalizálunk
 \paragraph{pbounds} \{'x': (x\_min, x\_max), ...\} alakú szótár
 az f függvény bemenő paramétereinek nevével, és azoknak alsó és felső korlátaival
-\paragraph{verbose} paraméterrel az optimalizálás logolását állíthatjuk be.\\\\
-Metódusai:
+\paragraph{verbose} flag beállításával az optimalizálás lépései a konzolra logolódnak.\\\\
+Hívható metódusai:
 
 \paragraph{initialize(points\_dict):} arra ad lehetőséget, hogy az általunk ismert függvényértékeket még az optimalizálás előtt betöltsük a Gauss folyamat közelítő modelljébe. \{'target': [f1,f2,..], 'x':[x1,x2,..], ...\} alakban
 \paragraph{explore(points\_dict):} megadhatunk pontokat a függvénytérben, melyeket rögtön az algoritmus futása elején kiszámol a program, ezzel segítve, hogy plusz információval segíthessük az optimalizálást, ha rendelkezünk ilyennel. \{'x':[x1,x2,..], ...\} alakban
@@ -266,8 +264,7 @@ A GPflowOpt\footnote{\url{https://github.com/GPflow/GPflowOpt}} egy Pythonban í
 
 \subsubsection{GPflowOpt}
 
-A GPflowOpt fő osztálya az Optimizer ősosztás, melynek a gyereke a BayesianOptimizer.\\\\
-Paraméterei:
+A GPflowOpt fő osztálya az Optimizer ősosztás, melynek a gyereke a BayesianOptimizer. Példányosításánál megadandó paraméterek:
 \paragraph{domain:} függvényparaméterek értelmezési tartományai
 \paragraph{acquisition:} nyereség függvény objektum
 \paragraph{optimizer:} opcionális paraméter, Optimizer osztály leszármazottja, a nyereség függvény optimalizálásához. Ha nem adjuk meg, a SciPy könyvtár optimize.minimize() metódusát használja.
@@ -279,8 +276,7 @@ szerzünk n paramétert.
 Metódusok:
 \paragraph{optimize(objectivefx, n\_iter):} a kapott függvényt optimalizálja n\_iter iterációszámban, melynek default értéke 20.\\
 
-A Domain osztály reprezentálja a függvények paramétereit. Belőle öröklődik a Parameter osztály, abból pedig a ContinuousParameter, amit nekünk használni kell.\\\\
-Paraméterei:
+A Domain osztály reprezentálja a függvények paramétereit. Belőle öröklődik a Parameter osztály, abból pedig a ContinuousParameter, amit nekünk használni kell. Példányosításánál megadandó paraméterek:
 \paragraph{label} paraméter neve,
 \paragraph{lb} alsó korlát,
 \paragraph{ub} felső korlát,
@@ -302,8 +298,8 @@ Paraméterei:
 
 A GPflowban számos kernel függvény implementálva van, melyek közös absztrakt őse a Kern osztály. Többek között megtalálhatóak \aref{subsec:bayes}. fejezetben említettek is:
 \begin{itemize}
-	% TODO \item RBF: négyzetes exponenciális kernel
-	% TODO ? \item Exponential: exponenciális kernel
+	\item RBF: négyzetes exponenciális kernel
+	\item Exponential: exponenciális kernel
 	\item Matern12
 	\item Matern32
 	\item Matern52
@@ -365,14 +361,13 @@ Az optimális hiperparamétereket kiválasztó osztály, paramétere egy Gradien
 
 \subsubsection{MyShogunOpt}
 
-Az általam implementált Bayesi optimalizációt végző osztály a MyShogunOpt. Az osztály paraméterei:\\
-Optimalizálandó SPDN modell\\
-Kezdőpontok száma\\
-Büntetőérték, ha nem kiszámítható helyen számítunk függvényértéket. Deafult értéke 10000.
+Az általam implementált Bayesi optimalizációt végző osztály a MyShogunOpt. Példányosításánál megadandó paraméterek:
+\paragraph{model} Optimalizálandó SPDN modell
+\paragraph{error\_value} Büntetőérték, ha nem kiszámítható helyen számítunk függvényértéket. Deafult értéke 10000.\\
 
 A Gauss folyamatokból a regressziót az ismeretlen nemlineáris célfüggvényünk közelítéséhez, a klasszifikációt pedig a nem kiszámítható területek feltérképezéséhez használom. Mivel mind a klasszifikációt, mind a regressziót minden esetben ugyanazokra a pontokra számítjuk ki, egészen egyszerűen az SPDN objektumunk által adott eredményt vizsgáljuk: helyes érték esetén a klasszifikáció célfüggvényének a pontban való értéke 1, SPDNException esetében azonban -1. Ekkor a regressziós modell frissítéséhez az adott büntetőértéket használjuk.
 
-A nyereség függvények közül a javulás várható értékét (\ref{eq:EI}) használtam, megszorozva a klasszifikáció által visszaadott valószínűséggel, hogy az adott pontban a célfüggvényünk értelmezhető-e. A maximumának a megkereséséhez a SciPy könyvtár minimize metódusát használtam, a nyereség függvényem -1-szeresével.
+A nyereség függvények közül a javulás várható értékét (\ref{eq:EI} képlet) használtam, megszorozva a klasszifikáció által visszaadott valószínűséggel, hogy az adott pontban a célfüggvényünk értelmezhető-e. A maximumának a megkereséséhez a SciPy könyvtár minimize metódusát használtam, a nyereség függvényem -1-szeresével.
 
 Az algoritmus működése során az előző fejezetben leírt Shogun osztályokat alkalmaztam. Az algoritmus működése:
 

@@ -27,7 +27,7 @@ public class ParticleSwarmTest{
 		ParticleSwarm opt = new ParticleSwarm(Model.FIL9);
 		System.out.println(opt.optimize(10, 10, 0, 0, 0).toString());
 	}
-		
+/*		
 	/// swarm = 30, iter = 10
 	@Test
 	public void test5() {
@@ -93,5 +93,5 @@ public class ParticleSwarmTest{
 		ParticleSwarm opt = new ParticleSwarm(Model.FIL9);
 		System.out.println(opt.optimize(10, 10, 0, 0.6, 0.4).toString());
 	}
-
+*/
 }

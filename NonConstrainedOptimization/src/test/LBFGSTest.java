@@ -26,7 +26,7 @@ public class LBFGSTest{
 		LBFGS opt = new LBFGS(Model.FIL9);
 		System.out.println(opt.optimize(0, 10, 0, new double[0], 5).toString());
 	}
-	
+	/*
 	/// Max iter = 30, restart = 5
 	@Test
 	public void test5() {
@@ -92,5 +92,5 @@ public class LBFGSTest{
 		LBFGS opt = new LBFGS(Model.FIL9);
 		System.out.println(opt.optimize(0, 10, 0, new double[0], 5).toString());
 	}
-	
+	*/
 }

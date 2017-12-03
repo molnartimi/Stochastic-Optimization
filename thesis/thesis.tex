@@ -1,8 +1,4 @@
-% !TeX spellcheck = hu_HU
-% !TeX encoding = UTF-8
-% !TeX program = xelatex
-\documentclass[11pt,a4paper,oneside]{report}             % Single-side
-%\documentclass[11pt,a4paper,twoside,openright]{report}  % Duplex
+\documentclass[11pt,a4paper,twoside,openright]{report}  % Duplex
 
 \input{include/packages}
 
@@ -15,17 +11,16 @@
 \newcommand{\vikkonzulensAKeresztnev}{Vince}
 
 \newcommand{\vikcim}{Sztochasztikus modellek paramétereinek optimalizációja: eszközök és kihívások} % Cím
-\newcommand{\viktanszek}{\bmemit} % Tanszék
-\newcommand{\vikdoktipus}{\bsc} % Dokumentum típusa (\bsc vagy \msc)
-\newcommand{\vikmunkatipusat}{szakdolgozatot} % a "hallgató nyilatkozat" részhez: szakdolgozatot vagy diplomatervet
+\newcommand{\viktanszek}{\bmemit}
+\newcommand{\vikdoktipus}{\bsc}
+\newcommand{\vikmunkatipusat}{szakdolgozatot}
 
-\newcommand{\szerzoMeta}{\vikszerzoVezeteknev{} \vikszerzoKeresztnev} % egy szerző esetén
+\newcommand{\szerzoMeta}{\vikszerzoVezeteknev{} \vikszerzoKeresztnev}
 
 \newcommand*{\tabsorvege}[1]{\let\tmp=\\#1\let\\=\tmp}
 
 % Beállítások magyar nyelvű dolgozathoz
 \input{include/thesis-hu}
-
 \input{include/preamble}
 
 %--------------------------------------------------------------------------------------
@@ -37,7 +32,7 @@
 
 %Titlepage 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\include{include/titlepage}		   % Szakdolgozat címlap
+\include{include/titlepage}	
 
 
 % Table of Contents
@@ -47,8 +42,8 @@
 
 % Declaration and Abstract
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\include{include/declaration} % Hallgatói nyilatkozat
-\include{content/abstract}    % Összefoglaló
+\include{include/declaration}
+\include{content/abstract} 
 
 
 % The main part of the thesis
@@ -71,20 +66,16 @@
 
 % List of Figures, Tables
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\listoffigures
-\listoftables
+\listoffigures\addcontentsline{toc}{chapter}{\listfigurename}
+\listoftables\addcontentsline{toc}{chapter}{\listtablename}
 
 
 % Bibliography
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-%\bibliography{bib/mybib}
-%\addcontentsline{toc}{chapter}{\bibname}
 \include{content/irodalomjegyzek}
-
 
 % Appendix
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-% \include{content/appendices}
+\include{content/appendices}
 
-%\label{page:last}
 \end{document}

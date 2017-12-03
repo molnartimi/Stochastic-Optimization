@@ -27,7 +27,7 @@ public class ParticleSwarmWithGradientDescentTest{
 		ParticleSwarmWithGradientDescent opt = new ParticleSwarmWithGradientDescent(Model.FIL9);
 		System.out.println(opt.optimize(10, 10, 0, 0, 0, 0, 0).toString());
 	}
-		
+/*		
 	/// swarm = 30, iter = 10
 	@Test
 	public void test5() {
@@ -70,5 +70,5 @@ public class ParticleSwarmWithGradientDescentTest{
 	public void tes12() {
 		ParticleSwarmWithGradientDescent opt = new ParticleSwarmWithGradientDescent(Model.FIL9);
 		System.out.println(opt.optimize(10, 30, 0, 0, 0, 0, 0).toString());
-	}
+	}*/
 }

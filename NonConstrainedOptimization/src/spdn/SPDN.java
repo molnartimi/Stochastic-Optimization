@@ -104,7 +104,7 @@ public class SPDN implements DiffFunction {
 			if (name.contains("\\")) {
 				f = new File(name + "\\src\\spdn\\results\\" + model.getId() + "_DATAS_points.csv");
 			} else {
-				f = new File(name + "/src/spdn/results/" + model.getId() + "_DATAS_points.csv");
+				f = new File(name + "/NonConstrainedOptimization/src/spdn/results/" + model.getId() + "_DATAS_points.csv");
 			}
 			boolean exist = f.exists();
 			csvWriter = new PrintWriter(new FileOutputStream(f, true));

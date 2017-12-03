@@ -39,8 +39,8 @@ public class SimulatedAnnealing {
 		initParams(initTemp, coolingRate, initBorder, borderSmallerRate, restart);
 		
 		int i = 0;
-		RealVector minPoint = null;
-		double minValue = this.tolerance + 1;
+		RealVector minPoint =  MatrixUtils.createRealVector(new double[model.getDim()]);
+		double minValue = 10000000;
 		
 		while (i < restart+1 && minValue > this.tolerance) {
 			RealVector xn = MatrixUtils.createRealVector(model.getRandomPoint());
@@ -80,10 +80,10 @@ public class SimulatedAnnealing {
 					minPoint = best.copy();
 					minValue = bestF;
 				}
-				i++;
 			} catch (SpdnException e) {
-				continue;
-			}			
+				// Nothing to do, go and try again.
+			}
+			i++;
 		}
 		
 		SPDNResult result = new SPDNResult(minValue, SPDN.convertPoint(minPoint).toArray(),ID, getHyperParams(), model);

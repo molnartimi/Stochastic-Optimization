@@ -17,7 +17,7 @@ class MyGPflowOpt:
     def __init__(self, model, error_value=10000):
         self.model = model
         self.ALGORITHM_ID = "GPFL"
-        self.spdn = SPDN(self.model)
+        self.spdn = SPDN(self.model,self.ALGORITHM_ID)
         self.KERNELS = {'exp': MyKernel.exp, 'rbf': MyKernel.rbf, 'm12': MyKernel.m12, 'm32': MyKernel.m12, 'm52': MyKernel.m52}
         self.ACQS = {'ei': MyAcquisition.ei, 'poi': MyAcquisition.poi, 'lcb': MyAcquisition.lcb}
         self.PRIORS = {'gaussian': MyPrior.gaussian, 'lognormal': MyPrior.lognormal, 'gamma': MyPrior.gamma}

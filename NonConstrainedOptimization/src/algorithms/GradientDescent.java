@@ -25,8 +25,9 @@ public class GradientDescent {
 	public SPDNResult optimize(double gamma, double tolerance, double[] initPoint, int restart) {
 		long startTime = System.nanoTime();
 		
-		RealVector minPoint = null;
-		Double minValue = null;
+		RealVector minPoint = MatrixUtils.createRealVector(new double[model.getDim()]);
+		minPoint.set(1000000.0);
+		Double minValue = 1000000.0;
 		int iter = 0;
 		double initGamma = gamma;
 		RealVector xn = initPoint.length > 0 ? MatrixUtils.createRealVector(initPoint) : MatrixUtils.createRealVector(model.getRandomPoint());

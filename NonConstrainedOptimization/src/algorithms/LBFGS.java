@@ -24,13 +24,13 @@ public class LBFGS {
 
 	public SPDNResult optimize(int m, int maxIter, double tolerance, double[] initPoint, int restart) {
 		long startTime = System.nanoTime();
-		
+
 		m = m > 0 ? m : 4; 
 		maxIter = maxIter > 0 ? maxIter : 20;
 		tolerance = tolerance > 0 ? tolerance : 0.001;
 		
-		double[] minPoint = new double[0];
-		double minValue = tolerance + 1;
+		double[] minPoint = new double[model.getDim()];
+		double minValue = 10000000;
 		int iter = 0;
 		double[] xn = initPoint.length > 0 ? initPoint : model.getRandomPoint();
 		

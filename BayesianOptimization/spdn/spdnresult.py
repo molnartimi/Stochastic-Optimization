@@ -11,6 +11,7 @@ class SPDNResult:
         self.execution_time = 0
 
     def print_result(self):
+        print("DONE in " + str(self.execution_time / 60) + " min")
         print("Algorithm: " + self.algorithmId)
         print("Model: " + self.model.id)
         print("Value = " + str(self.resultValue))
@@ -21,13 +22,13 @@ class SPDNResult:
         row = ['MIN VALUE']
         for param in self.model.parameters: row.append(param + '(' + str(self.model.validvalues[param]) + ')')
         for hyperparam in self.hyperParams: row.append("HP_" + hyperparam)
-        row.append("EXEC TIME")
+        row.append("EXEC TIME(min)")
         self.csv_writer.write(row, header=True)
 
         row = [str(self.resultValue)]
         for i in range(len(self.model.parameters)): row.append(str(self.resultPoint[i]))
         for hyperparam in self.hyperParams: row.append(str(self.hyperParams[hyperparam]))
-        row.append(str(self.execution_time))
+        row.append(str(self.execution_time / 60))
         self.csv_writer.write(row)
 
     def __del__(self): self.csv_writer.close()

@@ -7,7 +7,7 @@ import models.Model;
 
 public class GradientDescentTest{
 	/// gamma = 1, restart = 5
-	@Test
+	/*@Test
 	public void test1() {
 		GradientDescent opt = new GradientDescent(Model.FIL3);
 		System.out.println(opt.optimize(1, 0, new double[0], 5).toString());
@@ -49,7 +49,7 @@ public class GradientDescentTest{
 		GradientDescent opt = new GradientDescent(Model.FIL9);
 		System.out.println(opt.optimize(0.5, 0, new double[0], 5).toString());
 	}
-			
+	*/		
 	/// gamma = 1, restart = 15
 	@Test
 	public void test9() {

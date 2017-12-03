@@ -139,7 +139,7 @@ public class BeesAlgorithm{
 			try {
 				scouts.get(i).setPos(pos, spdn.f(pos));
 			} catch (SpdnException e) {
-				i--;
+				scouts.get(i).setPos(pos, 100000000);
 			}
 		}
 	}
@@ -164,7 +164,7 @@ public class BeesAlgorithm{
 			try {
 				swarm.add(new Bee(pos, spdn.f(pos)));
 			} catch (SpdnException e) {
-				i--;
+				swarm.add(new Bee(pos, 100000000));
 			}
 		}
 		return swarm;

@@ -31,7 +31,7 @@ class MyShogunOpt:
         self.MIN_value = None
         self.MIN_point = []
 
-        self.spdn = SPDN(self.model)
+        self.spdn = SPDN(self.model,self.ALGORITHM_ID)
 
     def optimize(self,max_iter=20,init_points=20,verbose=False):
         start_time = time.time()

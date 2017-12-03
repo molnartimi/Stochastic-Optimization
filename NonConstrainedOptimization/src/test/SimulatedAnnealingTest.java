@@ -22,7 +22,7 @@ public class SimulatedAnnealingTest{
 		SimulatedAnnealing opt = new SimulatedAnnealing(Model.FIL7);
 		System.out.println(opt.optimize(0, 0, 0, 0, 5).toString());
 	}
-	@Test
+/*	@Test
 	public void tes4() {
 		SimulatedAnnealing opt = new SimulatedAnnealing(Model.FIL9);
 		System.out.println(opt.optimize(0, 0, 0, 0, 5).toString());
@@ -93,5 +93,5 @@ public class SimulatedAnnealingTest{
 		SimulatedAnnealing opt = new SimulatedAnnealing(Model.FIL9);
 		System.out.println(opt.optimize(0, 0, 0.1, 0, 5).toString());
 	}
-
+*/
 }

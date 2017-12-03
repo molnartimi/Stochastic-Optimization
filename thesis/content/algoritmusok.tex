@@ -123,7 +123,14 @@ A Gauss-folyamatok praktikus valószínűségi megközelítést nyújtanak a ker
 
 Egy sztochasztikus folyamat valójában egy valószínűségi eloszlás -- mely leír egy véges dimenziójú véletlen valószínűségi változót -- általánosítása függvényekként. Azon folyamatokat, melyek esetében ez egy normális eloszlás, Gauss-folyamtoknak nevezzük.
 
-Segítségükkel kétféle szempontból is vizsgálhatjuk a modelljeinket. A regresszió lehetővé teszi a célfüggvényünk alakjának modellezését, ami által minden iteráció során előfeltételezéssel élhetünk az ismeretlen helyek függvényértékeiről is, és ezt felhasználva irányíthatjuk az optimalizáló algoritmust. Ez a feltételezett modell minden újabb megismert ponttal módosul, precízebb és -- reményeink szerint -- valósághűbb lesz.
+Segítségükkel kétféle szempontból is vizsgálhatjuk a modelljeinket. A regresszió lehetővé teszi a célfüggvényünk alakjának modellezését, ami által minden iteráció során előfeltételezéssel élhetünk az ismeretlen helyek függvényértékeiről is, és ezt felhasználva irányíthatjuk az optimalizáló algoritmust. Egy ilyen predikciót szemléltet a \ref{fig:gp}. ábra, az eddig kiszámított pontok ismeretében a lehetséges illeszkedő függvények várható értékét véve. Ez a feltételezett modell minden újabb megismert ponttal módosul, precízebb és -- reményeink szerint -- valósághűbb lesz.
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=140mm, keepaspectratio]{figures/gp.png}
+	\caption{Gauss-folyamat regressziós becslése}
+	\label{fig:gp}
+\end{figure}
 
 A klasszifikáció diszkrét osztályokba sorolja a tér pontjait. A mi esetünkben egy bináris osztályozásról beszélhetünk azt tekintve, az értelmezési tartomány adott pontján a megoldó keretrendszer által kiértékelhető-e (1), vagy nem (-1) a modell. A regresszióhoz hasonlóan itt is minden iterációval frissítjük a becsült modellünket, melyet felhasználva feltételezéseket vonhatunk le, a tér egyes területein valószínűleg értelmezhető-e a célfüggvényünk.\cite{GPKonyv}
 

@@ -10,7 +10,7 @@ class MyBasienOptimization:
     def __init__(self, model, error_value=1000000000):
         self.model = model
         self.ALGORITHM_ID = "BAYO"
-        self.spdn = SPDN(self.model)
+        self.spdn = SPDN(self.model,self.ALGORITHM_ID)
         self.ACQS = {'ei': MyAcquisition.opt_with_xi, 'poi': MyAcquisition.opt_with_xi, 'ucb': MyAcquisition.opt_with_kappa}
         self.ERROR_VALUE = error_value
 

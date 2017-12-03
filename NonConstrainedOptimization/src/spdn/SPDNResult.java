@@ -35,6 +35,7 @@ public class SPDNResult {
 	@Override
 	public String toString() {
 		String s = "Done in " + time / 60. / 1000000000. + " min\nAlgorithm: " + algorithmID + "\nModel: " + model.getId() + "\nValue = " + resultValue;
+		if (resultPoint == null) resultPoint = new double[model.getDim()];
 		for (int i = 0; i < model.getDim(); i++) {
 			s += "\n" + model.getParam(i).getName() + " = " + resultPoint[i];
 		}
@@ -48,7 +49,7 @@ public class SPDNResult {
 			if (name.contains("\\")) {
 				f = new File(name + "\\src\\spdn\\results\\" +algorithmID + "-" + model.getId() + ".csv");
 			} else {
-				f = new File(name + "/src/spdn/results/" +algorithmID + "-" + model.getId() + ".csv");
+				f = new File(name + "/NonConstrainedOptimization/src/spdn/results/" +algorithmID + "-" + model.getId() + ".csv");
 			}
 			boolean exist = f.exists();
 			csvWriter = new PrintWriter(new FileOutputStream(f, true));
@@ -80,6 +81,7 @@ public class SPDNResult {
 	
 	private void writeResultToCsv() {
 		String row = String.valueOf(resultValue) + ";";
+		if (resultPoint == null) resultPoint = new double[model.getDim()];
 		for(double x: resultPoint) {
 			row += String.valueOf(x) + ";";
 		}
