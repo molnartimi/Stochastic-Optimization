@@ -41,7 +41,7 @@ Egy számítógépes szerver modellje, végtelenül leegyszerűsítve. Paraméte
 
 \subsection{VCL stochastic}
 
-TODO miez?
+A Virtual Computing Laboratory egy felhő rendszer leegyszerűsített sztochasztikus modellje
 \begin{center}
 	\begin{tabular}{lrl}
 		\textbf{\textbf{Paraméter}} & \textbf{Default érték} & \textbf{Leírás} \\
@@ -61,7 +61,7 @@ TODO miez?
 		jobsFinished & Befejezett feladatok\\
 		powerUsage & Energia felhasználás\\
 		noFreeMachines & Szabad gépek hiánya\\
-		jobsDispatched & ??\\
+		jobsDispatched & Beérkezett feladatok\\
 		machinesWorking & Működő gépek\\
 		hotMachinesWorking & Működő meleg gépek\\
 		coldStarted & Elindított hideg gépek\\
@@ -71,18 +71,18 @@ TODO miez?
 \begin{figure}
 	\centering
 	\includegraphics[width=140mm, keepaspectratio]{figures/vcl.png}
-	\caption{Sztochasztikus VCL ?? modell a PetriDotNet alkalmazásban}
+	\caption{VCL modell a PetriDotNet alkalmazásban}
 \end{figure}
 
 \subsection{Hybrid cloud}
 
-Egy sztochasztikus felhő alkalmazás modellje.
+Egy felhő alkalmazás sztochasztikus modellje.
 \begin{center}
 	\begin{tabular}{lrl}
 		\textbf{\textbf{Paraméter}} & \textbf{Default érték} & \textbf{Leírás} \\
 		\hline
 		incRate & 5& Beérkező kérések rátája\\
-		p & 0.75 & Privát felhő dispatch valószínűsége\\
+		p & 0.75 & A kérés privát felhőhöz érkezésének valószínűsége\\
 		lbTime & 0.0002 & Load balancer elindítához szükséges idő\\
 		execTime1 & 0.2 & Publikus felhő végrehajtási ideje\\
 		execTime2 & 0.1 & Privát felhő végrehajtási ideje\\
