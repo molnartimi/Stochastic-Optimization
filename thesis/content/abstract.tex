@@ -8,11 +8,11 @@
 %----------------------------------------------------------------------------
 \chapter*{Kivonat}\addcontentsline{toc}{chapter}{Kivonat}
 
-Különböző modellekkel bármely tudományterületen találkozhatunk.  Mérnökökként a valós világot tetszőleges mértékben leegyszerűsítve végezzük feladatainkat. Sok esetben az események bekövetkezésének valószínűségét nem hanyagolhatjuk el, így sztochasztikus modellekkel kell dolgoznunk.
+Modellekkel bármely tudományterületen találkozhatunk.  Mérnökként a valós világot tetszőleges mértékben leegyszerűsítve végezzük feladatainkat. Azokban a gyakori esetekben, amikor az események bekövetkezésének valószínűségét nem hanyagolhatjuk el, sztochasztikus modellekkel kell dolgoznunk.
 
 Sztochasztikus modell esetén valószínűségi eloszlásokkal, várható értékekkel, tüzelési valószínűségekkel számolunk. Parametrikus esetben ezek az átmeneti valószínűségek ismeretlen változók. Ilyen helyzettel állunk szemben bizonyos rendszerek tervezésénél, informatikusként például szolgáltatásbiztonság vagy teljesítmény tervezésénél, vizsgálatánál.
 
-Markov láncról beszélünk, ha modellezett folyamataink jövője és múltja függetlenek a jelen ismeretében, ugyanakkor az állapotváltozások tetszőleges időpontban történhetnek.
+Markov-láncról beszélünk, ha modellezett folyamataink jövője és múltja függetlenek a jelen ismeretében, ugyanakkor az állapotváltozások tetszőleges időpontban történhetnek.
 
 A paraméterek valamilyen konkrét értékével a rendszer kimenete megfigyelhető, így, bár a rendszert leíró függvényt pontosan nem ismerjük, a függvényértékeket felhasználva végezhetünk műveleteket a kívánt cél elérése érdekében - ami a mi esetünkben az optimalizálás lesz. Paraméter szintézissel keressük azokat a paramétereket, melyekkel a modell kielégíti a specifikációban definiált elvárásokat.
 
@@ -20,9 +20,9 @@ A kulcslépés a valószínűségi modellek ellenőrzésénél az elérhetőség
 
 Sok esetben azonban a modell kiértékelése nem az elsődleges célunk. Az élet minden területén az optimális megoldásokat keressük, így van ez egy rendszer tervezésénél is. 
 
-Szakdolgozatomban arra a kérdésre keresem a választ, adott modell esetén mely paraméter lekötéssel érhető el az elvárt optimális viselkedés. Ennek a megválaszolásához számos optimalizáló algoritmust kipróbálok, saját és létező implementációkat vegyítve a ,,tökéletes'' módszer megtalálása érdekében.
+Szakdolgozatomban arra a kérdésre keresem a választ, adott modell esetén mely paraméter lekötéssel érhető el az elvárt optimális viselkedés. Ennek a megválaszolásához számos optimalizáló algoritmust kipróbálok, saját és létező implementációkat vegyítve a ``tökéletes'' módszer megtalálása érdekében.
 
-A tanszéken fejlesztett PetriDotNet alkalmazásban leírt modelleket egy TDK keretein belül megalkotott megoldó segítségével értékelem ki, és különböző ismert optimalizáló algoritmusokkal keresem a modellek azon paramétereit, melyek a lehető legjobban közelítik a célfüggvényünk minimumát. Ez a célfüggvény a reward függvények elvárt értékektől való eltérésének négyzetössze. Célunk ezen összesített hibaérték lehető legkisebbre csökkentése.
+A tanszéken fejlesztett PetriDotNet alkalmazásban leírt modelleket egy TDK keretein belül megalkotott megoldó keretrendszer, az SPDN segítségével értékelem ki, és különböző ismert optimalizáló algoritmusokkal keresem a modellek azon paramétereit, melyek a lehető legjobban közelítik a célfüggvényünk minimumát. Ez a célfüggvény a reward függvények elvárt értékektől való eltérésének négyzetössze. Célunk ezen összesített hibaérték lehető legkisebbre csökkentése.
 
 
 \vfill
@@ -34,7 +34,21 @@ A tanszéken fejlesztett PetriDotNet alkalmazásban leírt modelleket egy TDK ke
 %----------------------------------------------------------------------------
 \chapter*{Abstract}\addcontentsline{toc}{chapter}{Abstract}
 
-% TODO
+We can see models on any fields of science. As engineers we always make the real life simpler in a way to solve our tasks. In those frequent cases, when we can't pass by the probability of the occurrence of an event, we have to work with stochastic models.
+
+In case of a stochastic model, we calculate with probability distibutions, expected values and fire probabilities. If our model is parametric, these transition probabilites are unknown variables. We have to face with these problems at designing certain systems, as IT engineer for example at designing security services or service performance.
+
+We call a process Markov chain, if its future and past values are independets, the future depends on only the present. Besides, the state changes can occur in any time. 
+
+With concrete parameters as inputs, the output of the system is observable. In this way, although the function that represents the system is unknown, we can use these results to solve our problem -- in our case, to optimize the parameters. We use parameter synthesis to search for the parameters with which the model meets the requirements given in the specification.
+
+The main step at cheking probability models is the calculation of the accessible probabilites: how likely is to get to a state? In case of nondeterministic models, just like the Markov decision process, we can solve the nondeterminism with these probabilites. With their assistance, using iterative techniques we can evaluate the model.
+
+However, in lots of cases the evaluation of a model is not the primary goal. We search for optimal solutions on all fields of life, as well as at designing a system.
+
+In this thesis I'm looking for the answer of the question, with a certain model which parameters will lead to the optimal behavior. For this I'm going to try several different optimization algorithms, using my own and also existed implementations to find the ``perfect'' solution.
+
+I work with models written in the PetriDotNet application, which was a project on the department. The SPDN solver makes the evaluations of these models, it was created also on the department as a TDK dissertation. I use these tools with many common optimalization algorithm to find the optimal parameters which approaches our objective function the best. This objective function is the squared sum of the difference of the measured and expected values. Our task is to reduce these error rate to as small as we can.
 
 
 \vfill

@@ -38,17 +38,17 @@ Egy számítógépes szerver modellje, végtelenül leegyszerűsítve. Paraméte
 	\includegraphics{figures/smpl.png}
 	\caption{Egyszerű szerver modellje a PetriDotNet alkalmazásban}
 \end{figure}
-
+\clearpage
 \subsection{VCL stochastic}
 
-A Virtual Computing Laboratory egy felhő rendszer leegyszerűsített sztochasztikus modellje
+A Virtual Computing Laboratory egy felhő rendszer leegyszerűsített sztochasztikus modellje.
 \begin{center}
 	\begin{tabular}{lrl}
 		\textbf{\textbf{Paraméter}} & \textbf{Default érték} & \textbf{Leírás} \\
 		\hline
 		incomingRate & 0.015 & Beérkező kérések rátája\\
-		dispatchTime & 0.5 & Kérés dispatch ideje\\
-		warmDispatchTime & 0.15 & További dispatch idő meleg gép esetén\\
+		dispatchTime & 0.5 & Kérés feldolgozási ideje\\
+		warmDispatchTime & 0.15 & További feldolgozási idő meleg gép esetén\\
 		jobTime & 60 & Feladatok végrehajtásának átlagos ideje\\
 		powerTime & 5 & Gép ki- vagy bekapcsolásának ideje\\
 		powerUsage & 0.75 & Gép energiaigénye időegységenként\\
@@ -74,6 +74,7 @@ A Virtual Computing Laboratory egy felhő rendszer leegyszerűsített sztochaszt
 	\caption{VCL modell a PetriDotNet alkalmazásban}
 \end{figure}
 
+\clearpage
 \subsection{Hybrid cloud}
 
 Egy felhő alkalmazás sztochasztikus modellje.
@@ -113,7 +114,7 @@ Egy felhő alkalmazás sztochasztikus modellje.
 
 \subsection{Philosophers}
 
-A klasszikus "étkező filozófusok problémája", stochasztikus rendszerként modellezve.
+A klasszikus ``étkező filozófusok problémája'', stochasztikus rendszerként modellezve.
 Adva van valahány filozófus (esetünkben 3, 5, 7 illetve 9), akik egy kerek asztal körül ülnek. Mindegyikük előtt van egy tányér, a tányérok között félúton pedig egy-egy villa. Mindegyik filozófus elmélkedik, egészen addig, míg meg nem éhezik. Akkor azonban csak akkor tud étkezni, ha mindkét oldalán szabad a villa, ha valamelyik nem áll a rendelkezésére, várakoznia kell.
 
 Modelleink esetében a paraméterek jelölik, milyen gyakran éheznek meg az egyes filozófusok, reward függvényeink pedig azt, hogy mennyit tudnak elmélkedni az este folyamán.
