@@ -18,6 +18,8 @@ public class SPDNResult {
 	private PrintWriter csvWriter = null;
 	private long time;
 	
+	private final boolean DONT_WRITE_TO_CSV = true;
+	
 	public SPDNResult(double value, double[] result, String aId, SortedMap<String,Double> hyperParams, Model model) {
 		this.resultValue = value;
 		this.resultPoint = result;
@@ -43,13 +45,14 @@ public class SPDNResult {
 	}
 	
 	public void writeToCsv() {
+		if (DONT_WRITE_TO_CSV) return;
 		try {
 			String name = System.getProperty("user.dir");
 			File f;
 			if (name.contains("\\")) {
-				f = new File(name + "\\src\\spdn\\results\\" +algorithmID + "-" + model.getId() + ".csv");
+				f = new File(name + "\\results\\" +algorithmID + "-" + model.getId() + ".csv");
 			} else {
-				f = new File(name + "/NonConstrainedOptimization/src/spdn/results/" +algorithmID + "-" + model.getId() + ".csv");
+				f = new File(name + "/results/" +algorithmID + "-" + model.getId() + ".csv");
 			}
 			boolean exist = f.exists();
 			csvWriter = new PrintWriter(new FileOutputStream(f, true));
