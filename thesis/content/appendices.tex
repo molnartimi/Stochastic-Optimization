@@ -38,17 +38,17 @@ Egy számítógépes szerver modellje, végtelenül leegyszerűsítve. Paraméte
 	\includegraphics{figures/smpl.png}
 	\caption{Egyszerű szerver modellje a PetriDotNet alkalmazásban}
 \end{figure}
-
+\clearpage
 \subsection{VCL stochastic}
 
-TODO miez?
+A Virtual Computing Laboratory egy felhő rendszer leegyszerűsített sztochasztikus modellje.
 \begin{center}
 	\begin{tabular}{lrl}
 		\textbf{\textbf{Paraméter}} & \textbf{Default érték} & \textbf{Leírás} \\
 		\hline
 		incomingRate & 0.015 & Beérkező kérések rátája\\
-		dispatchTime & 0.5 & Kérés dispatch ideje\\
-		warmDispatchTime & 0.15 & További dispatch idő meleg gép esetén\\
+		dispatchTime & 0.5 & Kérés feldolgozási ideje\\
+		warmDispatchTime & 0.15 & További feldolgozási idő meleg gép esetén\\
 		jobTime & 60 & Feladatok végrehajtásának átlagos ideje\\
 		powerTime & 5 & Gép ki- vagy bekapcsolásának ideje\\
 		powerUsage & 0.75 & Gép energiaigénye időegységenként\\
@@ -61,7 +61,7 @@ TODO miez?
 		jobsFinished & Befejezett feladatok\\
 		powerUsage & Energia felhasználás\\
 		noFreeMachines & Szabad gépek hiánya\\
-		jobsDispatched & ??\\
+		jobsDispatched & Beérkezett feladatok\\
 		machinesWorking & Működő gépek\\
 		hotMachinesWorking & Működő meleg gépek\\
 		coldStarted & Elindított hideg gépek\\
@@ -71,18 +71,19 @@ TODO miez?
 \begin{figure}
 	\centering
 	\includegraphics[width=140mm, keepaspectratio]{figures/vcl.png}
-	\caption{Sztochasztikus VCL ?? modell a PetriDotNet alkalmazásban}
+	\caption{VCL modell a PetriDotNet alkalmazásban}
 \end{figure}
 
+\clearpage
 \subsection{Hybrid cloud}
 
-Egy sztochasztikus felhő alkalmazás modellje.
+Egy felhő alkalmazás sztochasztikus modellje.
 \begin{center}
 	\begin{tabular}{lrl}
 		\textbf{\textbf{Paraméter}} & \textbf{Default érték} & \textbf{Leírás} \\
 		\hline
 		incRate & 5& Beérkező kérések rátája\\
-		p & 0.75 & Privát felhő dispatch valószínűsége\\
+		p & 0.75 & A kérés privát felhőhöz érkezésének valószínűsége\\
 		lbTime & 0.0002 & Load balancer elindítához szükséges idő\\
 		execTime1 & 0.2 & Publikus felhő végrehajtási ideje\\
 		execTime2 & 0.1 & Privát felhő végrehajtási ideje\\
@@ -113,7 +114,7 @@ Egy sztochasztikus felhő alkalmazás modellje.
 
 \subsection{Philosophers}
 
-A klasszikus "étkező filozófusok problémája", stochasztikus rendszerként modellezve.
+A klasszikus ``étkező filozófusok problémája'', stochasztikus rendszerként modellezve.
 Adva van valahány filozófus (esetünkben 3, 5, 7 illetve 9), akik egy kerek asztal körül ülnek. Mindegyikük előtt van egy tányér, a tányérok között félúton pedig egy-egy villa. Mindegyik filozófus elmélkedik, egészen addig, míg meg nem éhezik. Akkor azonban csak akkor tud étkezni, ha mindkét oldalán szabad a villa, ha valamelyik nem áll a rendelkezésére, várakoznia kell.
 
 Modelleink esetében a paraméterek jelölik, milyen gyakran éheznek meg az egyes filozófusok, reward függvényeink pedig azt, hogy mennyit tudnak elmélkedni az este folyamán.

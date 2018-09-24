@@ -14,10 +14,10 @@ ahol $\gamma<1$ egy általunk megadható lépéshossz, $H$ a Hesse-mátrix, $\na
 
 A konvergálás várható ideje és iterációszáma nagyban függ attól, hogy az iteráció kezdőpontja mennyire esik közel a keresett gyökhöz. Jó esetben viszont nagyon gyorsan tud jó eredményt szolgáltatni.
 
-Láthatjuk, hogy a mi esetünkben ez több kívánni valót is hagy maga után: szükséges hozzá a második derivált számítása minden iterációban, csak lokális szélsőérték keresést biztosít, és nincs lehetőségünk a korlátok kezelésére. Szerencsére azonban nem kell teljesen lemondanunk az algoritmusról, mivel több olyan megvalósítása is létezik, lehetővé teszi olyan függvények optimalizálást, ahol a Hesse-mátrix nem áll rendelkezésünkre. Ezeket az algoritmusokat kvázi-Newton módszerekként emlegetjük.
+Láthatjuk, hogy a mi esetünkben ez több kívánni valót is hagy maga után: szükséges hozzá a második derivált számítása minden iterációban, csak lokális szélsőérték keresést biztosít, és nincs lehetőségünk a korlátok kezelésére. Szerencsére azonban nem kell teljesen lemondanunk az algoritmusról, mivel több olyan megvalósítása is létezik, melyek lehetővé teszik olyan függvények optimalizálást, ahol a Hesse-mátrix nem áll rendelkezésünkre. Ezeket az algoritmusokat kvázi-Newton módszerekként emlegetjük.
 
 \subsubsection{BFGS}
-A feltalálóiról elnevezett Broyden-–Fletcher--Goldfarb--Shanno algoritmus egy a nagyon hatékony optimalizáló algoritmusok közül. A kvázi-Newton családba tartozó módszer a Hesse-mátrixot egy minden iterációban a gradiens alapján frissített, becsült mátrixszal helyettesíti. Ezzel számítási költséget spórolhatunk. A módosított algoritmus a következő lépéseket hajtja végre, míg nem konvergálunk a megoldáshoz:
+A feltalálóiról elnevezett Broyden-–Fletcher--Goldfarb--Shanno algoritmus egy a nagyon hatékony optimalizáló algoritmusok közül. A kvázi-Newton családba tartozó módszer a Hesse-mátrixot egy becsült mátrixszal közelíti, melyet minden iterációban a gradiens alapján frissít. Ezzel számítási költséget spórolhatunk. A módosított algoritmus a következő lépéseket hajtja végre, míg nem konvergálunk a megoldáshoz:
 \begin{enumerate}
 	\item $B_kp_k=-\nabla f(x_k)$ egyenlet megoldásával kiszámoljuk $p_k$ értékét, ahol $B_k$ mátrix a Hesse-mátrix közelítése, kezdeti értéke $B_0=I$ egységmátrix.
 	\item Tetszőleges egydimenziós optimalizálással megkereshető az $f(x_k+\alpha p_k)$ függvény minimuma,
@@ -26,7 +26,7 @@ A feltalálóiról elnevezett Broyden-–Fletcher--Goldfarb--Shanno algoritmus e
 	$$y_k=\nabla f(x_{k+1})-\nabla f(x_k), \quad B_{k+1}=B_k+\frac{y_ky_k^T}{y_k^Ts_k}-\frac{B_ks_ks_k^TB_k}{s_k^TB_ks_k}.$$
 \end{enumerate}
 
-Eggyel tovább fejlesztett verziója, a Limitált memóriájú BFGS pedig azt is biztosítja, hogy az iterációk során az átlagosnál jóval kevesebb memóriát használunk.
+Eggyel tovább fejlesztett verziója, a Limitált memóriájú BFGS (továbbiakban \mbox{L-BFGS}) pedig azt is biztosítja, hogy az iterációk során az átlagosnál jóval kevesebb memóriát használunk.
 
 Az eredeti Newton módszernél megfelelőbb a mi céljainkra, mivel csak gradiens számítást igényel. A kezdőpont azonban itt is nagy hatással van az eredményre, és ebben az esetben sincsen biztosítva a globális optimalizálás.
 
@@ -52,7 +52,7 @@ Az általunk befolyásolható paraméter itt is a kezdőpont, máshonnan indítv
 A részecske raj optimalizálás\footnote{Particle swarm optimization} során a keresési térben részecskéket veszünk fel. Ezek a részecskék egy egyszerű matematikai formula alapján járják be a teret, miközben a saját maguk és a globálisan ismert eddigi minimumhely ismeretében számolják ki minden iterációban, merre tegyék meg a következő lépést. A folyamatot \aref{fig:pso}. ábra szemlélteti. Az $i.$ részecske sebességének és pozíciójának kiszámításához használt képlet:
 \begin{equation}
 	\label{eq:pso}
-	v_{i+1}=\omega v_{i}+\phi _pr_p(p_{i}-x_{i})+\phi_gr_g(g-x_{i}), \quad\textnormal{majd ezzel}\quad x_{i+1}=x_i+v_{i+1}
+	v_{i+1}=\omega v_{i}+\phi _pr_p(p_{i}-x_{i})+\phi_gr_g(g-x_{i}), \quad\textnormal{majd ezzel}\quad x_{i+1}=x_i+v_{i+1},
 \end{equation}
 ahol $r_p, r_g \sim U(0,1)$ véletlen számok, $\omega, \phi_p$ és $\phi_g$ pedig általunk választott hiperparaméterek. Ezeknek a megválasztása nagy körültekintést igényel, hisz jelentősen befolyásolják az algoritmus eredményességét.
 
@@ -75,23 +75,35 @@ A természetben számtalan helyen visszaköszönnek a matematika szépségei. Re
 A méhek úgy keresik meg a lehető legtöbb virágot tartalmazó területeket, hogy először \textbf{felderítők}et küldenek véletlenszerű helyekre, majd visszaérkezésük után azok a méhek \textbf{toborozzák} magukhoz a legtöbb \textbf{segítőt}, akik a legjobb helyeket találták. A folyamatot \aref{fig:bees}. ábra szemlélteti.
 Az első $b$ db, legjobb területet találó méhek a \textbf{lebjobb méhek}, azon belül az első $e$ db legjobbak az \textbf{elit méhek}. Értelem szerűen az elit méhek kapják a legtöbb segítőt maguk köré, a legjobbak, akik nem elitek, náluk kevesebbet. A többi toborzó marad véletlenszerű területek felderítőjének.
 
-Minden iteráció során a segítő méhek egy $r$ sugarú körben véletlenszerűen helyezkednek el a toborzójuk által talált legjobb pont körül. Ezt a számot aztán iterációnként adott mértékben csökkenthetjük, így koncentrálva minél jobban az optimális helyekre. Ha egy részecske az eddigi minimumnál jobb pontot talál, ő veszi át a toborzó szerepét, és az utána következő iterációban már hozzá viszonyítva helyezkednek el a többiek.
+Minden iteráció során a segítő méhek egy $r$ sugarú körben véletlenszerűen helyezkednek el a toborzójuk által talált legjobb pont körül. Ezt a számot aztán iterációnként adott mértékben csökkenthetjük, így koncentrálva minél jobban az optimálisnak tűnő helyekre. Ha egy részecske az eddigi minimumnál jobb pontot talál, ő veszi át a toborzó szerepét, és az utána következő iterációban már hozzá viszonyítva helyezkednek el a többiek.
 
 Így a biztatónak ígérkező területek jóval több részecske által kerülnek felderítésre, ezzel növelve a lehető legjobb terület megtalálásának valószínűségét. Azok a méhek, akik nem kerültek a legjobbak közé, folytatják véletlenszerű felderítésüket, ezzel biztosítva azt is, hogy van esélyünk az eddig esetleg elkerült globálisan optimális helyet is megtalálni.
 
-Általunk megadandó paraméter itt a felderítők száma, hogy az első hány legjobb méh a legjobb, és azon belül az első hány legjobb az elit, ők hány segítőt toboroznak magukhoz, az iterációk száma, a keresési terület határai, a keresési kör sugara, és az iterációnként való csökkentési mértéke.
+Általunk megadandó hiperparaméterből van bőven:
+\begin{itemize}
+	\itemsep0em 
+	\item felderítő méhek száma (toborzottakat nem beleszámítva) 
+	\item legjobb méhek száma
+	\item elit méhek száma
+	\item legjobb méhek által toborzott méhek száma
+	\item elit méhek által toborzott méhek száma
+	\item iterációk száma
+	\item a keresési terület határai
+	\item a keresési kör sugara
+	\item keresési kör csökkentésének mértéke
+\end{itemize}
 
 \subsubsection{Gradiens módszerrel ötvözve}
 
-Sok esetben a célunk eléréséért nem egy, hanem egyszerre több algoritmus által nyújtott lehetőségeket kell kihasználnunk. A részecske raj algoritmusok globális keresési tulajdonsága csábító, de hatékonysága csekély. Ellenben a gradiens módszer, bár biztosítja egy minimumhely megtalálását, ennek globális voltáról nincs információja.
+Sok esetben a célunk eléréséért nem egy, hanem egyszerre több algoritmus által nyújtotta lehetőségeket kell kihasználnunk. A részecske raj algoritmusok globális keresési tulajdonsága csábító, de hatékonysága csekély. Ellenben a gradiens módszer, bár biztosítja egy minimumhely megtalálását, ennek globális voltáról nincs információja.
 
-Ideális megoldás lehet, ha a két ismert algoritmust ötvözzük. Ennek egy megvalósítása, ha minden iterációban a részecskék \aref({eq:pso}) képlet alapján kiszámolják az új pozíciójukat, majd az ezután ismert globális minimumhelyről indulva végzünk néhány lépést a gradiens módszerrel \aref({eq:gd}). képletek alapján. Ezáltal biztosíthatjuk a keresési tér bejárását globális optimum után kutatva, és az ígéretesnek tűnő pozíciókból nem kell a véletlenre bíznunk magunkat, hogy mennyire tudjuk megközelíteni a tényleges szélsőértéket, a gradiens használatával biztosra mehetünk. Arany középút, mely a költséges műveletet, a derivált számítást csak ott végzi el, ahol a legnagyobb a valószínűsége az optimális hely megtalálásának.
+Ideális megoldás lehet, ha a két ismert algoritmust ötvözzük. Ennek egy megvalósítása, ha minden iterációban a részecskék \aref({eq:pso}) képlet alapján kiszámolják az új pozíciójukat, majd az ezután ismert globális minimumhelyről indulva végzünk néhány lépést a gradiens módszerrel \aref({eq:gd}) képletek alapján. Ezáltal biztosíthatjuk a keresési tér bejárását globális optimum után kutatva, és az ígéretesnek tűnő pozíciókból nem kell a véletlenre bíznunk magunkat, hogy mennyire tudjuk megközelíteni a tényleges szélsőértéket, a gradiens használatával biztosra mehetünk. Arany középút, mely a költséges műveletet, a derivált számítást csak ott végzi el, ahol a legnagyobb a valószínűsége az optimális hely megtalálásának.
 
 \subsection{Szimulált lehűtés}
 
 Szintén egy természetből vett példát utánozó algoritmus a szimulált lehűtés\footnote{Simulated annealing}. Köztudott, hogy egy anyag részecskéi annál jobban mozognak, minél magasabb az anyag hőmérséklete. A hőmérséklet csökkenésével ez a mozgás lassul, míg végül ki nem alakul a szilárd anyagra jellemző szabályos kristályszerkezet.
 
-Az optimalizáló algoritmusban a rendszerünket egy kezdeti hőmérséklettől indítjuk, és ezt minden iterációban egy meghatározott arányban csökkentjük. A jelenlegi pozíciónk körül egy $R$ sugarú körben kiválasztunk egy véletlenszerű pontot, majd eldöntjük, odaugrunk-e. Ez a döntés egy olyan valószínűséget adó egyenleten kell, hogy alapuljon, aminek az eredményéül magas hőmérséklet esetén nagy valószínűséggel a jelenleginél kedvezőtlenebb helyekre is átugrunk, a hőmérséklet csökkenésével azonban egyre kevésbé kockáztatunk. Ezzel csökkenthető annak az esélye, hogy egy lokális minimumba ragad a rendszer.
+Az optimalizáló algoritmusban a rendszerünket egy kezdeti hőmérsékletről indítjuk, és ezt minden iterációban meghatározott arányban csökkentjük. A jelenlegi pozíciónk körül egy $R$ sugarú körben kiválasztunk egy véletlenszerű pontot, majd eldöntjük, odaugrunk-e. Ez a döntés egy olyan valószínűséget adó egyenleten kell, hogy alapuljon, aminek az eredményéül magas hőmérséklet esetén nagy valószínűséggel a jelenleginél kedvezőtlenebb helyekre is átugrunk, a hőmérséklet csökkenésével azonban egyre kevésbé kockáztatunk. Ezzel csökkenthető annak az esélye, hogy egy lokális minimumba ragad a rendszer.
 Valószínűséget adó egyenlet az én esetemben:
 \begin{equation*}
 f(x_{new},x_{old})=
@@ -104,7 +116,7 @@ ahol $T$ a rendszerünk jelenlegi hőmérséklete. Amennyiben a visszatérési �
 
 Egyszerűsége miatt közkedvelt algoritmus, hiszen itt sincs szükség derivált számítására. Hasonlóan azonban az előzőekhez, a hiperparaméterek beállítása itt is nagy hatással lehet az eredményességre.
 
-Általunk megadandó paraméter a kezdeti hőmérséklet, a hőmérséklet iterációnként való csökkentésének aránya, a keresés R sugarának nagysága, és a csökkentésének az aránya.
+Általunk megadandó paraméter a kezdeti hőmérséklet, a hőmérséklet iterációnként való csökkentésének aránya, a keresés $R$ sugarának nagysága, és a csökkentésének az aránya.
 
 %----------------------------------------------------------------------------
 \section{Bayesi optimalizáció}
@@ -119,9 +131,7 @@ A kernel gépek a mintaelemzéses algoritmusok egy fajtája. Fő célja az adato
 
 \subsection{Gauss-folyamat}
 
-A Gauss-folyamatok praktikus valószínűségi megközelítést nyújtanak a kernel gépekkel való tanuláshoz. 
-
-Egy sztochasztikus folyamat valójában egy valószínűségi eloszlás -- mely leír egy véges dimenziójú véletlen valószínűségi változót -- általánosítása függvényekként. Azon folyamatokat, melyek esetében ez egy normális eloszlás, Gauss-folyamtoknak nevezzük.
+A Gauss-folyamatok praktikus valószínűségi megközelítést nyújtanak a kernel gépekkel való tanuláshoz. Egy sztochasztikus folyamat valójában egy valószínűségi eloszlás -- mely leír egy véges dimenziójú véletlen valószínűségi változót -- általánosítása függvények egy lehetséges halmazaként. Azon folyamatokat, melyek esetében ez egy normális eloszlás, Gauss-folyamtoknak nevezzük.
 
 Segítségükkel kétféle szempontból is vizsgálhatjuk a modelljeinket. A regresszió lehetővé teszi a célfüggvényünk alakjának modellezését, ami által minden iteráció során előfeltételezéssel élhetünk az ismeretlen helyek függvényértékeiről is, és ezt felhasználva irányíthatjuk az optimalizáló algoritmust. Egy ilyen predikciót szemléltet a \ref{fig:gp}. ábra, az eddig kiszámított pontok ismeretében a lehetséges illeszkedő függvények várható értékét véve. Ez a feltételezett modell minden újabb megismert ponttal módosul, precízebb és -- reményeink szerint -- valósághűbb lesz.
 
@@ -132,12 +142,12 @@ Segítségükkel kétféle szempontból is vizsgálhatjuk a modelljeinket. A reg
 	\label{fig:gp}
 \end{figure}
 
-A klasszifikáció diszkrét osztályokba sorolja a tér pontjait. A mi esetünkben egy bináris osztályozásról beszélhetünk azt tekintve, az értelmezési tartomány adott pontján a megoldó keretrendszer által kiértékelhető-e (1), vagy nem (-1) a modell. A regresszióhoz hasonlóan itt is minden iterációval frissítjük a becsült modellünket, melyet felhasználva feltételezéseket vonhatunk le, a tér egyes területein valószínűleg értelmezhető-e a célfüggvényünk.\cite{GPKonyv}
+A klasszifikáció diszkrét osztályokba sorolja a tér pontjait. A mi esetünkben egy bináris osztályozásról beszélhetünk, azt tekintve, hogy az értelmezési tartomány adott pontján a megoldó keretrendszer által a modell kiértékelhető-e (1), vagy nem (-1). A regresszióhoz hasonlóan itt is minden iterációval frissítjük a becsült modellünket, melyet felhasználva következtetéseket vonhatunk le, a tér egyes területein valószínűleg értelmezhető-e a célfüggvényünk.\cite{GPKonyv}
 
 \subsection{Bayesi optimalizáció}
 
 \label{subsec:bayes}
-A Bayesi optimalizáció egy olyan, függvények fölötti a posteriori\footnote{Tapasztalatból származó ismeret} eloszlással dolgozik, mely a legjobban leírja a függvényt, melyet optimalizálunk. Ahogy a megfigyelt értékek száma nő, a jósolt eloszlásunk úgy válik biztosabbá. Amint egyre nagyobb valószínűséggel tudjuk megállapítani, mely területek a legérdemesebbek az újabb iterációkra, és ezáltal a modell pontosabbá tételére, úgy válik az algoritmus egyre hatékonyabbá.
+A Bayesi optimalizáció egy olyan, függvények fölötti a posteriori\footnote{Tapasztalatból származó ismeret} eloszlással dolgozik, mely a legjobban leírja az optimalizálandó függvényt. Ahogy a megfigyelt értékek száma nő, a jósolt eloszlásunk úgy válik biztosabbá. Amint egyre nagyobb valószínűséggel tudjuk megállapítani, mely területek a legérdemesebbek az újabb iterációkra, és ezáltal a modell pontosabbá tételére, úgy válik az algoritmus egyre hatékonyabbá.
 
 Az algoritmus működése egyszerű és nagyszerű, az alábbi lépéseket ismétli, míg nem teljesül a megállási feltétel. Ez általában a végzendő iterációk számára vonatkozik.
 \begin{enumerate}
@@ -174,7 +184,7 @@ ahol $\phi$ a standard normális eloszlás sűrűségfüggvénye (eloszlásfügg
 \end{equation}
 ahol $\kappa$ hiperparaméter hivatott kifejezni a kizsákmányolás és felderítés módszere közötti egyensúlyozás mértékét, amiről bővebben a következő alfejezetben olvashatunk.
 
-Ezek az ismert függvények esetében már a maximum megtalálása jóval egyszerűbb, mint az ismeretlen célfüggvényünk esetében. Agy alkalmas optimalizáló algoritmus -- akár a fentebb említettek közül -- jóval kisebb költséggel oldja meg, mint az eredeti problémát. Ebben rejlik tehát a Bayesi optimalizáció titka.
+Ezek az ismert függvények esetében már a maximum megtalálása jóval egyszerűbb, mint az ismeretlen célfüggvényünk esetében. Egy alkalmas optimalizáló algoritmus -- akár a fentebb említettek közül -- jóval kisebb költséggel oldja meg, mint az eredeti problémát. Ebben rejlik tehát a Bayesi optimalizáció titka.
 
 \subsubsection{Kizsákmányolás vagy felderítés}
 A kizsákmányolás\footnote{exploitation} vagy felderítés\footnote{exploration} dilemmája ismert számos tudományterületen. Az optimalizálás során ugyanúgy hasznos az új tudás szerzése ismeretlen függvényterületekről, ahogy szükségünk lenne a már ismert tudás pontosságának, hatékonyságának növelésére is. Az algoritmus futása során nagy kérdés, mikor éri meg jobban egy olyan területről választani kiértékelendő pontot, ahonnan még nincsenek információink, és mikor válik nagyobb hasznunkra az eddig ismert, ígéretesnek tűnő területek precízebb feltérképezése, a globális minimum megközelítése érdekében.
