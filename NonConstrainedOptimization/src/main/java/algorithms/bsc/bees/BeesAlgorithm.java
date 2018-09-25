@@ -1,40 +1,25 @@
-package algorithms;
+package algorithms.bsc.bees;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
+import algorithms.Optimizer;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
 import models.Model;
 import spdn.SPDNResult;
 import spdn.SPDN;
 
-public class BeesAlgorithm{
+public class BeesAlgorithm extends Optimizer<BeesHyperParam> {
 	public static final String ID = "BEES";
 	
-	private Model model;
-	private SPDN spdn;
-	
-	private int scoutSize = 20;
-	private int bestBeesSize = 8;
-	private int eliteBeesSize = 3;
-	private int recruitedOfBestsSize = 5;
-	private int recruitedOfElitesSize = 10;
-	
-	private int maxIter = 20;
-	private double radius = 0.5;
-	private double radiusSmallerRate = 0.9;
-	
 	public BeesAlgorithm(Model model) {
-		this.model = model;
-		this.spdn = new SPDN(model);
+		super(model);
 	}
 	
 	private class Bee{
@@ -73,31 +58,30 @@ public class BeesAlgorithm{
 		}
 	}
 	
-	public SPDNResult optimize(int maxIter, double initRadius, double radiusSmallerRate, 
-			int scoutSize, int bestBeesSize, int eliteBeesSize, 
-			int recruitedOfBestsSize, int recruitedOfElitesSize) {
+	@Override
+	public SPDNResult optimize(BeesHyperParam params) {
 		long startTime = System.nanoTime();
 		
-		initParams(maxIter, initRadius, radiusSmallerRate, scoutSize, bestBeesSize, eliteBeesSize, recruitedOfBestsSize, recruitedOfElitesSize);
-		List<Bee> scouts = initSwarm();
+		List<Bee> scouts = initSwarm(params.scoutSize);
+		double radius = params.radius;
 		
 		BeeComparator comparator = new BeeComparator();
 		Collections.sort(scouts, comparator);
 		
-		for (int iter = 0; iter < this.maxIter; iter++) {
-			calculateLeadsAndRecruiteds(scouts, 0, this.eliteBeesSize, this.recruitedOfElitesSize);
-			calculateLeadsAndRecruiteds(scouts, this.eliteBeesSize, this.bestBeesSize, this.recruitedOfBestsSize);
-			randomizeOtherScouts(scouts, this.eliteBeesSize + this.bestBeesSize);
+		for (int iter = 0; iter < params.maxIter; iter++) {
+			calculateLeadsAndRecruiteds(scouts, 0, params.eliteBeesSize, params.recruitedOfElitesSize, radius);
+			calculateLeadsAndRecruiteds(scouts, params.eliteBeesSize, params.bestBeesSize, params.recruitedOfBestsSize, radius);
+			randomizeOtherScouts(scouts, params.eliteBeesSize + params.bestBeesSize);
 
 			Collections.sort(scouts, comparator);
 			
-			radius *= this.radiusSmallerRate;
+			radius *= params.radiusSmallerRate;
 		}
 		
 		SPDNResult result= new SPDNResult(scouts.get(0).getVal(),
 										  SPDN.convertPoint(scouts.get(0).getPos()).toArray(), 
 										  ID, 
-										  getHyperParams(initRadius),
+										  params.getHyperParams(),
 										  model);
 		
 		result.setTime(System.nanoTime() - startTime);
@@ -106,7 +90,7 @@ public class BeesAlgorithm{
 		return result;
 	}
 	
-	private void calculateLeadsAndRecruiteds(List<Bee> scouts, int fromIdx, int count, int recruitedSize) {
+	private void calculateLeadsAndRecruiteds(List<Bee> scouts, int fromIdx, int count, int recruitedSize, double radius) {
 		Random r = new Random();
 		
 		for (int i = fromIdx; i < fromIdx + count; i++) {
@@ -144,19 +128,7 @@ public class BeesAlgorithm{
 		}
 	}
 	
-	private void initParams(int maxIter, double initRadius, double radiusSmallerRate, int scoutSize, int bestBeesSize, int eliteBeesSize, int recruitedOfBestsSize, int recruitedOfElitesSize) {
-		if (maxIter > 0) this.maxIter = maxIter;
-		if (initRadius > 0) this.radius = initRadius;
-		if (radiusSmallerRate > 0) this.radiusSmallerRate = radiusSmallerRate;
-		if (scoutSize > 0) this.scoutSize = scoutSize;
-		if (bestBeesSize > 0) this.bestBeesSize = bestBeesSize;
-		if (bestBeesSize > 0) this.bestBeesSize = bestBeesSize;
-		if (eliteBeesSize > 0) this.eliteBeesSize = eliteBeesSize;
-		if (recruitedOfBestsSize > 0) this.recruitedOfBestsSize = recruitedOfBestsSize;
-		if (recruitedOfElitesSize > 0) this.recruitedOfElitesSize = recruitedOfElitesSize;
-	}
-	
-	private List<Bee> initSwarm(){
+	private List<Bee> initSwarm(int scoutSize){
 		ArrayList<Bee> swarm = new ArrayList<>();
 		
 		for(int i=0; i<scoutSize; i++) {
@@ -169,17 +141,5 @@ public class BeesAlgorithm{
 		}
 		return swarm;
 	}
-	
-	private SortedMap<String, Double> getHyperParams(double initRadius) {
-		TreeMap<String, Double> map = new TreeMap<>();
-		map.put("maxIter", (double) this.maxIter);
-		map.put("initRadius", initRadius);
-		map.put("radiusSmallerRate", this.radiusSmallerRate);
-		map.put("scoutSize", (double) this.scoutSize);
-		map.put("bestBeesSize", (double) this.bestBeesSize);
-		map.put("eliteBeesSize", (double) this.eliteBeesSize);
-		map.put("recruitedOfBestsSize", (double) this.recruitedOfBestsSize);
-		map.put("recruitedOfElitesSize", (double) this.recruitedOfElitesSize);
-		return map;
-	}
+
 }
