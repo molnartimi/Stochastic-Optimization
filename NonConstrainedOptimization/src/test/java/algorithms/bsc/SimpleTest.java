@@ -2,6 +2,7 @@ package algorithms.bsc;
 
 import org.junit.Test;
 
+import algorithms.BaseTest;
 import algorithms.bsc.bees.BeesAlgorithm;
 import algorithms.bsc.bees.BeesHyperParam;
 import algorithms.bsc.bees.BeesHyperParamBuilder;
@@ -20,32 +21,22 @@ import algorithms.bsc.pso.ParticleSwarm;
 import algorithms.bsc.simann.SimAnnHyperParam;
 import algorithms.bsc.simann.SimAnnHyperParamBuilder;
 import algorithms.bsc.simann.SimulatedAnnealing;
-import models.Model;
-import spdn.SPDNResult;
 
-public class SimpleTest {
-	
-	Model model = Model.SIMPLE_SERVER;
-	
-	public void printResult(SPDNResult result) {
-		final String separator = "-----------------------------";
-		System.out.println();
-		System.out.println(separator + "\n" + result.toString() + "\n" + separator);
-	}
+public class SimpleTest extends BaseTest{
 	
 	@Test
 	public void lbfgs() {
 		LBFGSHyperParam params = new LBFGSHyperParamBuilder(model)
 				.maxIter(2)
 				.build();
-		printResult(new LBFGS(model).optimize(params));
+		optimize(new LBFGS(model), params);
 	}
 	
 	@Test
 	public void gd() {
 		GDHyperParam params = new GDHyperParamBuilder(model)
 				.build();
-		printResult(new GradientDescent(model).optimize(params));
+		optimize(new GradientDescent(model), params);
 	}
 	
 	@Test
@@ -54,7 +45,7 @@ public class SimpleTest {
 				.swarmSize(2)
 				.maxIter(1)
 				.build();
-		printResult(new ParticleSwarm(model).optimize(params));
+		optimize(new ParticleSwarm(model), params);
 	}
 	
 	@Test
@@ -64,7 +55,7 @@ public class SimpleTest {
 				.maxIter(1)
 				.gradientMaxIter(1)
 				.build();
-		printResult(new ParticleSwarmWithGradientDescent(model).optimize(params));
+		optimize(new ParticleSwarmWithGradientDescent(model), params);
 	}
 	
 	@Test
@@ -77,7 +68,7 @@ public class SimpleTest {
 				.recruitedOfBestsSize(1)
 				.recruitedOfElitesSize(1)
 				.build();
-		printResult(new BeesAlgorithm(model).optimize(params));
+		optimize(new BeesAlgorithm(model), params);
 	}
 	
 	@Test
@@ -86,6 +77,6 @@ public class SimpleTest {
 				.initTemp(5)
 				.innerRestart(1)
 				.build();
-		printResult(new SimulatedAnnealing(model).optimize(params));
+		optimize(new SimulatedAnnealing(model), params);
 	}
 }

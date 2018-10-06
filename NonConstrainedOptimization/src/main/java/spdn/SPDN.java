@@ -1,3 +1,4 @@
+
 package spdn;
 
 import java.io.File;
@@ -19,6 +20,7 @@ import models.Model;
 
 public class SPDN implements DiffFunction {
 	private Model model;
+	private SpdnAnalyzer analyzer;
 	private AnalysisBuilder builder;
 	private List<Parameter> parameters;
 	private List<Reward> rewards;
@@ -31,12 +33,21 @@ public class SPDN implements DiffFunction {
 		this.model = model;
 
 		Spdn spdn = new Spdn("../../SPDN");
-		SpdnAnalyzer analyzer = spdn.openModel("../SPDN/models/" + model.getFileName(), AnalysisConfiguration.DEFAULT);
+		analyzer = spdn.openModel("../SPDN/models/" + model.getFileName(), AnalysisConfiguration.DEFAULT);
 		builder = analyzer.createAnalysisBuilder();
 
 		parameters = model.getAllParams();
 		rewards = model.getAllRewards();
 		empiricalMeasurements = model.getAllMeasurements();
+	}
+	
+	public SPDN(Model model, double tolerance) {
+		this(model);
+		setTolerance(tolerance);
+	}
+	
+	public void setTolerance(double tol) {
+		analyzer.setTolerance(tol);
 	}
 
 	public double f(double[] variables) {
