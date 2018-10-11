@@ -21,10 +21,10 @@ import models.Model;
 public class SPDN implements DiffFunction {
 	private Model model;
 	private SpdnAnalyzer analyzer;
-	private AnalysisBuilder builder;
-	private List<Parameter> parameters;
-	private List<Reward> rewards;
-	private Map<Reward, Double> empiricalMeasurements;
+	protected AnalysisBuilder builder;
+	protected List<Parameter> parameters;
+	protected List<Reward> rewards;
+	protected Map<Reward, Double> empiricalMeasurements;
 	private ArrayList<String> countedValuesToCsv = new ArrayList<>();
 
 	private final boolean DONT_WRITE_TO_CSV = true;
@@ -152,26 +152,26 @@ public class SPDN implements DiffFunction {
 		}
 	}
 
-	private AnalysisResult runAnalyzer(RealVector variables, boolean derivatives) throws SpdnException {
+	protected AnalysisResult runAnalyzer(RealVector variables, boolean derivatives) throws SpdnException {
 		setRewards(derivatives);
 		setParams(variables);
 		AnalysisResult result = builder.run();
 		return result;
 	}
 
-	private void setRewards(boolean derivatives) {
+	protected void setRewards(boolean derivatives) {
 		for (int i = 0; i < rewards.size(); i++) {
 			builder.withReward(rewards.get(i), derivatives ? parameters : new ArrayList<Parameter>());
 		}
 	}
 
-	private void setParams(RealVector variables) {
+	protected void setParams(RealVector variables) {
 		for (int i = 0; i < parameters.size(); i++) {
 			builder = builder.withParameter(parameters.get(i), Math.exp(variables.getEntry(i)));
 		}
 	}
 
-	private double calcObjectiveF(AnalysisResult result) {
+	protected double calcObjectiveF(AnalysisResult result) {
 		double resultF = 0;
 		for (int i = 0; i < rewards.size(); i++) {
 			resultF += Math.pow(empiricalMeasurements.get(rewards.get(i)) - result.getValue(rewards.get(i)), 2);

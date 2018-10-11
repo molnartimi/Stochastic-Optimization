@@ -107,6 +107,18 @@ public enum Model {
 		return point;
 	}
 	
+	public List<Double> getRandomPointList() {
+		List<Double> point = new ArrayList<>();
+		Random rand = new Random();
+		
+		for(int i = 0; i < getDim(); i++) {
+			List<Double> border = borders.get(parameters.get(i));
+			point.add(rand.nextDouble() * (border.get(1) - border.get(0)) + border.get(0));
+		}
+		
+		return point;
+	}
+	
 	public double[] getRandomVelocity() {
 		double[] point = new double[getDim()];
 		Random rand = new Random();
