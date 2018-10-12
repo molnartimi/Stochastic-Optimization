@@ -6,18 +6,24 @@ import java.util.List;
 import hu.bme.mit.inf.petridotnet.spdn.AnalysisResult;
 import hu.bme.mit.inf.petridotnet.spdn.Reward;
 
-public class SPDNModelExecutor {
+public class SpdnModelAnalyzer {
 	
-	private SPDNModel model;
+	private SpdnModel model;
+	private SpdnExeRunner runner;
 
-	public SPDNModelExecutor(SPDNModel model) {
+	public SpdnModelAnalyzer(SpdnModel model) {
 		this.model = model;
+		this.runner = new SpdnExeRunner(model.filePath, model.simpleRewardList, model.simpleParameterList);
+	}
+	
+	public void setTolerance(double tolerance) {
+		runner.setTolerance(tolerance);
 	}
 	
 	public List<Double> analyze(List<Double> variables) {
-		AnalysisResult result = SpdnExeRunner.run(model.filePath, model.rewardList, model.parameterList, variables);
+		AnalysisResult result = runner.run(variables);
 		List<Double> rewardResults = new ArrayList<>();
-		for (Reward r: model.rewardList) {
+		for (Reward r: model.simpleRewardList) {
 			rewardResults.add(result.getValue(r));
 		}
 		return rewardResults;
@@ -27,7 +33,7 @@ public class SPDNModelExecutor {
 		List<Double> rewardResults = analyze(variables);
 		
 		double objectiveResult = 0;
-		for (int i = 0; i < model.getRewardNum(); i++) {
+		for (int i = 0; i < model.rewardSize(); i++) {
 			objectiveResult += model.getSquareErrorOfReward(i, rewardResults.get(i));
 		}
 		

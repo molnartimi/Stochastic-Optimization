@@ -12,23 +12,37 @@ import hu.bme.mit.inf.petridotnet.spdn.SpdnAnalyzer;
 
 public class SpdnExeRunner {
 	
-	public static AnalysisResult run(String filePath, List<Reward> rewardList, List<Parameter> parameterList, List<Double> parameterValues) {
-		if (parameterList.size() != parameterValues.size()) 
-			throw new IllegalArgumentException("Size of parameter object list and size of value list must be equal.");
-		
+	private SpdnAnalyzer analyzer;
+	private AnalysisBuilder analysisBuilder;
+	private List<Parameter> parameterList;
+	private List<Reward> rewardList;
+	
+	public SpdnExeRunner(String filePath, List<Reward> rewardList, List<Parameter> parameterList) {
 		Spdn spdn = new Spdn("../../SPDN");
-		SpdnAnalyzer analyzer = spdn.openModel(filePath, AnalysisConfiguration.DEFAULT);
-		AnalysisBuilder builder = analyzer.createAnalysisBuilder();
+		analyzer = spdn.openModel(filePath, AnalysisConfiguration.DEFAULT);
+		analysisBuilder = analyzer.createAnalysisBuilder();
+		
+		this.parameterList = parameterList;
+		this.rewardList = rewardList;
+	}
+	
+	public void setTolerance(double tolerance) {
+		analyzer.setTolerance(tolerance);	
+	}
+	
+	public AnalysisResult run(List<Double> parameterValues) {
+		if (parameterList.size() != parameterValues.size()) 
+			throw new IllegalArgumentException("Size of parameter list must equal to size of value list.");
 		
 		for (Reward r: rewardList) {
-			builder.withReward(r);
+			analysisBuilder.withReward(r);
 		}
 		
 		for (int i = 0; i < parameterList.size(); i++) {
-			builder = builder.withParameter(parameterList.get(i), parameterValues.get(i));
+			analysisBuilder.withParameter(parameterList.get(i), parameterValues.get(i));
 		}
 		
-		return builder.run();
+		return analysisBuilder.run();
 	}
 
 }
