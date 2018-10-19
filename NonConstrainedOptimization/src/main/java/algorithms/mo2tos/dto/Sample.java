@@ -1,11 +1,13 @@
-package algorithms.mo2tos;
+package algorithms.mo2tos.dto;
+
+import java.util.List;
 
 public class Sample implements Comparable<Sample>{
-	public final double[] values;
+	public final List<Double> values;
 	public final double lowResult;
 	private Double heighResult;
 	
-	public Sample(double[] values, double lowResult) {
+	public Sample(List<Double> values, double lowResult) {
 		this.values = values;
 		this.lowResult = lowResult;
 	}

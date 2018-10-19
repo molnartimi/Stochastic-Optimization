@@ -1,32 +1,41 @@
-package algorithms.mo2tos;
+package algorithms.mo2tos.helper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import algorithms.mo2tos.dto.Group;
 import algorithms.mo2tos.exceptions.MeanNotCalculatedException;
 import algorithms.mo2tos.exceptions.VarianceNotCalculatedException;
 
 public class AllocationHandler {
-	private List<Integer> allocations;
+	private int[] allocations;
 	private final int ALLOC_NUM;
 	
 	public AllocationHandler(int groupNum, int heighModelSampleNumPerIter) {
 		if (heighModelSampleNumPerIter / groupNum < 1) {
 			throw new IllegalArgumentException("Number of heigh model sample calculation per iteration MUST be LARGER than number of groups.");
 		}
+		
 		ALLOC_NUM = heighModelSampleNumPerIter;
-		allocations = new ArrayList<>();
+		
+		allocations = new int[groupNum];
 		for (int i = 0; i < groupNum; i++) {
-			allocations.add(heighModelSampleNumPerIter / groupNum);
+			allocations[i] = heighModelSampleNumPerIter / groupNum;
 		}
 	}
 	
-	public int get(int i) {
-		return allocations.get(i);
+	public int getGroupAlloc(int i) {
+		return allocations[i];
+	}
+	
+	private void setGroupAlloc(int idx, double value) {
+		allocations[idx] = (int) Math.round(value);
 	}
 	
 	public void recalcAllocations(List<Group> groups) {
+		allocations = new int[groups.size()];
+		
 		setBestToFirst(groups);
 		List<Double> distancePerVarianceList = calcDistPerVar(groups);
 		List<Double> distancePerVarianceRates = calcDistPerVarRates(distancePerVarianceList);
@@ -36,15 +45,11 @@ public class AllocationHandler {
 		double otherParts = getOtherParts(distancePerVarianceRatesProducts);
 		double lastGroupAlloc = ALLOC_NUM / (bestPart + otherParts);
 		
-		setAlloc(0, lastGroupAlloc * bestPart);
-		setAlloc(allocations.size() - 1, lastGroupAlloc);
-		for (int i = allocations.size() - 2; i > 0; i--) {
-			setAlloc(i, allocations.get(i + 1) * distancePerVarianceRatesProducts.get(i - 1));
+		setGroupAlloc(0, lastGroupAlloc * bestPart);
+		setGroupAlloc(allocations.length - 1, lastGroupAlloc);
+		for (int i = allocations.length - 2; i > 0; i--) {
+			setGroupAlloc(i, allocations[i + 1] * distancePerVarianceRatesProducts.get(i - 1));
 		}
-	}
-	
-	private void setAlloc(int idx, double value) {
-		allocations.set(idx, (int) Math.round(value));
 	}
 
 	private void setBestToFirst(List<Group> groups) {
@@ -52,21 +57,6 @@ public class AllocationHandler {
 		groups.remove(best);
 		groups.add(0, best);
 	}
-
-	private Group getBestGroup(List<Group> groups) {
-		Group best = groups.get(0);
-		for (Group g: groups) {
-			try {
-				if (g.getMean() < best.getMean()) {
-					best = g;
-				}
-			} catch (MeanNotCalculatedException e) {
-				e.printStackTrace();
-			}
-		}
-		return best;
-	}
-	
 	
 	private List<Double> calcDistPerVar(List<Group> groups) {
 		List<Double> results = new ArrayList<>();
@@ -85,7 +75,6 @@ public class AllocationHandler {
 		return results;
 	}
 	
-
 	private List<Double> calcDistPerVarRates(List<Double> distancePerVarianceList) {
 		List<Double> results = new ArrayList<>();
 		
@@ -102,9 +91,9 @@ public class AllocationHandler {
 		List<Double> results = new ArrayList<>();
 
 		results.add(1.0);
-		for (int i = distancePerVarianceRates.size() - 1; i >= 0; i--) {
-			double prevProduct = results.get(i + 1);
-			double product = prevProduct * distancePerVarianceRates.get(i);
+		for (int j = distancePerVarianceRates.size() - 1, i = 1; j >= 0; j--, i++) {
+			double prevProduct = results.get(i - 1);
+			double product = prevProduct * distancePerVarianceRates.get(j);
 			results.add(product);
 		}
 		
@@ -135,6 +124,20 @@ public class AllocationHandler {
 			result += d;
 		}
 		return result;
+	}
+	
+	private Group getBestGroup(List<Group> groups) {
+		Group best = groups.get(0);
+		for (Group g: groups) {
+			try {
+				if (g.getMean() < best.getMean()) {
+					best = g;
+				}
+			} catch (MeanNotCalculatedException e) {
+				e.printStackTrace();
+			}
+		}
+		return best;
 	}
 
 }

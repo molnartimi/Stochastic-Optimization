@@ -1,4 +1,4 @@
-package algorithms.mo2tos;
+package algorithms.mo2tos.dto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,7 @@ import algorithms.mo2tos.exceptions.MeanNotCalculatedException;
 import algorithms.mo2tos.exceptions.VarianceNotCalculatedException;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
 import spdn.SPDN;
+import spdn.SpdnModelAnalyzer;
 
 public class Group {
 	private List<Sample> samples, countedSamples;
@@ -37,7 +38,7 @@ public class Group {
 		return localBestSample;
 	}
 	
-	public void calcNextRandomSample(SPDN spdn, int maxError) throws EmptyGroupException {
+	public void calcNextRandomSample(SpdnModelAnalyzer spdn, int maxError) throws EmptyGroupException {
 		calcNextRandomSample(spdn, 0, maxError);
 	}
 	
@@ -59,21 +60,19 @@ public class Group {
 		return variance;
 	}
 	
-	public void calcMeanAndVariance(SPDN spdn, int maxError) throws SpdnException{
-		double sum1 = calcWithSamples(spdn, 0, (actValue, result) -> {return actValue + result;}, maxError);
+	public void calcMeanAndVariance(int maxError) throws SpdnException{
+		double sum1 = calcWithSamples(0, (actValue, result) -> {return actValue + result;}, maxError);
 		mean = sum1 / countedSamples.size();
 		
-		double sum2 = calcWithSamples(spdn, 0, (actValue, result) -> {return actValue + Math.pow(result - mean, 2);}, maxError);
+		double sum2 = calcWithSamples(0, (actValue, result) -> {return actValue + Math.pow(result - mean, 2);}, maxError);
 		variance = Math.sqrt(sum2 / countedSamples.size());
 	}
 	
-	private double calcWithSamples(SPDN spdn, double actValue, IteratorOverSamples iterator, int maxError) {
+	private double calcWithSamples(double actValue, IteratorOverSamples iterator, int maxError) {
 		int errorsInARow = 0;
 		for (int i = 0; i < countedSamples.size(); i++) {
 			try {
-				Sample s = countedSamples.get(i);
-				Double x = s.isComputed() ? s.getHeighResult() : spdn.f(s.values);
-				actValue = iterator.changeValue(actValue, x);
+				actValue = iterator.changeValue(actValue, countedSamples.get(i).getHeighResult());
 				
 				errorsInARow = 0;
 			} catch(SpdnException e) {
@@ -87,10 +86,10 @@ public class Group {
 		return actValue;
 	}
 	
-	private void calcNextRandomSample(SPDN spdn, int raisedErrors, int maxError) throws EmptyGroupException {
+	private void calcNextRandomSample(SpdnModelAnalyzer spdn, int raisedErrors, int maxError) throws EmptyGroupException {
 		Sample chosen = getNextRandom();
 		try {
-			chosen.setHeighResult(spdn.f(chosen.values));
+			chosen.setHeighResult(spdn.calcObjective(chosen.values));
 		} catch (SpdnException e) {
 			if (++raisedErrors >= maxError) {
 				throw new SpdnException("Spdn failed " + raisedErrors + " times in a row at calculating samples with heigh fidelity model in a group.");

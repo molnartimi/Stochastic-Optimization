@@ -1,16 +1,16 @@
 package algorithms;
 
-import models.Model;
-import spdn.SPDN;
 import spdn.SPDNResult;
+import spdn.SpdnModel;
+import spdn.SpdnModelAnalyzer;
 
 public abstract class Optimizer<HyperParam extends HyperParameters> {
-	protected SPDN spdn;
-	protected Model model;
+	protected SpdnModelAnalyzer spdn;
+	protected SpdnModel model;
 	
-	public Optimizer(Model model) {
+	public Optimizer(SpdnModel model) {
 		this.model = model;
-		this.spdn = new SPDN(model);
+		this.spdn = new SpdnModelAnalyzer(model);
 	}
 	
 	public abstract SPDNResult optimize(HyperParam hyperParams);

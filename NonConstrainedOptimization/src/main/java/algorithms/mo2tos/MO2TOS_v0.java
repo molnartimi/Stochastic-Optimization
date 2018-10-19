@@ -1,16 +1,19 @@
 package algorithms.mo2tos;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import algorithms.mo2tos.dto.Group;
+import algorithms.mo2tos.dto.Sample;
 import algorithms.mo2tos.exceptions.EmptyGroupException;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
-import models.Model;
+import spdn.SpdnModel;
 
 public class MO2TOS_v0 extends MO2TOS {
 
-	public MO2TOS_v0(Model model) {
+	public MO2TOS_v0(SpdnModel model) {
 		super(model);
 	}
 	
@@ -21,8 +24,8 @@ public class MO2TOS_v0 extends MO2TOS {
 		
 		while (lowModelSampleNum > 0) {
 			try {
-				double[] point = model.getRandomPoint();
-				double result = spdn.f(point);
+				List<Double> point = model.randomParamValues();
+				double result = spdn.calcObjective(point);
 				ordinalSpace.add(new Sample(point, result));
 				
 				lowModelSampleNum--;
@@ -40,14 +43,18 @@ public class MO2TOS_v0 extends MO2TOS {
 	@Override
 	protected Sample optimalSample(int iter, List<Group> groups, int maxError) {
 		while (iter > 0) {
+			List<Group> groupsToDelete = new ArrayList<>();
 			calcRandomSamples(groups, maxError);
 			for (int i = 0; i < groups.size(); i++) {
 				try {
-					groups.get(i).calcMeanAndVariance(spdn, maxError);
+					groups.get(i).calcMeanAndVariance(maxError);
 				} catch (SpdnException e) {
-					System.out.println("Group removed");
-					groups.remove(i);
+					groupsToDelete.add(groups.get(i));
 				}
+			}
+			if (groupsToDelete.size() > 0) {
+				System.out.println(groupsToDelete.size() + " groups removed");
+				groups.remove(groupsToDelete);
 			}
 			allocationHandler.recalcAllocations(groups);
 			iter--;
@@ -56,15 +63,19 @@ public class MO2TOS_v0 extends MO2TOS {
 	}
 
 	private void calcRandomSamples(List<Group> groups, int maxError) {
+		List<Group> groupsToDelete = new ArrayList<>();
 		for (int i = 0; i < groups.size(); i++) {
-			for (int j = 0; j < allocationHandler.get(i); j++) {
+			for (int j = 0; j < allocationHandler.getGroupAlloc(i); j++) {
 				try {
 					groups.get(i).calcNextRandomSample(spdn, maxError);
 				} catch (EmptyGroupException e) {
-					System.out.println("Group removed");
-					groups.remove(i);
+					groupsToDelete.add(groups.get(i));
 				}
 			}
+		}
+		if (groupsToDelete.size() > 0) {
+			System.out.println(groupsToDelete.size() + " groups removed");
+			groups.remove(groupsToDelete);
 		}
 	}
 
@@ -72,10 +83,10 @@ public class MO2TOS_v0 extends MO2TOS {
 		Sample globalBestSample = groups.get(0).getLocalBest();
 		for (int i = 1; i < groups.size(); i++) {
 			Sample localBestSample = groups.get(i).getLocalBest();
-			if (localBestSample.getHeighResult() > globalBestSample.getHeighResult()) {
+			if (localBestSample.getHeighResult() < globalBestSample.getHeighResult()) {
 				globalBestSample = localBestSample;
 			}
 		}
-		return null;
+		return globalBestSample;
 	}
 }

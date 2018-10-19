@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 
 import hu.bme.mit.inf.petridotnet.spdn.Parameter;
@@ -11,16 +13,16 @@ import models.Model;
 
 public class SPDNResult {
 	private double resultValue;
-	private double[] resultPoint;
+	private List<Double> resultPoint;
 	private String algorithmID;
 	private SortedMap<String,Double> hyperParams;
-	private Model model;
+	private SpdnModel model;
 	private PrintWriter csvWriter = null;
 	private long time;
 	
 	private final boolean DONT_WRITE_TO_CSV = true;
 	
-	public SPDNResult(double value, double[] result, String aId, SortedMap<String,Double> hyperParams, Model model) {
+	public SPDNResult(double value, List<Double> result, String aId, SortedMap<String,Double> hyperParams, SpdnModel model) {
 		this.resultValue = value;
 		this.resultPoint = result;
 		this.algorithmID = aId;
@@ -30,16 +32,16 @@ public class SPDNResult {
 	
 	public double getValue() { return resultValue; }
 	
-	public double[] getPoint() { return resultPoint; }
+	public List<Double> getPoint() { return resultPoint; }
 	
 	public void setTime(long time) { this.time = time; }
 	
 	@Override
 	public String toString() {
-		String s = "Done in " + time / 60. / 1000000000. + " min\nAlgorithm: " + algorithmID + "\nModel: " + model.getId() + "\nValue = " + resultValue;
-		if (resultPoint == null) resultPoint = new double[model.getDim()];
-		for (int i = 0; i < model.getDim(); i++) {
-			s += "\n" + model.getParam(i).getName() + " = " + resultPoint[i];
+		String s = "Done in " + time / 60. / 1000000000. + " min\nAlgorithm: " + algorithmID + "\nModel: " + model.id + "\nValue = " + resultValue;
+		if (resultPoint == null) resultPoint = new ArrayList<>(model.parameterSize());
+		for (int i = 0; i < model.parameterSize(); i++) {
+			s += "\n" + model.simpleParameterList.get(i).getName() + " = " + resultPoint.get(i);
 		}
 		return s;
 	}
@@ -50,9 +52,9 @@ public class SPDNResult {
 			String name = System.getProperty("user.dir");
 			File f;
 			if (name.contains("\\")) {
-				f = new File(name + "\\results\\" +algorithmID + "-" + model.getId() + ".csv");
+				f = new File(name + "\\results\\" +algorithmID + "-" + model.id + ".csv");
 			} else {
-				f = new File(name + "/results/" +algorithmID + "-" + model.getId() + ".csv");
+				f = new File(name + "/results/" +algorithmID + "-" + model.id + ".csv");
 			}
 			boolean exist = f.exists();
 			csvWriter = new PrintWriter(new FileOutputStream(f, true));
@@ -72,8 +74,8 @@ public class SPDNResult {
 	
 	private void writeCsvHeader() {
 		String header = "MIN VALUE;";
-		for(Parameter param: model.getAllParams()) {
-			header += param.getName() + "(" + model.getValidValue(param) + ");";
+		for(SpdnParameter param: model.SpdnParameterList) {
+			header += param.parameter.getName() + "(" + param.defaultValue + ");";
 		}
 		for(String key: hyperParams.keySet()) {
 			header += "HP_" + key + ";";
@@ -84,7 +86,7 @@ public class SPDNResult {
 	
 	private void writeResultToCsv() {
 		String row = String.valueOf(resultValue) + ";";
-		if (resultPoint == null) resultPoint = new double[model.getDim()];
+		if (resultPoint == null) resultPoint = new ArrayList<>(model.parameterSize());
 		for(double x: resultPoint) {
 			row += String.valueOf(x) + ";";
 		}

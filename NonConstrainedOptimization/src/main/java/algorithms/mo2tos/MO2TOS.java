@@ -7,14 +7,18 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 import algorithms.Optimizer;
+import algorithms.mo2tos.dto.Group;
+import algorithms.mo2tos.dto.Sample;
+import algorithms.mo2tos.helper.AllocationHandler;
 import models.Model;
 import spdn.SPDNResult;
+import spdn.SpdnModel;
 
 public abstract class MO2TOS extends Optimizer<MO2TOSHyperParam>{
 	public static final String ID = "MO2TOS";
 	protected AllocationHandler allocationHandler;
 	
-	public MO2TOS(Model model) {
+	public MO2TOS(SpdnModel model) {
 		super(model);
 	}
 
