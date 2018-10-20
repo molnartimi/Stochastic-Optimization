@@ -12,7 +12,7 @@ import algorithms.mo2tos.dto.Sample;
 import algorithms.mo2tos.helper.AllocationHandler;
 import models.Model;
 import spdn.SPDNResult;
-import spdn.SpdnModel;
+import spdn.model.SpdnModel;
 
 public abstract class MO2TOS extends Optimizer<MO2TOSHyperParam>{
 	public static final String ID = "MO2TOS";

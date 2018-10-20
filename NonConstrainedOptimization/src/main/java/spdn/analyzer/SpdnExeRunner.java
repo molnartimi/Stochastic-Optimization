@@ -1,4 +1,4 @@
-package spdn;
+package spdn.analyzer;
 
 import java.util.List;
 

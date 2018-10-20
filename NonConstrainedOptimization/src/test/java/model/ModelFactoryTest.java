@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
-import spdn.SpdnModel;
+import spdn.model.SpdnModel;
 
 public class ModelFactoryTest {
 	
@@ -52,4 +52,5 @@ public class ModelFactoryTest {
 		List<String> expectedRewardNames = Arrays.asList(new String[] {"phil2_thinkingTime", "Table_totalThinkingTime", "phil1_thinkingTime", "phil3_thinkingTime"});
 		assertThat(rewardNames, Is.is(expectedRewardNames));
 	}
+
 }

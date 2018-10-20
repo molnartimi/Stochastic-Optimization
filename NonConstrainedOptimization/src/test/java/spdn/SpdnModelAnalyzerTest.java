@@ -10,6 +10,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import model.TestModel;
+import spdn.analyzer.SpdnModelAnalyzer;
+import spdn.model.SpdnModel;
 
 @RunWith(Parameterized.class)
 public class SpdnModelAnalyzerTest {

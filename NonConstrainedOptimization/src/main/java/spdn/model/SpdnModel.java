@@ -1,4 +1,4 @@
-package spdn;
+package spdn.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,10 +14,10 @@ public class SpdnModel {
 	public final String filePath;
 	public final String name;
 	public final String id;
-	public final List<Parameter> simpleParameterList;
-	public final List<Reward> simpleRewardList;
-	public final List<SpdnParameter> SpdnParameterList;
-	public final List<SpdnReward> SpdnRewardList;
+	public final transient List<Parameter> simpleParameterList;
+	public final transient List<Reward> simpleRewardList;
+	public final transient List<SpdnParameter> SpdnParameterList;
+	public final transient List<SpdnReward> SpdnRewardList;
 	
 	public SpdnModel(String filePath, String name, String id, List<SpdnParameter> parameterList, List<SpdnReward> rewardList) {
 		this.filePath = filePath;
@@ -63,6 +63,5 @@ public class SpdnModel {
 		
 		return point;
 	}
-	
 	
 }

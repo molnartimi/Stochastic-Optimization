@@ -1,8 +1,8 @@
 package algorithms;
 
 import spdn.SPDNResult;
-import spdn.SpdnModel;
-import spdn.SpdnModelAnalyzer;
+import spdn.analyzer.SpdnModelAnalyzer;
+import spdn.model.SpdnModel;
 
 public abstract class Optimizer<HyperParam extends HyperParameters> {
 	protected SpdnModelAnalyzer spdn;

@@ -1,10 +1,11 @@
-package spdn;
+package spdn.analyzer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import hu.bme.mit.inf.petridotnet.spdn.AnalysisResult;
 import hu.bme.mit.inf.petridotnet.spdn.Reward;
+import spdn.model.SpdnModel;
 
 public class SpdnModelAnalyzer {
 	

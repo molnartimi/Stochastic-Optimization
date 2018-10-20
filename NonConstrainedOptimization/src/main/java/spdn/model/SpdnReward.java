@@ -1,4 +1,4 @@
-package spdn;
+package spdn.model;
 
 import hu.bme.mit.inf.petridotnet.spdn.Reward;
 

@@ -9,7 +9,7 @@ import algorithms.mo2tos.dto.Group;
 import algorithms.mo2tos.dto.Sample;
 import algorithms.mo2tos.exceptions.EmptyGroupException;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
-import spdn.SpdnModel;
+import spdn.model.SpdnModel;
 
 public class MO2TOS_v0 extends MO2TOS {
 

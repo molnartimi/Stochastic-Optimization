@@ -11,9 +11,9 @@ public class MO2TOSTest extends BaseTest {
 	@Test
 	public void firstTest() {
 		MO2TOSHyperParam params = new MO2TOSHyperParamBuilder()
-				.groupNumber(10)
+				.groupNumber(5)
 				.heighModelSampleNumPerIter(20)
-				.lowModelSampleNum(1000)
+				.lowModelSampleNum(100)
 				.build();
 		optimize(new MO2TOS_v0(model), params);
 	}

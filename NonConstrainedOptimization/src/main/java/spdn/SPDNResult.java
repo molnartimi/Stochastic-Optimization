@@ -10,6 +10,8 @@ import java.util.SortedMap;
 
 import hu.bme.mit.inf.petridotnet.spdn.Parameter;
 import models.Model;
+import spdn.model.SpdnModel;
+import spdn.model.SpdnParameter;
 
 public class SPDNResult {
 	private double resultValue;

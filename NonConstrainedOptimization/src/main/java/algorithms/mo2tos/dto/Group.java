@@ -8,8 +8,7 @@ import algorithms.mo2tos.exceptions.EmptyGroupException;
 import algorithms.mo2tos.exceptions.MeanNotCalculatedException;
 import algorithms.mo2tos.exceptions.VarianceNotCalculatedException;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
-import spdn.SPDN;
-import spdn.SpdnModelAnalyzer;
+import spdn.analyzer.SpdnModelAnalyzer;
 
 public class Group {
 	private List<Sample> samples, countedSamples;
