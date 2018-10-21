@@ -2,38 +2,13 @@ package spdn;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import model.TestModel;
 import spdn.analyzer.SpdnModelAnalyzer;
 import spdn.model.SpdnModel;
 
-@RunWith(Parameterized.class)
 public class SpdnModelAnalyzerTest {
-	
-	private SpdnModel model;
-	
-	public SpdnModelAnalyzerTest(SpdnModel model) {
-		this.model = model;
-	}
-	
-	@Parameterized.Parameters
-	public static Collection<SpdnModel> models() {
-		return Arrays.asList(new SpdnModel[] {
-				TestModel.SMPL.model(),
-				TestModel.VCLS.model(),
-				TestModel.HYBC.model(),
-				TestModel.FIL5.model(),
-				TestModel.FIL10.model(),
-				TestModel.FIL15.model()
-		});
-	}
-	
 	
 	@Test
 	public void testModelWithDefaultValues() {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Level;
 
 import algorithms.mo2tos.dto.Group;
 import algorithms.mo2tos.dto.Sample;
@@ -53,8 +54,7 @@ public class MO2TOS_v0 extends MO2TOS {
 				}
 			}
 			if (groupsToDelete.size() > 0) {
-				System.out.println(groupsToDelete.size() + " groups removed");
-				groups.remove(groupsToDelete);
+				deleteIncalculableGroups(groups, groupsToDelete);
 			}
 			allocationHandler.recalcAllocations(groups);
 			iter--;
@@ -70,13 +70,20 @@ public class MO2TOS_v0 extends MO2TOS {
 					groups.get(i).calcNextRandomSample(spdn, maxError);
 				} catch (EmptyGroupException e) {
 					groupsToDelete.add(groups.get(i));
+					break;
 				}
 			}
 		}
 		if (groupsToDelete.size() > 0) {
-			System.out.println(groupsToDelete.size() + " groups removed");
-			groups.remove(groupsToDelete);
+			deleteIncalculableGroups(groups, groupsToDelete);
 		}
+	}
+
+	private void deleteIncalculableGroups(List<Group> groups, List<Group> groupsToDelete) {
+		for (Group toDelete: groupsToDelete) {
+			groups.remove(toDelete);
+		}
+		logger.info(groupsToDelete.size() + " groups removed, remain " + groups.size());
 	}
 
 	private Sample getGlobalBest(List<Group> groups) {

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import algorithms.mo2tos.exceptions.EmptyGroupException;
 import algorithms.mo2tos.exceptions.MeanNotCalculatedException;
 import algorithms.mo2tos.exceptions.VarianceNotCalculatedException;
@@ -15,6 +18,7 @@ public class Group {
 	private Double mean;
 	private Double variance;
 	private Random rand;
+	private static final Logger logger = LoggerFactory.getLogger(Group.class);
 	
 	private interface IteratorOverSamples {
 		double changeValue(double actValue, double result);
@@ -75,7 +79,8 @@ public class Group {
 				
 				errorsInARow = 0;
 			} catch(SpdnException e) {
-				countedSamples.remove(i);
+				Sample removed = countedSamples.remove(i);
+				logger.info("Removed sample " + removed.values.toString());
 				i--;
 				if (++errorsInARow >= maxError) {
 					throw new SpdnException("Spdn failed " + errorsInARow + " times in a row at calculate mean and/or variance of group.");

@@ -20,16 +20,6 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>hu.bme.mit.inf.optimization.wrapper</groupId>
-			<artifactId>breeze-wrapper</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-math3</artifactId>
-			<version>3.6.1</version>
-		</dependency>
-		<dependency>
 			<groupId>hu.bme.mit.inf.petridotnet.spdn</groupId>
 			<artifactId>spdn-interactive</artifactId>
 			<version>1.0-SNAPSHOT</version>
@@ -44,6 +34,11 @@
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ca.umontreal.iro.simul</groupId>
+			<artifactId>ssj</artifactId>
+			<version>3.3.1</version>
 		</dependency>
 	</dependencies>
 </project>

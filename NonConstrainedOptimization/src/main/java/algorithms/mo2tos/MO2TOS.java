@@ -4,19 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import algorithms.Optimizer;
 import algorithms.mo2tos.dto.Group;
 import algorithms.mo2tos.dto.Sample;
 import algorithms.mo2tos.helper.AllocationHandler;
-import models.Model;
 import spdn.SPDNResult;
 import spdn.model.SpdnModel;
 
 public abstract class MO2TOS extends Optimizer<MO2TOSHyperParam>{
 	public static final String ID = "MO2TOS";
 	protected AllocationHandler allocationHandler;
+	protected static final Logger logger = LoggerFactory.getLogger(MO2TOS.class);
 	
 	public MO2TOS(SpdnModel model) {
 		super(model);
@@ -24,12 +28,16 @@ public abstract class MO2TOS extends Optimizer<MO2TOSHyperParam>{
 
 	@Override
 	public SPDNResult optimize(MO2TOSHyperParam params) {
+		logger.info("Start to optimize " + model.id);
 		allocationHandler = new AllocationHandler(params.groupNum, params.heighModelSampleNumPerIter);
+		logger.info("Set model analyzer tolerance to " + params.lowModelTol);
 		spdn.setTolerance(params.lowModelTol);
 		
 		SortedSet<Sample> OTSamples = ordinalTransform(params.lowModelSampleNum, params.maxError);
 		List<Group> groups = separateToGroups(OTSamples, params.groupNum);
+		logger.info("Ordinal transformation done");
 		
+		logger.info("Set model analyzer tolerance to " + params.heighModelTol);
 		spdn.setTolerance(params.heighModelTol);
 		Sample optimum = optimalSample(params.maxIter, groups, params.maxError);
 		return new SPDNResult(optimum.getHeighResult(), optimum.values, ID, params.getHyperParams(), model);

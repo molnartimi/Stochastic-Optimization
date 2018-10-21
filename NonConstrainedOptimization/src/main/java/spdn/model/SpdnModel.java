@@ -63,5 +63,4 @@ public class SpdnModel {
 		
 		return point;
 	}
-	
 }

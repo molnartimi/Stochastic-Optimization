@@ -13,6 +13,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -35,9 +37,11 @@ public class SpdnModelFactory {
 	private static final String VALUE = "value";
 	
 	private static final Double INIT_TOL = 1e-9;
+	private static final Logger logger = LoggerFactory.getLogger(SpdnModelFactory.class);
 	
 	public static SpdnModel createModelFromXml(String filePath, String id) {
 		if (existSerializedModel(id)) {
+			logger.info("Serialized model exists with id " + id);
 			return loadModelFromXml(filePath, id);
 		} else {
 			return parseFromPnml(filePath, id);
@@ -50,7 +54,7 @@ public class SpdnModelFactory {
 	}
 
 	private static SpdnModel parseFromPnml(String filePath, String id) {
-		System.out.println(id + " started to be parsed");
+		logger.info("Parsing model " + filePath);
 		Document xmlDocument = convertXMLFileToXMLDocument(filePath);
 		
 		String name = xmlDocument.getElementsByTagName(NAME).item(0).getTextContent().trim();
@@ -58,14 +62,14 @@ public class SpdnModelFactory {
 		
 		List<Reward> rewardList = getRewardList(xmlDocument);
 		List<SpdnReward> spdnRewardList = calcExpectedRewardValues(filePath, rewardList, spdnParameterList);
-		
-		System.out.println(id + " finished parsing");
-		
+			
 		writeModelToXml(name, id, spdnParameterList, spdnRewardList);
 		return new SpdnModel(filePath, name, id, spdnParameterList, spdnRewardList);
 	}
 	
 	private static SpdnModel loadModelFromXml(String filePath, String id) {
+		logger.info("Loading model " + id);
+		
 		Document xmlDocument = convertXMLFileToXMLDocument(MODELS_FOLDER + id + ".xml");
 		String name = xmlDocument.getElementsByTagName(SpdnModel).item(0).getAttributes().getNamedItem(NAME).getNodeValue();
 		
@@ -86,6 +90,7 @@ public class SpdnModelFactory {
 			double expectedValue = Double.valueOf(nodeAttributes.getNamedItem(VALUE).getNodeValue());
 			spdnRewardList.add(new SpdnReward(rewardName, expectedValue));
 		}
+		
 		return new SpdnModel(filePath, name, id, spdnParameterList, spdnRewardList);
 	}
 
@@ -150,6 +155,7 @@ public class SpdnModelFactory {
 			parameterValues.add(handler.defaultValue);
 		}
 		
+		logger.info("Run analyzer to get reward values at default parameter values.");
 		SpdnExeRunner runner = new SpdnExeRunner(filePath, rewardList, simpleParameterList);
 		return tryRunWithDefaultValues(runner, INIT_TOL, parameterValues);
 	}
@@ -163,6 +169,7 @@ public class SpdnModelFactory {
 			if (tolerance > 0.01) {
 				throw new SpdnException("Model can't be analysed with its default values!");
 			} else {
+				logger.info("Model analyze failed with tolerance " + tolerance);
 				tryRunWithDefaultValues(runner, tolerance * 10, parameterValues);
 			}
 		}
@@ -171,7 +178,8 @@ public class SpdnModelFactory {
 	
 	private static void writeModelToXml(String name, String id, List<SpdnParameter> parameterList, List<SpdnReward> rewardList) {
 		try {
-
+			logger.info("Serializing model " + id);
+			
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
@@ -205,9 +213,6 @@ public class SpdnModelFactory {
 			StreamResult result = new StreamResult(new File(MODELS_FOLDER + id + ".xml"));
 
 			transformer.transform(source, result);
-
-			System.out.println("File saved!");
-
 		} catch (ParserConfigurationException | TransformerException e) {
 			e.printStackTrace();
 		}

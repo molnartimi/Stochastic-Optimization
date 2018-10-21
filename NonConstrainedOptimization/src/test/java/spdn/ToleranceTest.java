@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -86,6 +87,7 @@ public class ToleranceTest {
 	}
 
 	@Test
+	@Ignore("Test only for create data to visualize.")
 	public void runTest() {
 		for (double tol: tolerances) {
 			try {
