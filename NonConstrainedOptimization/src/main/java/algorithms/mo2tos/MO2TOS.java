@@ -40,6 +40,7 @@ public abstract class MO2TOS extends Optimizer<MO2TOSHyperParam>{
 		logger.info("Set model analyzer tolerance to " + params.heighModelTol);
 		spdn.setTolerance(params.heighModelTol);
 		Sample optimum = optimalSample(params.maxIter, groups, params.maxError);
+		logger.info("Found optimum: " + optimum.getHeighResult() + " at point : " + optimum.values.toString());
 		return new SPDNResult(optimum.getHeighResult(), optimum.values, ID, params.getHyperParams(), model);
 	}
 	

@@ -13,6 +13,7 @@ import org.junit.Test;
 import algorithms.mo2tos.MO2TOSHyperParam;
 import algorithms.mo2tos.MO2TOSHyperParamBuilder;
 import algorithms.mo2tos.MO2TOS_v0;
+import algorithms.mo2tos.MO2TOS_v1;
 import algorithms.mo2tos.dto.Group;
 import algorithms.mo2tos.helper.AllocationHandler;
 import model.TestModel;
@@ -27,6 +28,17 @@ public class MO2TOSTest extends BaseTest {
 				.lowModelSampleNum(1000)
 				.build();
 		optimize(new MO2TOS_v0(TestModel.FIL3.model()), params);
+	}
+	
+	@Test
+	public void secondTest() {
+		MO2TOSHyperParam params = new MO2TOSHyperParamBuilder()
+				.groupNumber(5)
+				.heighModelSampleNumPerIter(20)
+				.lowModelSampleNum(1000)
+				.maxError(200)
+				.build();
+		optimize(new MO2TOS_v1(TestModel.FIL3.model()), params);
 	}
 	
 	@Test

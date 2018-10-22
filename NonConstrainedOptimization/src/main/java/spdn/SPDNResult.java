@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.SortedMap;
 
 import hu.bme.mit.inf.petridotnet.spdn.Parameter;
-import models.Model;
 import spdn.model.SpdnModel;
 import spdn.model.SpdnParameter;
 
