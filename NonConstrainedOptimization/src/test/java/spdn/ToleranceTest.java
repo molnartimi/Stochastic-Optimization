@@ -20,8 +20,8 @@ import org.junit.runners.Parameterized;
 
 import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
 import model.TestModel;
-import spdn.analyzer.SpdnModelAnalyzer;
-import spdn.model.SpdnModel;
+import model.spdn.SpdnModel;
+import model.spdn.SpdnModelAnalyzer;
 
 @RunWith(Parameterized.class)
 public class ToleranceTest {

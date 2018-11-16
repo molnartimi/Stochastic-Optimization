@@ -6,7 +6,7 @@ import java.util.TreeSet;
 
 import algorithms.mo2tos.dto.Sample;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
-import spdn.model.SpdnModel;
+import model.spdn.SpdnModel;
 
 public class MO2TOS_v1 extends MO2TOS_v0 {
 
@@ -22,7 +22,7 @@ public class MO2TOS_v1 extends MO2TOS_v0 {
 		List<List<Double>> randomPoints = model.latinHypercubeParamValues(lowModelSampleNum);
 		for (List<Double> point: randomPoints) {
 			try {
-				double result = spdn.calcObjective(point);
+				double result = modelChecker.calcObjective(point);
 				ordinalSpace.add(new Sample(point, result));
 			} catch (SpdnException e) {
 				if (++errorsInARow >= maxError) {

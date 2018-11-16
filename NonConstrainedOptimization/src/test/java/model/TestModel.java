@@ -1,7 +1,7 @@
 package model;
 
-import spdn.model.SpdnModel;
-import spdn.model.SpdnModelFactory;
+import model.spdn.SpdnModel;
+import model.spdn.SpdnModelFactory;
 
 public enum TestModel {
 	SMPL("simple-server"),
@@ -31,6 +31,6 @@ public enum TestModel {
 	}
 	
 	public SpdnModel model() {
-		return new SpdnModelFactory().createModelFromXml(modelFolderPath + fileName + ".pnml", this.toString());
+		return SpdnModelFactory.createModelFromXml(modelFolderPath + fileName + ".pnml", this.toString());
 	}
 }

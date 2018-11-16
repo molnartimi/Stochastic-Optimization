@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import model.TestModel;
-import spdn.analyzer.SpdnModelAnalyzer;
-import spdn.model.SpdnModel;
+import model.spdn.SpdnModel;
+import model.spdn.SpdnModelAnalyzer;
 
 public class SpdnModelAnalyzerTest {
 	

@@ -1,4 +1,4 @@
-package spdn.model;
+package model.spdn;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,11 +21,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import hu.bme.mit.inf.petridotnet.spdn.AnalysisResult;
 import hu.bme.mit.inf.petridotnet.spdn.Parameter;
 import hu.bme.mit.inf.petridotnet.spdn.Reward;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
-import spdn.analyzer.SpdnExeRunner;
 
 public class SpdnModelFactory {
 	private static final String MODELS_FOLDER = "..\\SPDN\\models\\";
@@ -136,7 +134,7 @@ public class SpdnModelFactory {
 	}
 	
 	private static List<SpdnReward> calcExpectedRewardValues(String filePath, List<Reward> simpleRewardList, List<SpdnParameter> spdnParameterList) {
-		AnalysisResult rewardResults = runAnalyzerWithDefaultParamValues(filePath, simpleRewardList, spdnParameterList);
+		SpdnAnalysisResult rewardResults = runAnalyzerWithDefaultParamValues(filePath, simpleRewardList, spdnParameterList);
 		
 		List<SpdnReward> rewardHandlerList = new ArrayList<>();
 		for (Reward r: simpleRewardList) {
@@ -146,7 +144,7 @@ public class SpdnModelFactory {
 		return rewardHandlerList;
 	}
 
-	private static AnalysisResult runAnalyzerWithDefaultParamValues(String filePath, List<Reward> rewardList, List<SpdnParameter> spdnParameterList) {
+	private static SpdnAnalysisResult runAnalyzerWithDefaultParamValues(String filePath, List<Reward> rewardList, List<SpdnParameter> spdnParameterList) {
 		List<Parameter> simpleParameterList = new ArrayList<>();
 		List<Double> parameterValues = new ArrayList<>();
 		
@@ -160,8 +158,8 @@ public class SpdnModelFactory {
 		return tryRunWithDefaultValues(runner, INIT_TOL, parameterValues);
 	}
 
-	private static AnalysisResult tryRunWithDefaultValues(SpdnExeRunner runner, double tolerance, List<Double> parameterValues) {
-		AnalysisResult result = null;
+	private static SpdnAnalysisResult tryRunWithDefaultValues(SpdnExeRunner runner, double tolerance, List<Double> parameterValues) {
+		SpdnAnalysisResult result = null;
 		try {
 			runner.setTolerance(tolerance);
 			result = runner.run(parameterValues);

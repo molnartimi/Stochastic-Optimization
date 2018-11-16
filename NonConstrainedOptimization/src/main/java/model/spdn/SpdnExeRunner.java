@@ -1,16 +1,16 @@
-package spdn.analyzer;
+package model.spdn;
 
 import java.util.List;
 
 import hu.bme.mit.inf.petridotnet.spdn.AnalysisBuilder;
 import hu.bme.mit.inf.petridotnet.spdn.AnalysisConfiguration;
-import hu.bme.mit.inf.petridotnet.spdn.AnalysisResult;
 import hu.bme.mit.inf.petridotnet.spdn.Parameter;
 import hu.bme.mit.inf.petridotnet.spdn.Reward;
 import hu.bme.mit.inf.petridotnet.spdn.Spdn;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnAnalyzer;
+import model.ModelCheckerRunner;
 
-public class SpdnExeRunner {
+public class SpdnExeRunner implements ModelCheckerRunner<SpdnAnalysisResult> {
 	
 	private SpdnAnalyzer analyzer;
 	private AnalysisBuilder analysisBuilder;
@@ -30,7 +30,7 @@ public class SpdnExeRunner {
 		analyzer.setTolerance(tolerance);	
 	}
 	
-	public AnalysisResult run(List<Double> parameterValues) {
+	public SpdnAnalysisResult run(List<Double> parameterValues) {
 		if (parameterList.size() != parameterValues.size()) 
 			throw new IllegalArgumentException("Size of parameter list must equal to size of value list.");
 		
@@ -42,7 +42,7 @@ public class SpdnExeRunner {
 			analysisBuilder.withParameter(parameterList.get(i), parameterValues.get(i));
 		}
 		
-		return analysisBuilder.run();
+		return new SpdnAnalysisResult(analysisBuilder.run());
 	}
 
 }

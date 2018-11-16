@@ -1,4 +1,4 @@
-package spdn;
+package algorithms;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -8,22 +8,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 
-import hu.bme.mit.inf.petridotnet.spdn.Parameter;
-import spdn.model.SpdnModel;
-import spdn.model.SpdnParameter;
+import model.Model;
+import model.ModelParameter;
+import model.spdn.SpdnModel;
+import model.spdn.SpdnParameter;
 
-public class SPDNResult {
+public class OptimizerResult<P extends ModelParameter> {
 	private double resultValue;
 	private List<Double> resultPoint;
 	private String algorithmID;
 	private SortedMap<String,Double> hyperParams;
-	private SpdnModel model;
+	private Model<P,?,?> model;
 	private PrintWriter csvWriter = null;
 	private long time;
 	
 	private final boolean DONT_WRITE_TO_CSV = true;
 	
-	public SPDNResult(double value, List<Double> result, String aId, SortedMap<String,Double> hyperParams, SpdnModel model) {
+	public OptimizerResult(double value, List<Double> result, String aId, SortedMap<String,Double> hyperParams, Model model) {
 		this.resultValue = value;
 		this.resultPoint = result;
 		this.algorithmID = aId;
@@ -42,7 +43,7 @@ public class SPDNResult {
 		String s = "Done in " + time / 60. / 1000000000. + " min\nAlgorithm: " + algorithmID + "\nModel: " + model.id + "\nValue = " + resultValue;
 		if (resultPoint == null) resultPoint = new ArrayList<>(model.parameterSize());
 		for (int i = 0; i < model.parameterSize(); i++) {
-			s += "\n" + model.simpleParameterList.get(i).getName() + " = " + resultPoint.get(i);
+			s += "\n" + model.parameterList.get(i).name + " = " + resultPoint.get(i);
 		}
 		return s;
 	}
@@ -75,8 +76,8 @@ public class SPDNResult {
 	
 	private void writeCsvHeader() {
 		String header = "MIN VALUE;";
-		for(SpdnParameter param: model.SpdnParameterList) {
-			header += param.parameter.getName() + "(" + param.defaultValue + ");";
+		for(ModelParameter param: model.parameterList) {
+			header += param.name + "(" + param.defaultValue + ");";
 		}
 		for(String key: hyperParams.keySet()) {
 			header += "HP_" + key + ";";

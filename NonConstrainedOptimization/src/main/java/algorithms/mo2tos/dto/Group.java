@@ -11,7 +11,8 @@ import algorithms.mo2tos.exceptions.EmptyGroupException;
 import algorithms.mo2tos.exceptions.MeanNotCalculatedException;
 import algorithms.mo2tos.exceptions.VarianceNotCalculatedException;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
-import spdn.analyzer.SpdnModelAnalyzer;
+import model.ModelChecker;
+import model.spdn.SpdnModelAnalyzer;
 
 public class Group {
 	private List<Sample> samples, countedSamples;
@@ -41,8 +42,8 @@ public class Group {
 		return localBestSample;
 	}
 	
-	public void calcNextRandomSample(SpdnModelAnalyzer spdn, int maxError) throws EmptyGroupException {
-		calcNextRandomSample(spdn, 0, maxError);
+	public void calcNextRandomSample(ModelChecker modelChecker, int maxError) throws EmptyGroupException {
+		calcNextRandomSample(modelChecker, 0, maxError);
 	}
 	
 	public double getDistanceFrom(Group g) throws MeanNotCalculatedException {
@@ -90,15 +91,15 @@ public class Group {
 		return actValue;
 	}
 	
-	private void calcNextRandomSample(SpdnModelAnalyzer spdn, int raisedErrors, int maxError) throws EmptyGroupException {
+	private void calcNextRandomSample(ModelChecker modelChecker, int raisedErrors, int maxError) throws EmptyGroupException {
 		Sample chosen = getNextRandom();
 		try {
-			chosen.setHeighResult(spdn.calcObjective(chosen.values));
+			chosen.setHeighResult(modelChecker.calcObjective(chosen.values));
 		} catch (SpdnException e) {
 			if (++raisedErrors >= maxError) {
 				throw new SpdnException("Spdn failed " + raisedErrors + " times in a row at calculating samples with heigh fidelity model in a group.");
 			} else {
-				calcNextRandomSample(spdn, raisedErrors, maxError);
+				calcNextRandomSample(modelChecker, raisedErrors, maxError);
 			}
 		}
 	}

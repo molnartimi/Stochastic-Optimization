@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import spdn.model.SpdnModel;
-import spdn.model.SpdnParameter;
+import model.spdn.SpdnModel;
+import model.spdn.SpdnParameter;
 
 public class ModelTest {
 
@@ -21,7 +21,7 @@ public class ModelTest {
 		assertEquals(n, randomParams.size());
 		assertEquals(model.parameterSize(), randomParams.get(0).size());
 		
-		validateRandomParams(model.SpdnParameterList, randomParams);
+		validateRandomParams(model.parameterList, randomParams);
 	}
 
 	private void validateRandomParams(List<SpdnParameter> parameters, List<List<Double>> randomParams) {

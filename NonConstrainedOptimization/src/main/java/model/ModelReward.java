@@ -1,15 +1,11 @@
-package spdn.model;
+package model;
 
-import hu.bme.mit.inf.petridotnet.spdn.Reward;
-
-public class SpdnReward {
+public class ModelReward {
 	public final String name;
-	public final Reward reward;
 	public final double expectedResult;
 	
-	public SpdnReward(String name, double expectedResult) {
+	public ModelReward(String name, double expectedResult) {
 		this.name = name;
-		this.reward = Reward.instantaneous(name);
 		this.expectedResult = expectedResult;
 	}
 	

@@ -1,68 +1,58 @@
-package spdn.model;
+package model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import hu.bme.mit.inf.petridotnet.spdn.Parameter;
-import hu.bme.mit.inf.petridotnet.spdn.Reward;
 import umontreal.ssj.hups.LatinHypercube;
 import umontreal.ssj.rng.MRG32k3a;
-import umontreal.ssj.rng.RandomStreamBase;
-import umontreal.ssj.rng.RandomStreamFactory;
 
-public class SpdnModel {
-	
+public abstract class Model<P extends ModelParameter, R extends ModelReward, A extends ModelChecker<?,?>>{
 	public final String filePath;
 	public final String name;
 	public final String id;
-	public final transient List<Parameter> simpleParameterList;
-	public final transient List<Reward> simpleRewardList;
-	public final transient List<SpdnParameter> SpdnParameterList;
-	public final transient List<SpdnReward> SpdnRewardList;
+	public final List<P> parameterList;
+	public final List<R> rewardList;
+	private A analyzer;
 	
-	public SpdnModel(String filePath, String name, String id, List<SpdnParameter> parameterList, List<SpdnReward> rewardList) {
+	public Model(String filePath, String name, String id, List<P> parameterList, List<R> rewardList) {
 		this.filePath = filePath;
 		this.name = name;
 		this.id = id;
-		this.SpdnParameterList = Collections.unmodifiableList(parameterList);
-		this.SpdnRewardList = Collections.unmodifiableList(rewardList);
-		
-		this.simpleParameterList = Collections.unmodifiableList(
-				SpdnParameterList.stream()
-									.map(handler -> handler.parameter)
-									.collect(Collectors.toList()));
-		
-		this.simpleRewardList = Collections.unmodifiableList(
-				SpdnRewardList.stream()
-									.map(handler -> handler.reward)
-									.collect(Collectors.toList()));
+		this.parameterList = Collections.unmodifiableList(parameterList);
+		this.rewardList = Collections.unmodifiableList(rewardList);
+	}
+	
+	public A getInstanceOfChecker() {
+		if (analyzer == null) {
+			analyzer = createAnalyzer();
+		}
+		return analyzer;
 	}
 	
 	public int rewardSize() {
-		return SpdnRewardList.size();
+		return rewardList.size();
 	}
 	
 	public int parameterSize() {
-		return SpdnParameterList.size();
+		return parameterList.size();
 	}
 	
 	public double getSquareErrorOfReward(int idx, double result) {
-		return SpdnRewardList.get(idx).getSqareError(result);
+		return rewardList.get(idx).getSqareError(result);
 	}
 
 	public List<Double> getDefaultValues() {
-		return SpdnParameterList.stream().map(param -> param.defaultValue).collect(Collectors.toList());
+		return parameterList.stream().map(param -> param.defaultValue).collect(Collectors.toList());
 	}
 
 	public List<Double> randomParamValues() {
 		List<Double> point = new ArrayList<>();
 		Random rand = new Random();
 		
-		for(SpdnParameter param: SpdnParameterList) {
+		for(P param: parameterList) {
 			point.add(rand.nextDouble() * (param.maxValue - param.minValue) + param.minValue);
 		}
 		
@@ -101,7 +91,10 @@ public class SpdnModel {
 	 * @return
 	 */
 	private Double getRandomParamValueFromNormal(int paramIdx, double normalValue) {
-		SpdnParameter param = SpdnParameterList.get(paramIdx);
+		P param = parameterList.get(paramIdx);
 		return (normalValue * (param.maxValue - param.minValue) + param.minValue);
 	}
+	
+	protected abstract A createAnalyzer();
+
 }

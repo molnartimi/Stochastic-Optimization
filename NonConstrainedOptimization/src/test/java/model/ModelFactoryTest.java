@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
-import spdn.model.SpdnModel;
+import model.spdn.SpdnModel;
 
 public class ModelFactoryTest {
 	
@@ -25,7 +25,7 @@ public class ModelFactoryTest {
 		List<String> expectedParamNames = Arrays.asList(new String[] {"requestRate", "serviceTime"});
 		assertThat(paramNames, Is.is(expectedParamNames));
 		
-		List<Double> defaultValues = model.SpdnParameterList.stream().map(handler -> handler.defaultValue).collect(Collectors.toList());
+		List<Double> defaultValues = model.parameterList.stream().map(handler -> handler.defaultValue).collect(Collectors.toList());
 		List<Double> expectedDefaultValues = Arrays.asList(new Double[] {1.5, 0.25});
 		assertThat(defaultValues, Is.is(expectedDefaultValues));
 		
@@ -44,7 +44,7 @@ public class ModelFactoryTest {
 		List<String> expectedParamNames = Arrays.asList(new String[] {"phil3_eatingRate", "phil1_eatingRate", "phil2_eatingRate"});
 		assertThat(paramNames, Is.is(expectedParamNames));
 			
-		List<Double> defaultValues = model.SpdnParameterList.stream().map(handler -> handler.defaultValue).collect(Collectors.toList());
+		List<Double> defaultValues = model.parameterList.stream().map(handler -> handler.defaultValue).collect(Collectors.toList());
 		List<Double> expectedDefaultValues = Arrays.asList(new Double[] {9.680783503298795, 7.33569408796258, 2.156376928966199});
 		assertThat(defaultValues, Is.is(expectedDefaultValues));
 			

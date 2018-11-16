@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.logging.Level;
 
 import algorithms.mo2tos.dto.Group;
 import algorithms.mo2tos.dto.Sample;
 import algorithms.mo2tos.exceptions.EmptyGroupException;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
-import spdn.model.SpdnModel;
+import model.Model;
 
 public class MO2TOS_v0 extends MO2TOS {
 
-	public MO2TOS_v0(SpdnModel model) {
+	public MO2TOS_v0(Model model) {
 		super(model);
 	}
 	
@@ -26,7 +25,7 @@ public class MO2TOS_v0 extends MO2TOS {
 		while (lowModelSampleNum > 0) {
 			try {
 				List<Double> point = model.randomParamValues();
-				double result = spdn.calcObjective(point);
+				double result = modelChecker.calcObjective(point);
 				ordinalSpace.add(new Sample(point, result));
 				
 				lowModelSampleNum--;
@@ -67,7 +66,7 @@ public class MO2TOS_v0 extends MO2TOS {
 		for (int i = 0; i < groups.size(); i++) {
 			for (int j = 0; j < allocationHandler.getGroupAlloc(i); j++) {
 				try {
-					groups.get(i).calcNextRandomSample(spdn, maxError);
+					groups.get(i).calcNextRandomSample(modelChecker, maxError);
 				} catch (EmptyGroupException e) {
 					groupsToDelete.add(groups.get(i));
 					break;

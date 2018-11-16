@@ -1,17 +1,17 @@
 package algorithms;
 
-import spdn.SPDNResult;
-import spdn.analyzer.SpdnModelAnalyzer;
-import spdn.model.SpdnModel;
+import model.Model;
+import model.ModelChecker;
+import model.ModelCheckerResult;
 
 public abstract class Optimizer<HyperParam extends HyperParameters> {
-	protected SpdnModelAnalyzer spdn;
-	protected SpdnModel model;
+	protected ModelChecker<Model<?,?,?>, ModelCheckerResult> modelChecker;
+	protected Model model;
 	
-	public Optimizer(SpdnModel model) {
+	public Optimizer(Model model) {
 		this.model = model;
-		this.spdn = new SpdnModelAnalyzer(model);
+		modelChecker = model.getInstanceOfChecker();
 	}
 	
-	public abstract SPDNResult optimize(HyperParam hyperParams);
+	public abstract OptimizerResult optimize(HyperParam hyperParams);
 }
