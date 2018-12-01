@@ -42,7 +42,7 @@ public class MO2TOS_v0 extends MO2TOS {
 
 	@Override
 	protected Sample optimalSample(int iter, List<Group> groups, int maxError) {
-		while (iter > 0) {
+		while (iter > 0 && groups.size() > 1) {
 			List<Group> groupsToDelete = new ArrayList<>();
 			calcRandomSamples(groups, maxError);
 			for (int i = 0; i < groups.size(); i++) {

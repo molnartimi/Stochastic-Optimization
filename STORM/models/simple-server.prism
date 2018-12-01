@@ -1,0 +1,23 @@
+// Simple server
+
+ctmc
+
+const double requestRate;
+const double serviceTime;
+
+module Net1
+
+	idle: [0..1] init 1;
+	serving: [0..1] init 0;
+
+	[] idle=1 -> requestRate: (idle'=0) & (serving'=1);
+	[] serving=1 -> 1/serviceTime: (idle'=1) & (serving'=0);
+endmodule
+
+rewards "Idle"
+	idle = 1: 1;
+endrewards
+
+rewards "ServedRequests"
+	serving = 1: 1/serviceTime;
+endrewards

@@ -1,7 +1,12 @@
 package model;
 
+import javax.naming.directory.InvalidAttributeValueException;
+
+import hu.bme.mit.modelchecker.storm.exception.StormException;
 import model.spdn.SpdnModel;
 import model.spdn.SpdnModelFactory;
+import model.storm.StormModel;
+import model.storm.StormModelFactory;
 
 public enum TestModel {
 	SMPL("simple-server"),
@@ -24,13 +29,20 @@ public enum TestModel {
 	
 	
 	private String fileName;
-	private final String modelFolderPath = "..\\SPDN\\models\\";
+	private final String spdnModelFolderPath = System.getProperty("os.name").contains("windows") ? "..\\SPDN\\models\\" : "../SPDN/models/";
+	private final String stormModelFolderPath = System.getProperty("os.name").contains("windows") ? "..\\STORM\\models\\" : "../STORM/models/";
 	
 	private TestModel(String fileName) {
 		this.fileName = fileName;
 	}
 	
-	public SpdnModel model() {
-		return SpdnModelFactory.createModelFromXml(modelFolderPath + fileName + ".pnml", this.toString());
+	public SpdnModel spdnModel() {
+		return SpdnModelFactory.createModelFromXml(spdnModelFolderPath + fileName + ".pnml", this.toString());
 	}
+	
+	public StormModel stormModel() throws InvalidAttributeValueException, StormException {
+		String path = stormModelFolderPath + fileName;
+		return new StormModelFactory(path + ".json", path + ".prism", this.toString()).build();
+	}
+	
 }

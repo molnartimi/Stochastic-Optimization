@@ -7,10 +7,14 @@ public class ModelParameter {
 	public final double defaultValue;
 	public final double minValue, maxValue;
 
-	public ModelParameter(String name, double defaultValue) {
+	public ModelParameter(String name, double defaultValue, double minValue, double maxValue) {
 		this.name = name;
 		this.defaultValue = defaultValue;
-		this.minValue = defaultValue / MIN_MAX_THRESHOLD;
-		this.maxValue = defaultValue * MIN_MAX_THRESHOLD;
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+	}
+	
+	public ModelParameter(String name, double defaultValue) {
+		this(name, defaultValue, defaultValue / MIN_MAX_THRESHOLD, defaultValue * MIN_MAX_THRESHOLD);
 	}
 }

@@ -16,7 +16,7 @@ public class ModelFactoryTest {
 	
 	@Test
 	public void simpleServerTest() {
-		SpdnModel model = TestModel.SMPL.model();
+		SpdnModel model = TestModel.SMPL.spdnModel();
 		
 		assertEquals(model.id, "SMPL");
 		assertEquals(model.name, "Net1");
@@ -36,7 +36,7 @@ public class ModelFactoryTest {
 	
 	@Test
 	public void fil3Test() {
-		SpdnModel model = TestModel.FIL3.model();
+		SpdnModel model = TestModel.FIL3.spdnModel();
 			
 		assertEquals(model.name, "DiningPhilosophers");
 			
@@ -52,5 +52,7 @@ public class ModelFactoryTest {
 		List<String> expectedRewardNames = Arrays.asList(new String[] {"phil2_thinkingTime", "Table_totalThinkingTime", "phil1_thinkingTime", "phil3_thinkingTime"});
 		assertThat(rewardNames, Is.is(expectedRewardNames));
 	}
+	
+	
 
 }

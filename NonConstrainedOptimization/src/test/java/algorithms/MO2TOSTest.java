@@ -4,10 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import algorithms.mo2tos.MO2TOSHyperParam;
@@ -27,7 +25,7 @@ public class MO2TOSTest extends BaseTest {
 				.heighModelSampleNumPerIter(20)
 				.lowModelSampleNum(1000)
 				.build();
-		optimize(new MO2TOS_v0(TestModel.FIL3.model()), params);
+		optimize(new MO2TOS_v0(TestModel.FIL3.spdnModel()), params);
 	}
 	
 	@Test
@@ -38,7 +36,7 @@ public class MO2TOSTest extends BaseTest {
 				.lowModelSampleNum(1000)
 				.maxError(200)
 				.build();
-		optimize(new MO2TOS_v1(TestModel.FIL3.model()), params);
+		optimize(new MO2TOS_v1(TestModel.FIL3.spdnModel()), params);
 	}
 	
 	@Test

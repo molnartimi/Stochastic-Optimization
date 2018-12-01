@@ -12,7 +12,7 @@ public class SpdnModelAnalyzerTest {
 	
 	@Test
 	public void testModelWithDefaultValues() {
-		SpdnModel model = TestModel.FIL9.model();
+		SpdnModel model = TestModel.FIL9.spdnModel();
 		SpdnModelAnalyzer analyzer = new SpdnModelAnalyzer(model);
 		
 		double objectResult = analyzer.calcObjective(model.getDefaultValues());

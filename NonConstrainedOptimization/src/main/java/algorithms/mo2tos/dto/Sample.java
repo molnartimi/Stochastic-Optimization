@@ -2,10 +2,14 @@ package algorithms.mo2tos.dto;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Sample implements Comparable<Sample>{
 	public final List<Double> values;
 	public final double lowResult;
 	private Double heighResult;
+	private final static Logger logger = LoggerFactory.getLogger(Sample.class);
 	
 	public Sample(List<Double> values, double lowResult) {
 		this.values = values;
@@ -19,7 +23,9 @@ public class Sample implements Comparable<Sample>{
 	}
 	
 	public void setHeighResult(double heighResult) {
+		logger.info("Sample: " + values.toString() + " => " + heighResult);
 		this.heighResult = heighResult;
+		
 	}
 	
 	public double getHeighResult() {

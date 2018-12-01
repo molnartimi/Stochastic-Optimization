@@ -1,0 +1,15 @@
+{ parameters: [
+	{
+		name: "requestRate",
+		min: 0.15,
+		max: 15,
+		defaultValue: 1.5
+	},
+	{
+		name: "serviceTime",
+		min: 0.025,
+		max: 2.5,
+		defaultValue: 0.25
+	}
+ ]
+}

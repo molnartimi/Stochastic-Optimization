@@ -14,7 +14,7 @@ public class ModelTest {
 
 	@Test
 	public void latinHyperCubeTest() {
-		SpdnModel model = TestModel.FIL5.model();
+		SpdnModel model = TestModel.FIL5.spdnModel();
 		int n = 10;
 		List<List<Double>> randomParams = model.latinHypercubeParamValues(n);
 		

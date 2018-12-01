@@ -34,21 +34,27 @@ public class AllocationHandler {
 	}
 	
 	public void recalcAllocations(List<Group> groups) {
-		allocations = new int[groups.size()];
-		
-		setBestToFirst(groups);
-		List<Double> distancePerVarianceList = calcDistPerVar(groups);
-		List<Double> distancePerVarianceRates = calcDistPerVarRates(distancePerVarianceList);
-		List<Double> distancePerVarianceRatesProducts = calcDistPerVarRatesProducts(distancePerVarianceRates);
-		
-		double bestPart = getBestPart(groups, distancePerVarianceRatesProducts);
-		double otherParts = getOtherParts(distancePerVarianceRatesProducts);
-		double lastGroupAlloc = ALLOC_NUM / (bestPart + otherParts);
-		
-		setGroupAlloc(0, lastGroupAlloc * bestPart);
-		setGroupAlloc(allocations.length - 1, lastGroupAlloc);
-		for (int i = allocations.length - 2; i > 0; i--) {
-			setGroupAlloc(i, allocations[i + 1] * distancePerVarianceRatesProducts.get(i - 1));
+		if (groups.size() == 1) {
+			allocations[0] = ALLOC_NUM;
+		} else if (groups.size() == 0) {
+			return;
+		} else {
+			allocations = new int[groups.size()];
+			
+			setBestToFirst(groups);
+			List<Double> distancePerVarianceList = calcDistPerVar(groups);
+			List<Double> distancePerVarianceRates = calcDistPerVarRates(distancePerVarianceList);
+			List<Double> distancePerVarianceRatesProducts = calcDistPerVarRatesProducts(distancePerVarianceRates);
+			
+			double bestPart = getBestPart(groups, distancePerVarianceRatesProducts);
+			double otherParts = getOtherParts(distancePerVarianceRatesProducts);
+			double lastGroupAlloc = ALLOC_NUM / (bestPart + otherParts);
+			
+			setGroupAlloc(0, lastGroupAlloc * bestPart);
+			setGroupAlloc(allocations.length - 1, lastGroupAlloc);
+			for (int i = allocations.length - 2; i > 0; i--) {
+				setGroupAlloc(i, allocations[i + 1] * distancePerVarianceRatesProducts.get(i - 1));
+			}
 		}
 	}
 
