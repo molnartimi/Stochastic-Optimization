@@ -26,7 +26,8 @@ import hu.bme.mit.inf.petridotnet.spdn.Reward;
 import hu.bme.mit.inf.petridotnet.spdn.SpdnException;
 
 public class SpdnModelFactory {
-	private static final String MODELS_FOLDER = "..\\SPDN\\models\\";
+	// TODO windows+linux compatibility
+	private static final String MODELS_FOLDER = "../SPDN/models/";
 	private static final String NAME = "name";
 	private static final String PARAMETER = "SensitivityNetParameter";
 	private static final String REWARD = "StateRewardConfiguration";

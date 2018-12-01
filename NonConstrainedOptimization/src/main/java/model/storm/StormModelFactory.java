@@ -34,7 +34,8 @@ import model.spdn.SpdnParameter;
 import model.spdn.SpdnReward;
 
 public class StormModelFactory {
-	private static final String MODELS_FOLDER = "..\\STORM\\models\\";
+	// TODO linux+windows compatibility!!
+	private static final String MODELS_FOLDER = "../STORM/models/";
 	
 	private String inputJSON, inputPRISM;
 	private String name;
@@ -76,7 +77,7 @@ public class StormModelFactory {
 	
 	private void saveToJson() {
 		logger.info("Serializing model to JSON");
-		try (Writer writer = new FileWriter(MODELS_FOLDER + "id" + ".json")) {
+		try (Writer writer = new FileWriter(MODELS_FOLDER + id + ".json")) {
 	        Gson gson = new Gson();
 	        SerializedJsonObject obj = new SerializedJsonObject();
 	        obj.name = name;
@@ -101,7 +102,7 @@ public class StormModelFactory {
 	        }
 	        obj.parameters = plist;
 	        obj.rewards = rlist;
-	        
+	        gson.toJson(obj, writer);
 	    } catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -188,7 +189,7 @@ public class StormModelFactory {
 	private StormModel loadModelFromJSON() {
 		logger.info("Loading model " + id);
 		
-		try(Reader reader = new InputStreamReader(StormModelFactory.class.getResourceAsStream(MODELS_FOLDER + id + ".json"), "UTF-8")){
+		try(Reader reader = new InputStreamReader(new FileInputStream(new File(MODELS_FOLDER + id + ".json")), "UTF-8")){
             Gson gson = new GsonBuilder().create();
             SerializedJsonObject jsonObj = gson.fromJson(reader, SerializedJsonObject.class);
             for (ParameterJsonObject p: jsonObj.parameters) {
@@ -197,7 +198,7 @@ public class StormModelFactory {
             for (RewardJsonObject r: jsonObj.rewards) {
             	rewardList.add(new StormReward(r.name, r.value));
             }
-            return new StormModel(jsonObj.prismPath, name, id, paramList, rewardList);
+            return new StormModel(jsonObj.prismPath, jsonObj.name, id, paramList, rewardList);
         } catch (IOException e) {
         	e.printStackTrace();
         }
