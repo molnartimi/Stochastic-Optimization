@@ -10,8 +10,6 @@ import java.util.SortedMap;
 
 import model.Model;
 import model.ModelParameter;
-import model.spdn.SpdnModel;
-import model.spdn.SpdnParameter;
 
 public class OptimizerResult<P extends ModelParameter> {
 	private double resultValue;
@@ -24,7 +22,7 @@ public class OptimizerResult<P extends ModelParameter> {
 	
 	private final boolean DONT_WRITE_TO_CSV = true;
 	
-	public OptimizerResult(double value, List<Double> result, String aId, SortedMap<String,Double> hyperParams, Model model) {
+	public OptimizerResult(double value, List<Double> result, String aId, SortedMap<String,Double> hyperParams, Model<P, ?, ?> model) {
 		this.resultValue = value;
 		this.resultPoint = result;
 		this.algorithmID = aId;

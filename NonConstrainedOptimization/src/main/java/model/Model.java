@@ -59,10 +59,32 @@ public abstract class Model<P extends ModelParameter, R extends ModelReward, A e
 		return point;
 	}
 	
+	public List<Double> randomVelocity() {
+		List<Double> point = new ArrayList<>();
+		Random rand = new Random();
+		
+		for(P param: parameterList) {
+			double area = param.maxValue - param.minValue;
+			point.add(rand.nextDouble() * 2 * area - area);
+		}
+		
+		return point;
+	}
+	
 	public List<List<Double>> latinHypercubeParamValues(int n) {
 		LatinHypercube cube = new LatinHypercube(n, parameterSize());
 		cube.randomize(new MRG32k3a());
 		return convertLatinHypercubeResult(cube.getArray());
+	}
+	
+	public void cutParamsOnBorder(List<Double> paramValues) {
+		for (int i = 0; i < parameterSize(); i++) {
+			P modelParam = parameterList.get(i);
+			if (paramValues.get(i) < modelParam.minValue)
+				paramValues.set(i, modelParam.minValue);
+			else if (paramValues.get(i) > modelParam.maxValue)
+				paramValues.set(i, modelParam.maxValue);
+		}
 	}
 
 	/**

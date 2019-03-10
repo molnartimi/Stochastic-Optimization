@@ -30,7 +30,9 @@ public abstract class MO2TOS extends Optimizer<MO2TOSHyperParam>{
 	@Override
 	public OptimizerResult optimize(MO2TOSHyperParam params) {
 		logger.info("Start to optimize " + model.id);
+		long startTime = System.nanoTime();
 		allocationHandler = new AllocationHandler(params.groupNum, params.heighModelSampleNumPerIter);
+		
 		logger.info("Set model analyzer tolerance to " + params.lowModelTol);
 		modelChecker.setTolerance(params.lowModelTol);
 		
@@ -41,8 +43,11 @@ public abstract class MO2TOS extends Optimizer<MO2TOSHyperParam>{
 		logger.info("Set model analyzer tolerance to " + params.heighModelTol);
 		modelChecker.setTolerance(params.heighModelTol);
 		Sample optimum = optimalSample(params.maxIter, groups, params.maxError);
+		
 		logger.info("Found optimum: " + optimum.getHeighResult() + " at point : " + optimum.values.toString());
-		return new OptimizerResult(optimum.getHeighResult(), optimum.values, ID, params.getHyperParams(), model);
+		OptimizerResult result = new OptimizerResult(optimum.getHeighResult(), optimum.values, ID, params.getHyperParams(), model);
+		result.setTime(System.nanoTime() - startTime);
+		return result;
 	}
 	
 	protected abstract SortedSet<Sample> ordinalTransform(int lowCalcNum, int maxError);
