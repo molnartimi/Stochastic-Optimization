@@ -45,4 +45,9 @@ public enum TestModel {
 		return new StormModelFactory(path + ".json", path + ".prism", this.toString()).build();
 	}
 	
+	public StormModel stormJaniModel() throws InvalidAttributeValueException, StormException {
+		String path = stormModelFolderPath + fileName;
+		return new StormModelFactory(path + "_bounded.jani", this.toString()).build();
+	}
+	
 }

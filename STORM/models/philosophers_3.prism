@@ -1,0 +1,51 @@
+// Simple server
+
+ctmc
+
+const double phil1_eatingRate;
+const double phil2_eatingRate;
+const double phil3_eatingRate;
+const double phil1_getHungry = 2.079900016886398;
+const double phil2_getHungry = 1.6969494269995804;
+const double phil3_getHungry = 0.08028005221551844;
+const double phil1_startEating = 1000;
+const double phil2_startEating = 1000;
+const double phil3_startEating = 1000;
+
+module DiningPhilosophers
+
+	phil1: [0..2] init 0; // thinking-waiting-eating
+	phil2: [0..2] init 0;
+	phil3: [0..2] init 0;
+	fork12: [0..1] init 1;
+	fork23: [0..1] init 1;
+	fork31: [0..1] init 1;
+
+	[] phil1=0 -> phil1_getHungry: (phil1'=1);
+	[] phil1=1 & fork12=1 & fork31=1 -> phil1_startEating: (phil1'=2) & (fork12'=0) & (fork31'=0);
+	[] phil1=2 -> phil1_eatingRate: (phil1'=0) & (fork12'=1) & (fork31'=1);
+	[] phil2=0 -> phil2_getHungry: (phil2'=1);
+	[] phil2=1 & fork12=1 & fork23=1 -> phil2_startEating: (phil2'=2) & (fork12'=0) & (fork23'=0);
+	[] phil2=2 -> phil2_eatingRate: (phil2'=0) & (fork12'=1) & (fork23'=1);
+	[] phil3=0 -> phil3_getHungry: (phil3'=1);
+	[] phil3=1 & fork23=1 & fork31=1 -> phil3_startEating: (phil3'=2) & (fork23'=0) & (fork31'=0);
+	[] phil3=2 -> phil3_eatingRate: (phil3'=0) & (fork23'=1) & (fork31'=1);
+endmodule
+
+rewards "phil1_thinkingTime"
+	phil1 = 0: 1;
+endrewards
+
+rewards "phil2_thinkingTime"
+	phil2 = 0: 1;
+endrewards
+
+rewards "phil3_thinkingTime"
+	phil3 = 0: 1;
+endrewards
+
+rewards "Table_totalThinkingTime"
+	phil1 = 0: 1;
+	phil2 = 0: 1;
+	phil3 = 0: 1;
+endrewards

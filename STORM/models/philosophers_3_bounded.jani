@@ -1,0 +1,735 @@
+{
+    "actions": [],
+    "automata": [
+        {
+            "edges": [
+                {
+                    "destinations": [
+                        {
+                            "assignments": [
+                                {
+                                    "comment": "phil1 <- 1",
+                                    "ref": "phil1",
+                                    "value": 1
+                                }
+                            ],
+                            "location": "l",
+                            "probability": {
+                                "comment": "(1039950008443199/500000000000000 / 1039950008443199/500000000000000)",
+                                "exp": {
+                                    "left": 2.0799000168864,
+                                    "op": "/",
+                                    "right": 2.0799000168864
+                                }
+                            }
+                        }
+                    ],
+                    "guard": {
+                        "comment": "(phil1 = 0)",
+                        "exp": {
+                            "left": "phil1",
+                            "op": "=",
+                            "right": 0
+                        }
+                    },
+                    "location": "l",
+                    "rate": {
+                        "comment": "1039950008443199/500000000000000",
+                        "exp": 2.0799000168864
+                    }
+                },
+                {
+                    "destinations": [
+                        {
+                            "assignments": [
+                                {
+                                    "comment": "phil1 <- 2",
+                                    "ref": "phil1",
+                                    "value": 2
+                                },
+                                {
+                                    "comment": "fork12 <- 0",
+                                    "ref": "fork12",
+                                    "value": 0
+                                },
+                                {
+                                    "comment": "fork31 <- 0",
+                                    "ref": "fork31",
+                                    "value": 0
+                                }
+                            ],
+                            "location": "l",
+                            "probability": {
+                                "comment": "(1000 / 1000)",
+                                "exp": {
+                                    "left": 1000,
+                                    "op": "/",
+                                    "right": 1000
+                                }
+                            }
+                        }
+                    ],
+                    "guard": {
+                        "comment": "(((phil1 = 1) & (fork12 = 1)) & (fork31 = 1))",
+                        "exp": {
+                            "left": {
+                                "left": {
+                                    "left": "phil1",
+                                    "op": "=",
+                                    "right": 1
+                                },
+                                "op": "∧",
+                                "right": {
+                                    "left": "fork12",
+                                    "op": "=",
+                                    "right": 1
+                                }
+                            },
+                            "op": "∧",
+                            "right": {
+                                "left": "fork31",
+                                "op": "=",
+                                "right": 1
+                            }
+                        }
+                    },
+                    "location": "l",
+                    "rate": {
+                        "comment": "1000",
+                        "exp": 1000
+                    }
+                },
+                {
+                    "destinations": [
+                        {
+                            "assignments": [
+                                {
+                                    "comment": "phil1 <- 0",
+                                    "ref": "phil1",
+                                    "value": 0
+                                },
+                                {
+                                    "comment": "fork12 <- 1",
+                                    "ref": "fork12",
+                                    "value": 1
+                                },
+                                {
+                                    "comment": "fork31 <- 1",
+                                    "ref": "fork31",
+                                    "value": 1
+                                }
+                            ],
+                            "location": "l",
+                            "probability": {
+                                "comment": "(phil1_eatingRate / phil1_eatingRate)",
+                                "exp": {
+                                    "left": "phil1_eatingRate",
+                                    "op": "/",
+                                    "right": "phil1_eatingRate"
+                                }
+                            }
+                        }
+                    ],
+                    "guard": {
+                        "comment": "(phil1 = 2)",
+                        "exp": {
+                            "left": "phil1",
+                            "op": "=",
+                            "right": 2
+                        }
+                    },
+                    "location": "l",
+                    "rate": {
+                        "comment": "phil1_eatingRate",
+                        "exp": "phil1_eatingRate"
+                    }
+                },
+                {
+                    "destinations": [
+                        {
+                            "assignments": [
+                                {
+                                    "comment": "phil2 <- 1",
+                                    "ref": "phil2",
+                                    "value": 1
+                                }
+                            ],
+                            "location": "l",
+                            "probability": {
+                                "comment": "(4242373567498951/2500000000000000 / 4242373567498951/2500000000000000)",
+                                "exp": {
+                                    "left": 1.69694942699958,
+                                    "op": "/",
+                                    "right": 1.69694942699958
+                                }
+                            }
+                        }
+                    ],
+                    "guard": {
+                        "comment": "(phil2 = 0)",
+                        "exp": {
+                            "left": "phil2",
+                            "op": "=",
+                            "right": 0
+                        }
+                    },
+                    "location": "l",
+                    "rate": {
+                        "comment": "4242373567498951/2500000000000000",
+                        "exp": 1.69694942699958
+                    }
+                },
+                {
+                    "destinations": [
+                        {
+                            "assignments": [
+                                {
+                                    "comment": "phil2 <- 2",
+                                    "ref": "phil2",
+                                    "value": 2
+                                },
+                                {
+                                    "comment": "fork12 <- 0",
+                                    "ref": "fork12",
+                                    "value": 0
+                                },
+                                {
+                                    "comment": "fork23 <- 0",
+                                    "ref": "fork23",
+                                    "value": 0
+                                }
+                            ],
+                            "location": "l",
+                            "probability": {
+                                "comment": "(1000 / 1000)",
+                                "exp": {
+                                    "left": 1000,
+                                    "op": "/",
+                                    "right": 1000
+                                }
+                            }
+                        }
+                    ],
+                    "guard": {
+                        "comment": "(((phil2 = 1) & (fork12 = 1)) & (fork23 = 1))",
+                        "exp": {
+                            "left": {
+                                "left": {
+                                    "left": "phil2",
+                                    "op": "=",
+                                    "right": 1
+                                },
+                                "op": "∧",
+                                "right": {
+                                    "left": "fork12",
+                                    "op": "=",
+                                    "right": 1
+                                }
+                            },
+                            "op": "∧",
+                            "right": {
+                                "left": "fork23",
+                                "op": "=",
+                                "right": 1
+                            }
+                        }
+                    },
+                    "location": "l",
+                    "rate": {
+                        "comment": "1000",
+                        "exp": 1000
+                    }
+                },
+                {
+                    "destinations": [
+                        {
+                            "assignments": [
+                                {
+                                    "comment": "phil2 <- 0",
+                                    "ref": "phil2",
+                                    "value": 0
+                                },
+                                {
+                                    "comment": "fork12 <- 1",
+                                    "ref": "fork12",
+                                    "value": 1
+                                },
+                                {
+                                    "comment": "fork23 <- 1",
+                                    "ref": "fork23",
+                                    "value": 1
+                                }
+                            ],
+                            "location": "l",
+                            "probability": {
+                                "comment": "(phil2_eatingRate / phil2_eatingRate)",
+                                "exp": {
+                                    "left": "phil2_eatingRate",
+                                    "op": "/",
+                                    "right": "phil2_eatingRate"
+                                }
+                            }
+                        }
+                    ],
+                    "guard": {
+                        "comment": "(phil2 = 2)",
+                        "exp": {
+                            "left": "phil2",
+                            "op": "=",
+                            "right": 2
+                        }
+                    },
+                    "location": "l",
+                    "rate": {
+                        "comment": "phil2_eatingRate",
+                        "exp": "phil2_eatingRate"
+                    }
+                },
+                {
+                    "destinations": [
+                        {
+                            "assignments": [
+                                {
+                                    "comment": "phil3 <- 1",
+                                    "ref": "phil3",
+                                    "value": 1
+                                }
+                            ],
+                            "location": "l",
+                            "probability": {
+                                "comment": "(2007001305387961/25000000000000000 / 2007001305387961/25000000000000000)",
+                                "exp": {
+                                    "left": 0.0802800522155184,
+                                    "op": "/",
+                                    "right": 0.0802800522155184
+                                }
+                            }
+                        }
+                    ],
+                    "guard": {
+                        "comment": "(phil3 = 0)",
+                        "exp": {
+                            "left": "phil3",
+                            "op": "=",
+                            "right": 0
+                        }
+                    },
+                    "location": "l",
+                    "rate": {
+                        "comment": "2007001305387961/25000000000000000",
+                        "exp": 0.0802800522155184
+                    }
+                },
+                {
+                    "destinations": [
+                        {
+                            "assignments": [
+                                {
+                                    "comment": "phil3 <- 2",
+                                    "ref": "phil3",
+                                    "value": 2
+                                },
+                                {
+                                    "comment": "fork23 <- 0",
+                                    "ref": "fork23",
+                                    "value": 0
+                                },
+                                {
+                                    "comment": "fork31 <- 0",
+                                    "ref": "fork31",
+                                    "value": 0
+                                }
+                            ],
+                            "location": "l",
+                            "probability": {
+                                "comment": "(1000 / 1000)",
+                                "exp": {
+                                    "left": 1000,
+                                    "op": "/",
+                                    "right": 1000
+                                }
+                            }
+                        }
+                    ],
+                    "guard": {
+                        "comment": "(((phil3 = 1) & (fork23 = 1)) & (fork31 = 1))",
+                        "exp": {
+                            "left": {
+                                "left": {
+                                    "left": "phil3",
+                                    "op": "=",
+                                    "right": 1
+                                },
+                                "op": "∧",
+                                "right": {
+                                    "left": "fork23",
+                                    "op": "=",
+                                    "right": 1
+                                }
+                            },
+                            "op": "∧",
+                            "right": {
+                                "left": "fork31",
+                                "op": "=",
+                                "right": 1
+                            }
+                        }
+                    },
+                    "location": "l",
+                    "rate": {
+                        "comment": "1000",
+                        "exp": 1000
+                    }
+                },
+                {
+                    "destinations": [
+                        {
+                            "assignments": [
+                                {
+                                    "comment": "phil3 <- 0",
+                                    "ref": "phil3",
+                                    "value": 0
+                                },
+                                {
+                                    "comment": "fork23 <- 1",
+                                    "ref": "fork23",
+                                    "value": 1
+                                },
+                                {
+                                    "comment": "fork31 <- 1",
+                                    "ref": "fork31",
+                                    "value": 1
+                                }
+                            ],
+                            "location": "l",
+                            "probability": {
+                                "comment": "(phil3_eatingRate / phil3_eatingRate)",
+                                "exp": {
+                                    "left": "phil3_eatingRate",
+                                    "op": "/",
+                                    "right": "phil3_eatingRate"
+                                }
+                            }
+                        }
+                    ],
+                    "guard": {
+                        "comment": "(phil3 = 2)",
+                        "exp": {
+                            "left": "phil3",
+                            "op": "=",
+                            "right": 2
+                        }
+                    },
+                    "location": "l",
+                    "rate": {
+                        "comment": "phil3_eatingRate",
+                        "exp": "phil3_eatingRate"
+                    }
+                }
+            ],
+            "initial-locations": [
+                "l"
+            ],
+            "locations": [
+                {
+                    "name": "l",
+                    "transient-values": [
+                        {
+                            "comment": "phil1_thinkingTime <- ((phil1 = 0) ? 1 : 0)",
+                            "ref": "phil1_thinkingTime",
+                            "value": {
+                                "else": 0.0,
+                                "if": {
+                                    "left": "phil1",
+                                    "op": "=",
+                                    "right": 0
+                                },
+                                "op": "ite",
+                                "then": 1
+                            }
+                        },
+                        {
+                            "comment": "phil2_thinkingTime <- ((phil2 = 0) ? 1 : 0)",
+                            "ref": "phil2_thinkingTime",
+                            "value": {
+                                "else": 0.0,
+                                "if": {
+                                    "left": "phil2",
+                                    "op": "=",
+                                    "right": 0
+                                },
+                                "op": "ite",
+                                "then": 1
+                            }
+                        },
+                        {
+                            "comment": "phil3_thinkingTime <- ((phil3 = 0) ? 1 : 0)",
+                            "ref": "phil3_thinkingTime",
+                            "value": {
+                                "else": 0.0,
+                                "if": {
+                                    "left": "phil3",
+                                    "op": "=",
+                                    "right": 0
+                                },
+                                "op": "ite",
+                                "then": 1
+                            }
+                        },
+                        {
+                            "comment": "Table_totalThinkingTime <- ((((phil1 = 0) ? 1 : 0) + ((phil2 = 0) ? 1 : 0)) + ((phil3 = 0) ? 1 : 0))",
+                            "ref": "Table_totalThinkingTime",
+                            "value": {
+                                "left": {
+                                    "left": {
+                                        "else": 0.0,
+                                        "if": {
+                                            "left": "phil1",
+                                            "op": "=",
+                                            "right": 0
+                                        },
+                                        "op": "ite",
+                                        "then": 1
+                                    },
+                                    "op": "+",
+                                    "right": {
+                                        "else": 0.0,
+                                        "if": {
+                                            "left": "phil2",
+                                            "op": "=",
+                                            "right": 0
+                                        },
+                                        "op": "ite",
+                                        "then": 1
+                                    }
+                                },
+                                "op": "+",
+                                "right": {
+                                    "else": 0.0,
+                                    "if": {
+                                        "left": "phil3",
+                                        "op": "=",
+                                        "right": 0
+                                    },
+                                    "op": "ite",
+                                    "then": 1
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "name": "DiningPhilosophers",
+            "variables": [
+                {
+                    "initial-value": 1,
+                    "name": "fork12",
+                    "type": {
+                        "base": "int",
+                        "kind": "bounded",
+                        "lower-bound": 0,
+                        "upper-bound": 1
+                    }
+                },
+                {
+                    "initial-value": 1,
+                    "name": "fork23",
+                    "type": {
+                        "base": "int",
+                        "kind": "bounded",
+                        "lower-bound": 0,
+                        "upper-bound": 1
+                    }
+                },
+                {
+                    "initial-value": 1,
+                    "name": "fork31",
+                    "type": {
+                        "base": "int",
+                        "kind": "bounded",
+                        "lower-bound": 0,
+                        "upper-bound": 1
+                    }
+                }
+            ]
+        }
+    ],
+    "constants": [
+        {
+            "name": "phil1_eatingRate",
+            "type": {
+                        "base": "real",
+                        "kind": "bounded",
+                        "lower-bound": 0.0,
+                        "upper-bound": 10.0
+                    },
+            "comment": "7.33569408796258"
+        },
+        {
+            "name": "phil2_eatingRate",
+            "type": {
+                        "base": "real",
+                        "kind": "bounded",
+                        "lower-bound": 0.0,
+                        "upper-bound": 10.0
+                    },
+            "comment": "2.156376928966199"
+        },
+        {
+            "name": "phil3_eatingRate",
+            "type": {
+                        "base": "real",
+                        "kind": "bounded",
+                        "lower-bound": 0.0,
+                        "upper-bound": 10.0
+                    },
+            "comment": "9.680783503298795"
+        },
+        {
+            "name": "phil1_getHungry",
+            "type": "real",
+            "value": 2.0799000168864
+        },
+        {
+            "name": "phil2_getHungry",
+            "type": "real",
+            "value": 1.69694942699958
+        },
+        {
+            "name": "phil3_getHungry",
+            "type": "real",
+            "value": 0.0802800522155184
+        },
+        {
+            "name": "phil1_startEating",
+            "type": "real",
+            "value": 1000
+        },
+        {
+            "name": "phil2_startEating",
+            "type": "real",
+            "value": 1000
+        },
+        {
+            "name": "phil3_startEating",
+            "type": "real",
+            "value": 1000
+        }
+    ],
+    "features": [
+        "derived-operators"
+    ],
+    "jani-version": 1,
+    "name": "philosophers_3",
+    "properties": [
+        {
+            "expression": {
+                "fun": "values",
+                "op": "filter",
+                "states": {
+                    "op": "initial"
+                },
+                "values": {
+                    "exp": "phil1_thinkingTime",
+                    "op": "Smin"
+                }
+            },
+            "name": "1"
+        },
+        {
+            "expression": {
+                "fun": "values",
+                "op": "filter",
+                "states": {
+                    "op": "initial"
+                },
+                "values": {
+                    "exp": "phil2_thinkingTime",
+                    "op": "Smin"
+                }
+            },
+            "name": "2"
+        },
+        {
+            "expression": {
+                "fun": "values",
+                "op": "filter",
+                "states": {
+                    "op": "initial"
+                },
+                "values": {
+                    "exp": "phil3_thinkingTime",
+                    "op": "Smin"
+                }
+            },
+            "name": "3"
+        }
+    ],
+    "restrict-initial": {
+        "exp": true
+    },
+    "system": {
+        "elements": [
+            {
+                "automaton": "DiningPhilosophers"
+            }
+        ]
+    },
+    "type": "ctmc",
+    "variables": [
+        {
+            "initial-value": 0.0,
+            "name": "phil1_thinkingTime",
+            "transient": true,
+            "type": "real"
+        },
+        {
+            "initial-value": 0.0,
+            "name": "phil2_thinkingTime",
+            "transient": true,
+            "type": "real"
+        },
+        {
+            "initial-value": 0.0,
+            "name": "phil3_thinkingTime",
+            "transient": true,
+            "type": "real"
+        },
+        {
+            "initial-value": 0.0,
+            "name": "Table_totalThinkingTime",
+            "transient": true,
+            "type": "real"
+        },
+        {
+            "initial-value": 0,
+            "name": "phil1",
+            "type": {
+                "base": "int",
+                "kind": "bounded",
+                "lower-bound": 0,
+                "upper-bound": 2
+            }
+        },
+        {
+            "initial-value": 0,
+            "name": "phil2",
+            "type": {
+                "base": "int",
+                "kind": "bounded",
+                "lower-bound": 0,
+                "upper-bound": 2
+            }
+        },
+        {
+            "initial-value": 0,
+            "name": "phil3",
+            "type": {
+                "base": "int",
+                "kind": "bounded",
+                "lower-bound": 0,
+                "upper-bound": 2
+            }
+        }
+    ]
+}

@@ -1,0 +1,21 @@
+{ parameters: [
+	{
+		name: "phil1_eatingRate",
+		min: 0,
+		max: 10,
+		defaultValue: 7.33569408796258
+	},
+	{
+		name: "phil2_eatingRate",
+		min: 0,
+		max: 10,
+		defaultValue: 2.156376928966199
+	},
+	{
+		name: "phil3_eatingRate",
+		min: 0,
+		max: 10,
+		defaultValue: 9.680783503298795
+	}
+ ]
+}

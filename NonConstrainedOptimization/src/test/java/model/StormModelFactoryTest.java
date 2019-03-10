@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 import javax.naming.directory.InvalidAttributeValueException;
 
 import org.hamcrest.core.Is;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import hu.bme.mit.modelchecker.storm.exception.StormException;
-import model.spdn.SpdnModel;
 import model.storm.StormModel;
 
 public class StormModelFactoryTest {
@@ -43,6 +43,7 @@ public class StormModelFactoryTest {
 	}
 	
 	@Test
+	// @Ignore("Check now jani version")
 	public void fil3Test() throws InvalidAttributeValueException, StormException {
 		StormModel model = TestModel.FIL3.stormModel();
 			
@@ -57,7 +58,26 @@ public class StormModelFactoryTest {
 		assertThat(defaultValues, Is.is(expectedDefaultValues));
 			
 		List<String> rewardNames = model.simpleRewardList.stream().map(reward -> reward.name).collect(Collectors.toList());
-		List<String> expectedRewardNames = Arrays.asList(new String[] {"phil1_thinkingTime", "phil2_thinkingTime", "phil3_thinkingTime", "Table_totalThinkingTime"});
+		List<String> expectedRewardNames = Arrays.asList(new String[] {"phil1_thinkingTime", "phil2_thinkingTime", "phil3_thinkingTime"});
+		assertThat(rewardNames, Is.is(expectedRewardNames));
+	}
+	
+	@Test
+	public void fil3JaniTest() throws InvalidAttributeValueException, StormException {
+		StormModel model = TestModel.FIL3.stormJaniModel();
+			
+		assertEquals(model.name, "DiningPhilosophers");
+			
+		List<String> paramNames = model.simpleParameterList.stream().map(param -> param.name).collect(Collectors.toList());
+		List<String> expectedParamNames = Arrays.asList(new String[] {"phil1_eatingRate", "phil2_eatingRate", "phil3_eatingRate"});
+		assertThat(paramNames, Is.is(expectedParamNames));
+			
+		List<Double> defaultValues = model.parameterList.stream().map(handler -> handler.defaultValue).collect(Collectors.toList());
+		List<Double> expectedDefaultValues = Arrays.asList(new Double[] {7.33569408796258, 2.156376928966199, 9.680783503298795});
+		assertThat(defaultValues, Is.is(expectedDefaultValues));
+			
+		List<String> rewardNames = model.simpleRewardList.stream().map(reward -> reward.name).collect(Collectors.toList());
+		List<String> expectedRewardNames = Arrays.asList(new String[] {"phil1_thinkingTime", "phil2_thinkingTime", "phil3_thinkingTime"});
 		assertThat(rewardNames, Is.is(expectedRewardNames));
 	}
 
