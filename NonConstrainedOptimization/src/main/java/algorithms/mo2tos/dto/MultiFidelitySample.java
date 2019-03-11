@@ -5,25 +5,28 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Sample implements Comparable<Sample>{
-	public final List<Double> values;
+import algorithms.Sample;
+
+public class MultiFidelitySample extends Sample {
+	public final List<Double> point;
 	public final double lowResult;
 	private Double heighResult;
-	private final static Logger logger = LoggerFactory.getLogger(Sample.class);
+	private final static Logger logger = LoggerFactory.getLogger(MultiFidelitySample.class);
 	
-	public Sample(List<Double> values, double lowResult) {
-		this.values = values;
+	public MultiFidelitySample(List<Double> point, double lowResult) {
+		super(point, lowResult);
+		this.point = point;
 		this.lowResult = lowResult;
 	}
 
 	@Override
 	public int compareTo(Sample o) {
-		double diff = this.lowResult - o.lowResult;
+		double diff = this.lowResult - ((MultiFidelitySample) o).lowResult;
 		return (diff > 0) ? 1 : (diff < 0) ?  -1 : 0;
 	}
 	
 	public void setHeighResult(double heighResult) {
-		logger.info("Sample: " + values.toString() + " => " + heighResult);
+		logger.info("Sample: " + point.toString() + " => " + heighResult);
 		this.heighResult = heighResult;
 		
 	}

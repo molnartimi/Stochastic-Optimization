@@ -15,7 +15,7 @@ import model.ModelChecker;
 import model.spdn.SpdnModelAnalyzer;
 
 public class Group {
-	private List<Sample> samples, countedSamples;
+	private List<MultiFidelitySample> samples, countedSamples;
 	private Double mean;
 	private Double variance;
 	private Random rand;
@@ -25,15 +25,15 @@ public class Group {
 		double changeValue(double actValue, double result);
 	}
 
-	public Group(List<Sample> samples) {
+	public Group(List<MultiFidelitySample> samples) {
 		this.samples = samples;
 		this.countedSamples = new ArrayList<>();
 		rand = new Random();
 	}
 	
 
-	public Sample getLocalBest() {
-		Sample localBestSample = countedSamples.get(0);
+	public MultiFidelitySample getLocalBest() {
+		MultiFidelitySample localBestSample = countedSamples.get(0);
 		for (int i = 1; i < countedSamples.size(); i++) {
 			if (localBestSample.getHeighResult() > countedSamples.get(i).getHeighResult()) {
 				localBestSample = countedSamples.get(i);
@@ -80,8 +80,8 @@ public class Group {
 				
 				errorsInARow = 0;
 			} catch(SpdnException e) {
-				Sample removed = countedSamples.remove(i);
-				logger.info("Removed sample " + removed.values.toString());
+				MultiFidelitySample removed = countedSamples.remove(i);
+				logger.info("Removed sample " + removed.point.toString());
 				i--;
 				if (++errorsInARow >= maxError) {
 					throw new SpdnException("Spdn failed " + errorsInARow + " times in a row at calculate mean and/or variance of group.");
@@ -92,9 +92,9 @@ public class Group {
 	}
 	
 	private void calcNextRandomSample(ModelChecker modelChecker, int raisedErrors, int maxError) throws EmptyGroupException {
-		Sample chosen = getNextRandom();
+		MultiFidelitySample chosen = getNextRandom();
 		try {
-			chosen.setHeighResult(modelChecker.calcObjective(chosen.values));
+			chosen.setHeighResult(modelChecker.calcObjective(chosen.point));
 		} catch (SpdnException e) {
 			if (++raisedErrors >= maxError) {
 				throw new SpdnException("Spdn failed " + raisedErrors + " times in a row at calculating samples with heigh fidelity model in a group.");
@@ -104,11 +104,11 @@ public class Group {
 		}
 	}
 	
-	private Sample getNextRandom() throws EmptyGroupException{
+	private MultiFidelitySample getNextRandom() throws EmptyGroupException{
 		if (samples.size() == 0) {
 			throw new EmptyGroupException();
 		}
-		Sample chosen = samples.remove(rand.nextInt(samples.size()));
+		MultiFidelitySample chosen = samples.remove(rand.nextInt(samples.size()));
 		countedSamples.add(chosen);
 		return chosen;
 	}

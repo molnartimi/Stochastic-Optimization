@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import algorithms.Optimizer;
 import algorithms.OptimizerResult;
+import algorithms.Sample;
 import algorithms.ToleranceExceededException;
 import model.Model;
 
@@ -24,39 +25,26 @@ public class BeesAlgorithm extends Optimizer<BeesHyperParam> {
 	}
 
 	private class Bee {
-		private List<Double> pos;
-		private double value;
+		private Sample sample;
 
 		public Bee(List<Double> p, double val) {
-			pos = p;
-			value = val;
+			sample = new Sample(p, val);
 		}
 
-		public void setPos(List<Double> p, double val) {
+		public void setPosition(List<Double> p, double val) {
 			model.cutParamsOnBorder(p);
-			pos = p;
-			value = val;
+			sample = new Sample(p, val);
 		}
 
-		public List<Double> getPos() {
-			return pos;
-		}
-
-		public double getVal() {
-			return value;
+		public Sample getPosition() {
+			return sample;
 		}
 	}
 
 	private class BeeComparator implements Comparator<Bee> {
 		@Override
 		public int compare(Bee b1, Bee b2) {
-			double result = b1.getVal() - b2.getVal();
-			if (result < 0)
-				return -1;
-			else if (result == 0)
-				return 0;
-			else
-				return 1;
+			return b1.sample.compareTo(b2.sample);
 		}
 	}
 
@@ -76,7 +64,7 @@ public class BeesAlgorithm extends Optimizer<BeesHyperParam> {
 
 		try {
 			for (int iter = 0; iter < params.maxIter; iter++) {
-				logger.info("New iteration starting, actual best value " + scouts.get(0).getVal() + " in point " + scouts.get(0).getPos().toString());
+				logger.info("New iteration starting, actual best value " + scouts.get(0).getPosition().value + " in point " + scouts.get(0).getPosition().point.toString());
 				
 				calculateLeadsAndRecruiteds(scouts, 0, params.eliteBeesSize, params.recruitedOfElitesSize, radius);
 				calculateLeadsAndRecruiteds(scouts, params.eliteBeesSize, params.bestBeesSize, params.recruitedOfBestsSize,
@@ -91,7 +79,7 @@ public class BeesAlgorithm extends Optimizer<BeesHyperParam> {
 			logger.info("Tolerance border exceeded, stop optimization");
 		}
 
-		OptimizerResult result = new OptimizerResult(scouts.get(0).getVal(), scouts.get(0).getPos(), ID, params.getHyperParams(), model);
+		OptimizerResult result = new OptimizerResult(scouts.get(0).getPosition().value, scouts.get(0).getPosition().point, ID, params.getHyperParams(), model);
 
 		result.setTime(System.nanoTime() - startTime);
 		return result;
@@ -107,13 +95,13 @@ public class BeesAlgorithm extends Optimizer<BeesHyperParam> {
 				List<Double> pos = new ArrayList<>();
 
 				for (int d = 0; d < model.parameterSize(); d++) {
-					pos.add(lead.getPos().get(d) + (r.nextDouble() * 2 - 1) * radius);
+					pos.add(lead.getPosition().point.get(d) + (r.nextDouble() * 2 - 1) * radius);
 				}
 
 				model.cutParamsOnBorder(pos);
 				double newPosValue = modelChecker.calcObjective(pos);
-				if (newPosValue < lead.getVal()) {
-					lead.setPos(pos, newPosValue);
+				if (newPosValue < lead.getPosition().value) {
+					lead.setPosition(pos, newPosValue);
 					if (newPosValue < tolerance) throw new ToleranceExceededException();
 				}
 			}
@@ -123,7 +111,7 @@ public class BeesAlgorithm extends Optimizer<BeesHyperParam> {
 	private void randomizeOtherScouts(List<Bee> scouts, int fromIdx) {
 		for (int i = fromIdx; i < scouts.size(); i++) {
 			List<Double> pos = model.randomParamValues();
-			scouts.get(i).setPos(pos, modelChecker.calcObjective(pos));
+			scouts.get(i).setPosition(pos, modelChecker.calcObjective(pos));
 		}
 	}
 
