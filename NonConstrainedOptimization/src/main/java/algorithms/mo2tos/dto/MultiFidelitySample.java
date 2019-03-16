@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import algorithms.Sample;
 
-public class MultiFidelitySample extends Sample {
+public class MultiFidelitySample extends Sample<List<Double>> {
 	public final List<Double> point;
 	public final double lowResult;
 	private Double heighResult;
@@ -20,7 +20,7 @@ public class MultiFidelitySample extends Sample {
 	}
 
 	@Override
-	public int compareTo(Sample o) {
+	public int compareTo(Sample<List<Double>> o) {
 		double diff = this.lowResult - ((MultiFidelitySample) o).lowResult;
 		return (diff > 0) ? 1 : (diff < 0) ?  -1 : 0;
 	}

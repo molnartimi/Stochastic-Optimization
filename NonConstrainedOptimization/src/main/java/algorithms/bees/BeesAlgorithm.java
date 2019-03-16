@@ -25,18 +25,18 @@ public class BeesAlgorithm extends Optimizer<BeesHyperParam> {
 	}
 
 	private class Bee {
-		private Sample sample;
+		private Sample<List<Double>> sample;
 
 		public Bee(List<Double> p, double val) {
-			sample = new Sample(p, val);
+			sample = new Sample<>(p, val);
 		}
 
 		public void setPosition(List<Double> p, double val) {
 			model.cutParamsOnBorder(p);
-			sample = new Sample(p, val);
+			sample = new Sample<>(p, val);
 		}
 
-		public Sample getPosition() {
+		public Sample<List<Double>> getPosition() {
 			return sample;
 		}
 	}

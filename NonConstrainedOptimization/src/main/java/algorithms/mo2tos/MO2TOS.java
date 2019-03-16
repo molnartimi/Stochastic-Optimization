@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -16,7 +15,6 @@ import algorithms.mo2tos.dto.Group;
 import algorithms.mo2tos.dto.MultiFidelitySample;
 import algorithms.mo2tos.helper.AllocationHandler;
 import model.Model;
-import model.spdn.SpdnModel;
 
 public abstract class MO2TOS extends Optimizer<MO2TOSHyperParam>{
 	public static final String ID = "MO2TOS";

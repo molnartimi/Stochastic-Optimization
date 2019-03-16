@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealVector;
+
 import umontreal.ssj.hups.LatinHypercube;
 import umontreal.ssj.rng.MRG32k3a;
 
@@ -57,6 +60,17 @@ public abstract class Model<P extends ModelParameter, R extends ModelReward, A e
 		}
 		
 		return point;
+	}
+	
+	public RealVector randomVector() {
+		double[] vec = new double[parameterSize()];
+		Random rand = new Random();
+		
+		for(int i = 0; i < parameterSize(); i++) {
+			P param = parameterList.get(i);
+			vec[i] = (rand.nextDouble() * (param.maxValue - param.minValue) + param.minValue);
+		}
+		return MatrixUtils.createRealVector(vec);
 	}
 	
 	public List<Double> randomVelocity() {
