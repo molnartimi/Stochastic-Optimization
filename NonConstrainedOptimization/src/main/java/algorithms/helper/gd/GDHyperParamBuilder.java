@@ -15,6 +15,10 @@ public class GDHyperParamBuilder extends HyperParamsBuilder {
 		_initPoint = model.randomVector();
 	}
 	
+	public GDHyperParamBuilder(RealVector initPoint) {
+		this._initPoint = initPoint;
+	}
+	
 	@Override
 	public GDHyperParam build() {
 		return new GDHyperParam(_gamma, _tolerance, _initPoint, _restart);

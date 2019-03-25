@@ -1,22 +1,20 @@
 package algorithms.bayes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import algorithms.HyperParameters;
 import algorithms.Optimizer;
 import algorithms.OptimizerResult;
 import algorithms.Sample;
 import algorithms.ToleranceExceededException;
-import algorithms.helper.SimpleOptimizer;
 import algorithms.helper.gd.GDHyperParam;
 import algorithms.helper.gd.GDHyperParamBuilder;
 import algorithms.helper.gd.GradientDescent;
+import algorithms.helper.gd.GradientDescentException;
 import model.Model;
 
 public class BayesianOptimization extends Optimizer<BayesHyperParam> {
@@ -26,8 +24,7 @@ public class BayesianOptimization extends Optimizer<BayesHyperParam> {
 	
 	protected GaussProcess gp;
 	protected ExpectedImprovement ei;
-	protected SimpleOptimizer<GDHyperParam> helperOpt;
-	protected GDHyperParam helperOptHyperParams;
+	protected GradientDescent helperOpt;
 
 	public BayesianOptimization(Model model) {
 		super(model);
@@ -44,7 +41,14 @@ public class BayesianOptimization extends Optimizer<BayesHyperParam> {
 			initAcquisitionFuncResources();
 			
 			for (int i = params.initSamples; i < params.maxSamples; i++) {
-				List<Double> acqFunMax = optimizeAcquisitionFunction();
+				List<Double> acqFunMax;
+				try {
+					acqFunMax = optimizeAcquisitionFunction();
+				} catch (GradientDescentException e) {
+					OptimizerResult result = new OptimizerResult(gp.getBestPosition().value, gp.getBestPosition().point, ID, params.getHyperParams(), model);
+					result.setTime(System.nanoTime() - startTime);
+					return result;
+				}
 				gp.updateWithSample(new Sample<List<Double>>(acqFunMax, modelChecker.calcObjective(acqFunMax)));
 			}
 		} catch (ToleranceExceededException e) {
@@ -75,15 +79,15 @@ public class BayesianOptimization extends Optimizer<BayesHyperParam> {
 	private void initAcquisitionFuncResources() {
 		ei = new ExpectedImprovement(gp);
 		helperOpt = new GradientDescent(model);
-		helperOptHyperParams = new GDHyperParamBuilder(model).restart(3).build();
 	}
 
 	/**
 	 * Optimize acquisition function
 	 * @return
+	 * @throws GradientDescentException 
 	 */
-	private List<Double> optimizeAcquisitionFunction() {
-		Sample<RealVector> bestPoint = helperOpt.optimize(ei::calc, ei::calcDx, helperOptHyperParams);
+	private List<Double> optimizeAcquisitionFunction() throws GradientDescentException {
+		Sample<RealVector> bestPoint = helperOpt.optimize(ei::calc, ei::calcDx, new GDHyperParamBuilder(model).restart(3).build());
 		List<Double> result = new ArrayList<Double>();
 		for (int i = 0; i < bestPoint.point.getDimension(); i++) {
 			result.add(bestPoint.point.getEntry(i));

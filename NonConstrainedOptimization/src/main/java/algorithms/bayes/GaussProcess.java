@@ -1,23 +1,29 @@
 package algorithms.bayes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import algorithms.Sample;
 import algorithms.ToleranceExceededException;
 
 public class GaussProcess {
 	
-	private List<Sample<List<Double>>> samples;
+	protected static final Logger logger = LoggerFactory.getLogger(GaussProcess.class);
+	
+	private List<Sample<List<Double>>> samples = new ArrayList<Sample<List<Double>>>();
 	private Sample<List<Double>> bestPosition;
 	
 	private RealVector valueVector;
-	private List<Double> valueList;
-	private List<List<Double>> vectorList;
+	private List<Double> valueList = new ArrayList<Double>();
+	private List<List<Double>> vectorList = new ArrayList<List<Double>>();
 	private RealMatrix kernelMatrixInverse;
 	private RealMatrix sampleMatrix;
 	
@@ -47,11 +53,12 @@ public class GaussProcess {
 		valueVector = listToVector(valueList);
 		
 		updateSampleMatrix();
-		kernelMatrixInverse = MatrixUtils.blockInverse(getKernelMatrix(sampleMatrix, sampleMatrix), vectorList.size()/2);
+		kernelMatrixInverse = new LUDecomposition(getKernelMatrix(sampleMatrix, sampleMatrix)).getSolver().getInverse();
+		logger.info("Updated GP with sample " + point.point.toString());
 	}
 	
 	public double getMean(RealVector point) {
-		RealMatrix rowMtx = getKernelMatrix(MatrixUtils.createRowRealMatrix(point.toArray()), sampleMatrix);
+		RealMatrix rowMtx = getKernelMatrix(MatrixUtils.createColumnRealMatrix(point.toArray()), sampleMatrix);
 		RealMatrix productMtx = rowMtx.multiply(kernelMatrixInverse);
 		assert productMtx.getRowDimension() == 1;
 		RealVector productVector = productMtx.getRowVector(0);
@@ -59,7 +66,7 @@ public class GaussProcess {
 	}
 	
 	public double getVariance(RealVector point) {
-		RealMatrix productRowMtx = getKernelMatrix(MatrixUtils.createRowRealMatrix(point.toArray()), sampleMatrix).multiply(kernelMatrixInverse);
+		RealMatrix productRowMtx = getKernelMatrix(MatrixUtils.createColumnRealMatrix(point.toArray()), sampleMatrix).multiply(kernelMatrixInverse);
 		assert productRowMtx.getRowDimension() == 1;
 		RealVector productVector = productRowMtx.getRowVector(0);
 		
@@ -71,7 +78,7 @@ public class GaussProcess {
 		return Math.sqrt(squareVariance);
 	}
 	
-	public RealMatrix getKernelMatrix(RealMatrix m1, RealMatrix m2) {
+	private RealMatrix getKernelMatrix(RealMatrix m1, RealMatrix m2) {
 		int n = m1.getColumnDimension();
 		int m = m2.getColumnDimension();
 		double[][] primitiveArray = new double[n][m];
@@ -82,7 +89,7 @@ public class GaussProcess {
 			}
 			
 			// to improve the numerical stability
-			primitiveArray[i][i] += 1e-6;
+			if (i < m) primitiveArray[i][i] += 1e-6;
 		}
 		return MatrixUtils.createRealMatrix(primitiveArray);
 	}
@@ -104,7 +111,7 @@ public class GaussProcess {
 	private void updateSampleMatrix() {
 		int n = vectorList.size();
 		int d = vectorList.get(0).size();
-		double[][] primitiveArray = new double[n][n];
+		double[][] primitiveArray = new double[d][n];
 		for (int i = 0; i < n; i++) {
 			List<Double> l = vectorList.get(i);
 			for (int j = 0; j < d; j++) {

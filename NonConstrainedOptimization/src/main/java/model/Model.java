@@ -100,6 +100,16 @@ public abstract class Model<P extends ModelParameter, R extends ModelReward, A e
 				paramValues.set(i, modelParam.maxValue);
 		}
 	}
+	
+	public void cutParamsOnBorder(RealVector vector) {
+		for (int i = 0; i < parameterSize(); i++) {
+			P modelParam = parameterList.get(i);
+			if (vector.getEntry(i) < modelParam.minValue)
+				vector.setEntry(i, modelParam.minValue);
+			else if (vector.getEntry(i) > modelParam.maxValue)
+				vector.setEntry(i, modelParam.maxValue);
+		}
+	}
 
 	/**
 	 * Convert double[][] array which returned by LatinHypercube into List<List<Double>>, with valid parameter values (not between 0 and 1)
