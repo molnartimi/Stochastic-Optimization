@@ -34,6 +34,7 @@ public class GaussProcess {
 	public GaussProcess(double alpha0, List<Double> alpha, double tolerance) {
 		this.alpha0 = alpha0;
 		this.alpha = listToVector(alpha);
+		this.tolerance = tolerance;
 	}
 	
 	public Sample<List<Double>> getBestPosition() {
@@ -46,6 +47,7 @@ public class GaussProcess {
 		
 		if (bestPosition == null || point.compareTo(bestPosition) < 0) {
 			bestPosition = point;
+			logger.info("New best value " + bestPosition.value + " in point " + bestPosition.point.toString());
 			if (bestPosition.value < tolerance) throw new ToleranceExceededException();
 		}
 		
@@ -54,7 +56,6 @@ public class GaussProcess {
 		
 		updateSampleMatrix();
 		kernelMatrixInverse = new LUDecomposition(getKernelMatrix(sampleMatrix, sampleMatrix)).getSolver().getInverse();
-		logger.info("Updated GP with sample " + point.point.toString());
 	}
 	
 	public double getMean(RealVector point) {

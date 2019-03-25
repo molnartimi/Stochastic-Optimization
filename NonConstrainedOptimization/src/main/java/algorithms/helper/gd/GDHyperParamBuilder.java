@@ -10,6 +10,7 @@ public class GDHyperParamBuilder extends HyperParamsBuilder {
 	private double _tolerance = 0.001;
 	private RealVector _initPoint;
 	private int _restart = 0;
+	private int _gradSearchMaxIter = 10;
 	
 	public GDHyperParamBuilder(Model model) {
 		_initPoint = model.randomVector();
@@ -21,7 +22,7 @@ public class GDHyperParamBuilder extends HyperParamsBuilder {
 	
 	@Override
 	public GDHyperParam build() {
-		return new GDHyperParam(_gamma, _tolerance, _initPoint, _restart);
+		return new GDHyperParam(_gamma, _tolerance, _initPoint, _restart, _gradSearchMaxIter);
 	}
 	
 	public GDHyperParamBuilder gamma(double gamma) {
@@ -41,6 +42,11 @@ public class GDHyperParamBuilder extends HyperParamsBuilder {
 	
 	public GDHyperParamBuilder restart(int restart) {
 		_restart = restart;
+		return this;
+	}
+	
+	public GDHyperParamBuilder gradSearchMaxIter(int maxIter) {
+		this._gradSearchMaxIter = maxIter;
 		return this;
 	}
 

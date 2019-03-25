@@ -101,14 +101,13 @@ public abstract class Model<P extends ModelParameter, R extends ModelReward, A e
 		}
 	}
 	
-	public void cutParamsOnBorder(RealVector vector) {
+	public boolean isOutOfBound(RealVector vector) {
 		for (int i = 0; i < parameterSize(); i++) {
 			P modelParam = parameterList.get(i);
-			if (vector.getEntry(i) < modelParam.minValue)
-				vector.setEntry(i, modelParam.minValue);
-			else if (vector.getEntry(i) > modelParam.maxValue)
-				vector.setEntry(i, modelParam.maxValue);
+			if (vector.getEntry(i) < modelParam.minValue || modelParam.maxValue < vector.getEntry(i))
+				return true;
 		}
+		return false;
 	}
 
 	/**
